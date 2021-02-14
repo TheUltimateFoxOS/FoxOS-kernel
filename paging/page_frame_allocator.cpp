@@ -4,6 +4,7 @@ uint64_t free_memory;
 uint64_t reserved_memory;
 uint64_t used_memory;
 bool initialized = false;
+PageFrameAllocator GlobalAllocator;
 
 void PageFrameAllocator::read_EFI_memory_map(efi_memory_descriptor_t* m_map, size_t m_map_size, size_t m_map_desc_size){
     if (initialized) return;
