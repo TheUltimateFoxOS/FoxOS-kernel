@@ -4,11 +4,12 @@
 #include <renderer/font.h>
 #include <renderer/framebuffer.h>
 #include <stdint.h>
+#include <efi_mem.h>
 
 struct bootinfo_t {
 	psf1_font_t* font;
 	framebuffer_t* framebuffer;
-	void* m_map;
+	efi_memory_descriptor_t* m_map;
 	uint64_t m_map_size;
 	uint64_t m_map_desc_size;
 };
