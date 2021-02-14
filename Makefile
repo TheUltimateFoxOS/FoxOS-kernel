@@ -1,5 +1,8 @@
+OBJDIR = lib
+BUILDDIR = bin
+
 SRCS = $(shell find -name '*.cpp')
-OBJS = $(addsuffix .o,$(basename $(SRCS)))
+OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(SRCS))
 
 CC = gcc
 LD = ld
@@ -9,15 +12,18 @@ LDFLAGS = -static -Bsymbolic -nostdlib -Tlink.ld
 
 foxkrnl.elf: $(OBJS)
 	@echo LD $^
-	@$(LD) $(LDFLAGS) -o $@ $^
+	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^
 
-	
-%.o: %.cpp
+$(OBJDIR)/%.o: %.cpp
 	@echo CPP $^
 	@$(CC) $(CFLAGS) -c -o $@ $^
 
+setup:
+	@mkdir $(BUILDDIR)
+	@mkdir $(OBJDIR)
+
 clean:
 	rm $(OBJS)
-	rm foxkrnl.elf
+	rm $(BUILDDIR)/foxkrnl.elf
 
-.PHONY: clean foxkrnl.elf
+.PHONY: clean $(BUILDDIR)/foxkrnl.elf
