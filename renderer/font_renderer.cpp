@@ -2,6 +2,8 @@
 
 using namespace renderer;
 
+FontRenderer* renderer::global_font_renderer;
+
 FontRenderer::FontRenderer(framebuffer_t* target_frame_buffer, psf1_font_t* font) {
 	this->target_frame_buffer = target_frame_buffer;
 	this->font = font;

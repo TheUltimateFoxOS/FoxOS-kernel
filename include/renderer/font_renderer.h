@@ -27,4 +27,6 @@ namespace renderer {
 			void putn(unsigned long x, int base);
 			void clear();
 	};
+
+	extern FontRenderer* global_font_renderer;
 }

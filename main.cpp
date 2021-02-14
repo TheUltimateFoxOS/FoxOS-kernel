@@ -4,22 +4,20 @@
 #include <kernel_info.h>
 #include <config.h>
 #include <paging/page_table_manager.h>
+#include <interrupts/panic.h>
 
 extern "C" void _start(bootinfo_t* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
 
-	renderer::FontRenderer r = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
+	renderer::global_font_renderer->printf("FoxOS version %s %d Copyright (C) 2021 %s\n", RELEASE_T, VERSION, VENDOR);
+	renderer::global_font_renderer->printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
+	renderer::global_font_renderer->printf("This is free software, and you are welcome to redistribute it.\n\n");
 
-	r.printf("FoxOS version %s %d Copyright (C) 2021 %s\n", RELEASE_T, VERSION, VENDOR);
-	r.printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
-	r.printf("This is free software, and you are welcome to redistribute it.\n\n");
+	renderer::global_font_renderer->printf("Im now colord %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
 
-	r.printf("Im now colord %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
-
-	//r.color = 0xff0000ff;
-
-	//r.clear();
+	interrupts::Panic p = interrupts::Panic(1);
+	p.do_it();
 
 	while (true);
 }

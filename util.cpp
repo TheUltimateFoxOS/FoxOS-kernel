@@ -33,6 +33,8 @@ void prepare_memory(bootinfo_t* bootinfo) {
 	kernel_info.page_table_manager = &page_table_manager;
 }
 
+renderer::FontRenderer r = renderer::FontRenderer(NULL, NULL);
+
 KernelInfo init_kernel(bootinfo_t* bootinfo) {
 
 	gdt_descriptor_t gdt_descriptor;
@@ -44,6 +46,9 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 	prepare_memory(bootinfo);
 
 	memset(bootinfo->framebuffer->base_address, 0, bootinfo->framebuffer->buffer_size);
+
+	r = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
+	renderer::global_font_renderer = &r;
 
 	return kernel_info;
 }
