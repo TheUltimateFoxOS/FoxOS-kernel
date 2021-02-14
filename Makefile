@@ -3,14 +3,18 @@ BUILDDIR = bin
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
-SRC = $(call rwildcard,./,*.cpp)
-OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(SRC))
+CPPSRC = $(call rwildcard,./,*.cpp)
+ASMSRC = $(call rwildcard,./,*.asm)
+OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(CPPSRC))
+OBJS += $(patsubst %.asm, $(OBJDIR)/%.o, $(ASMSRC))
 DIRS = $(wildcard ./*)
 
 CC = gcc
+ASM = nasm
 LD = ld
 
 CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -Iinclude
+ASMFLAGS = -f elf64
 LDFLAGS = -static -Bsymbolic -nostdlib -Tlink.ld
 
 foxkrnl.elf: $(OBJS)
@@ -21,6 +25,11 @@ $(OBJDIR)/%.o: %.cpp
 	@echo CPP $^
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c -o $@ $^
+
+$(OBJDIR)/%.o: %.asm
+	@echo ASM $^
+	@mkdir -p $(@D)
+	@$(ASM) $(ASMFLAGS) -o $@ $^
 
 setup:
 	@mkdir $(BUILDDIR)

@@ -12,6 +12,7 @@
 #include <paging/page_frame_allocator.h>
 #include <paging/page_map_indexer.h>
 #include <paging/page_table_manager.h>
+#include <gdt.h>
 
 void prepare_memory(bootinfo_t* boot_info);
 KernelInfo init_kernel(bootinfo_t* boot_info);

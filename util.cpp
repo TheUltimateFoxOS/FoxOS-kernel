@@ -34,6 +34,13 @@ void prepare_memory(bootinfo_t* bootinfo) {
 }
 
 KernelInfo init_kernel(bootinfo_t* bootinfo) {
+
+	gdt_descriptor_t gdt_descriptor;
+	gdt_descriptor.size = sizeof(gdt_t) - 1;
+	gdt_descriptor.offset = (uint64_t) &default_gdt;
+
+	load_gdt(&gdt_descriptor);
+
 	prepare_memory(bootinfo);
 
 	memset(bootinfo->framebuffer->base_address, 0, bootinfo->framebuffer->buffer_size);
