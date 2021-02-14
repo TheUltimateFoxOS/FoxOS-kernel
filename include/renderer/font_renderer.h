@@ -4,6 +4,7 @@
 #include <renderer/font.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include <memory.h>
 
 namespace renderer {
 
@@ -24,5 +25,6 @@ namespace renderer {
 			void putc(char c);
 			void puts(const char* s);
 			void putn(unsigned long x, int base);
+			void clear();
 	};
 }

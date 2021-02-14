@@ -15,7 +15,11 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	r.printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
 	r.printf("This is free software, and you are welcome to redistribute it.\n\n");
 
-	r.printf("String: %s, Hex: 0x%x, Dec: %d, Char: %c\n\n", "Hello World!", 0xf00d, 1001, 'X');
+	r.printf("Im now colord %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
+
+	//r.color = 0xff0000ff;
+
+	//r.clear();
 
 	while (true);
 }
