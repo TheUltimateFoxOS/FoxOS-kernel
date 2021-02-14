@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #define VERSION 	1
+#define RELEASE_T	"Alpha"
 #define VENDOR 		"Glowman554, ImDaBigBoss"
 
 #endif
