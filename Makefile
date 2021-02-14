@@ -1,8 +1,11 @@
 OBJDIR = lib
 BUILDDIR = bin
 
-SRCS = $(shell find -name '*.cpp')
-OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(SRCS))
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+
+SRC = $(call rwildcard,./,*.cpp)
+OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(SRC))
+DIRS = $(wildcard ./*)
 
 CC = gcc
 LD = ld
@@ -16,6 +19,7 @@ foxkrnl.elf: $(OBJS)
 
 $(OBJDIR)/%.o: %.cpp
 	@echo CPP $^
+	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c -o $@ $^
 
 setup:
