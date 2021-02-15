@@ -215,8 +215,11 @@ void interrupts::intr_common_handler(int intr_num, struct interrupt_frame* frame
 		}
 
 		if (intr_num >= 0x28) {
-			//outb(0xa0, 0x20);
+			Port8Bit p(0xa0);
+			p.Write(0x20);
 		}
-		//outb(0x20, 0x20);
+
+		Port8Bit p(0x20);
+		p.Write(0x20);
 	}
 }

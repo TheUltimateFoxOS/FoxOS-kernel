@@ -33,3 +33,5 @@ class Port32Bit{
 		void Write(uint32_t data);
 		uint32_t Read();
 };
+
+void io_wait();

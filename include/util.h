@@ -15,6 +15,7 @@
 #include <gdt.h>
 #include <interrupts/idt.h>
 #include <interrupts/interrupts.h>
+#include <port.h>
 
 void prepare_memory(bootinfo_t* boot_info);
 KernelInfo init_kernel(bootinfo_t* boot_info);

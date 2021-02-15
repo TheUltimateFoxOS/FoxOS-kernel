@@ -54,3 +54,7 @@ uint32_t Port32Bit::Read(){
 void Port32Bit::Write(uint32_t data){
 	asm volatile ("outl %0, %1" : : "a" (data), "Nd" (portnumber));
 }
+
+void io_wait() {
+	asm volatile ("outb %%al, $0x80" : : "a"(0));
+}

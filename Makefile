@@ -13,7 +13,7 @@ CC = gcc
 ASM = nasm
 LD = ld
 
-CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -Iinclude -fno-use-cxa-atexit -fno-rtti
+CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -Iinclude -fno-use-cxa-atexit -fno-rtti -fno-exceptions -fno-leading-underscore
 ASMFLAGS = -f elf64
 LDFLAGS = -static -Bsymbolic -nostdlib -Tlink.ld
 

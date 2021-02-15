@@ -98,6 +98,45 @@ void prepare_interrupts(){
 	set_idt_gate((void*) interrupts::intr_handler_48, 48, idt_ta_interrupt_gate, 0x08); 
 
     asm ("lidt %0" : : "m" (idtr));
+
+	Port8Bit pic1_data(0x21);
+	Port8Bit pic1_command(0x20);
+	Port8Bit pci2_data(0xa1);
+	Port8Bit pci2_command(0xa0);
+
+	uint8_t a1 = pic1_data.Read();
+	io_wait();
+	uint8_t a2 = pci2_data.Read();
+	io_wait();
+
+	pic1_command.Write(ICW1_INIT | ICW1_ICW4);
+	io_wait();
+	pci2_command.Write(ICW1_INIT | ICW1_ICW4);
+	io_wait();
+
+	pic1_data.Write(0x20);
+	io_wait();
+	pci2_data.Write(0x28);
+	io_wait();
+
+	pic1_data.Write(4);
+	io_wait();
+	pci2_data.Write(2);
+	io_wait();
+
+	pic1_data.Write(ICW4_8086);
+	io_wait();
+	pci2_data.Write(ICW4_8086);
+	io_wait();
+
+	pic1_data.Write(a1);
+	io_wait();
+	pci2_data.Write(a2);
+
+	pic1_data.Write(0b11111101);
+	pci2_data.Write(0b11111111);
+
+	asm ("sti");
 }
 
 renderer::FontRenderer r = renderer::FontRenderer(NULL, NULL);
