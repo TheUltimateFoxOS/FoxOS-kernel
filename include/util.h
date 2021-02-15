@@ -13,6 +13,8 @@
 #include <paging/page_map_indexer.h>
 #include <paging/page_table_manager.h>
 #include <gdt.h>
+#include <interrupts/idt.h>
+#include <interrupts/interrupts.h>
 
 void prepare_memory(bootinfo_t* boot_info);
 KernelInfo init_kernel(bootinfo_t* boot_info);

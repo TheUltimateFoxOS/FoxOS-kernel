@@ -16,8 +16,8 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	renderer::global_font_renderer->printf("Im now colord %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
 
-	interrupts::Panic p = interrupts::Panic(1);
-	p.do_it();
+	int* test = (int*) 0x80000000000;
+    *test = 2;
 
 	while (true);
 }

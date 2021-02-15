@@ -7,7 +7,7 @@ CPPSRC = $(call rwildcard,./,*.cpp)
 ASMSRC = $(call rwildcard,./,*.asm)
 OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(CPPSRC))
 OBJS += $(patsubst %.asm, $(OBJDIR)/%.o, $(ASMSRC))
-DIRS = $(wildcard ./*)
+DIRS = $(wildcard ./)
 
 CC = gcc
 ASM = nasm
@@ -20,6 +20,11 @@ LDFLAGS = -static -Bsymbolic -nostdlib -Tlink.ld
 foxkrnl.elf: $(OBJS)
 	@echo LD $^
 	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^
+
+$(OBJDIR)/.//interrupts/interrupts.o: interrupts/interrupts.cpp
+	@echo CPP INTR $^
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -mgeneral-regs-only -c -o $@ $^
 
 $(OBJDIR)/%.o: %.cpp
 	@echo CPP $^

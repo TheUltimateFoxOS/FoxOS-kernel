@@ -33,6 +33,73 @@ void prepare_memory(bootinfo_t* bootinfo) {
 	kernel_info.page_table_manager = &page_table_manager;
 }
 
+interrupts::idt_t idtr;
+
+void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector){
+
+    interrupts::idt_desc_entry_t* interrupt = (interrupts::idt_desc_entry_t*)(idtr.offset + entry_offset * sizeof(interrupts::idt_desc_entry_t));
+    interrupt->set_offset((uint64_t) handler);
+    interrupt->type_attr = type_attr;
+    interrupt->selector = selector;
+}
+
+void prepare_interrupts(){
+    idtr.limit = 0x0FFF;
+    idtr.offset = (uint64_t) GlobalAllocator.request_page();
+
+	set_idt_gate((void*) interrupts::intr_handler_0, 0, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_1, 1, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_2, 2, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_3, 3, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_4, 4, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_5, 5, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_6, 6, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_7, 7, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_8, 8, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_9, 9, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_10, 10, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_11, 11, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_12, 12, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_13, 13, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_14, 14, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_15, 15, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_16, 16, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_17, 17, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_18, 18, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_19, 19, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_20, 20, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_21, 21, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_22, 22, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_23, 23, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_24, 24, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_25, 25, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_26, 26, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_27, 27, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_28, 28, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_29, 29, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_30, 30, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_31, 31, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_32, 32, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_33, 33, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_34, 34, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_35, 35, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_36, 36, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_37, 37, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_38, 38, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_39, 39, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_40, 40, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_41, 41, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_42, 42, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_43, 43, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_44, 44, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_45, 45, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_46, 46, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_47, 47, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) interrupts::intr_handler_48, 48, idt_ta_interrupt_gate, 0x08); 
+
+    asm ("lidt %0" : : "m" (idtr));
+}
+
 renderer::FontRenderer r = renderer::FontRenderer(NULL, NULL);
 
 KernelInfo init_kernel(bootinfo_t* bootinfo) {
@@ -46,6 +113,8 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 	prepare_memory(bootinfo);
 
 	memset(bootinfo->framebuffer->base_address, 0, bootinfo->framebuffer->buffer_size);
+
+	prepare_interrupts();
 
 	r = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
 	renderer::global_font_renderer = &r;
