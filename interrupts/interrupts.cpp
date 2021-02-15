@@ -2,6 +2,8 @@
 
 using namespace interrupts;
 
+
+
 __attribute__((interrupt)) void interrupts::intr_handler_0(struct interrupt_frame* frame) {
 	intr_common_handler(0, frame);
 }
@@ -201,6 +203,20 @@ __attribute__((interrupt)) void interrupts::intr_handler_48(struct interrupt_fra
 
 
 void interrupts::intr_common_handler(int intr_num, struct interrupt_frame* frame) {
-	Panic p = Panic(intr_num);
-	p.do_it();
+
+	if(intr_num <= 0x1f) {
+		Panic p = Panic(intr_num);
+		p.do_it();
+	}
+
+	if(intr_num >= 0x20 && intr_num <= 0x2f) {
+		if(handlers[intr_num] != NULL) {
+			handlers[intr_num]->handle();
+		}
+
+		if (intr_num >= 0x28) {
+			//outb(0xa0, 0x20);
+		}
+		//outb(0x20, 0x20);
+	}
 }

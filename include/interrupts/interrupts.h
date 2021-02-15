@@ -3,6 +3,7 @@
 #include <interrupts/panic.h>
 #include <stdint.h>
 #include <renderer/font_renderer.h>
+#include <interrupts/interrupt_handler.h>
 
 namespace interrupts {
 	struct interrupt_frame;
