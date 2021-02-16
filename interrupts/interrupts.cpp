@@ -2,8 +2,6 @@
 
 using namespace interrupts;
 
-
-
 __attribute__((interrupt)) void interrupts::intr_handler_0(struct interrupt_frame* frame) {
 	intr_common_handler(0, frame);
 }

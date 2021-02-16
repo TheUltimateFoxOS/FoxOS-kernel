@@ -1,18 +1,14 @@
 #pragma once
 
+#include <renderer/renderer2D.h>
 #include <renderer/framebuffer.h>
+#include <renderer/point.h>
 #include <renderer/font.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <memory.h>
 
 namespace renderer {
-
-	struct point_t {
-		uint32_t x;
-		uint32_t y;
-	};
-
 	class FontRenderer {
 		public:
 			FontRenderer(framebuffer_t* target_frame_buffer, psf1_font_t* font);

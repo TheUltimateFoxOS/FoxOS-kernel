@@ -133,13 +133,23 @@ void prepare_interrupts(){
 	io_wait();
 	pci2_data.Write(a2);
 
-	pic1_data.Write(0b11111101);
-	pci2_data.Write(0b11111111);
-
-	asm ("sti");
+	pic1_data.Write(0b11111001);
+	pci2_data.Write(0b11101111);
 }
 
-renderer::FontRenderer r = renderer::FontRenderer(NULL, NULL);
+renderer::FontRenderer fr = renderer::FontRenderer(NULL, NULL);
+renderer::MouseRenderer mr = renderer::MouseRenderer();
+renderer::Renderer2D r2d = renderer::Renderer2D(NULL);
+void setup_renderers(bootinfo_t* bootinfo) {
+	fr = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
+	renderer::global_font_renderer = &fr;
+
+	mr = renderer::MouseRenderer();
+	renderer::global_mouse_renderer = &mr;
+
+	r2d = renderer::Renderer2D(bootinfo->framebuffer);
+	renderer::global_renderer2D = &r2d;
+}
 
 KernelInfo init_kernel(bootinfo_t* bootinfo) {
 
@@ -153,10 +163,11 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 
 	memset(bootinfo->framebuffer->base_address, 0, bootinfo->framebuffer->buffer_size);
 
+	setup_renderers(bootinfo);
+
 	prepare_interrupts();
 
-	r = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
-	renderer::global_font_renderer = &r;
+	asm ("sti"); //Re-enable interrupts
 
 	return kernel_info;
 }
