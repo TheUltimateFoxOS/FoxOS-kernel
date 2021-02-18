@@ -70,6 +70,22 @@ out:
 
 void FontRenderer::putc(char c) {
 
+	if(c == 0) {
+		return;
+	}
+
+	if(c == '\b') {
+		uint32_t* pix_ptr = (uint32_t*) target_frame_buffer->base_address;
+		for (unsigned long y = cursor_position.y; y < cursor_position.y + 16; y++){
+			for (unsigned long x = cursor_position.x; x < cursor_position.x+8; x++){
+				*(unsigned int*)(pix_ptr + x + (y * target_frame_buffer->pixels_per_scanline)) = 0;
+			}
+		}
+
+		cursor_position.x -= 8;
+		return;
+	}
+
 	if(cursor_position.x > target_frame_buffer->width || c == '\n') {
 		cursor_position.x = 0;
 		cursor_position.y += 16;
