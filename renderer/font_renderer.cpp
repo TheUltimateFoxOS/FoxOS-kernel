@@ -86,7 +86,7 @@ void FontRenderer::putc(char c) {
 		return;
 	}
 
-	if(cursor_position.x > target_frame_buffer->width || c == '\n') {
+	if(cursor_position.x + 16 > target_frame_buffer->width || c == '\n') {
 		cursor_position.x = 0;
 		cursor_position.y += 16;
 	} else {
