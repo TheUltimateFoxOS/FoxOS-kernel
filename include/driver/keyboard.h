@@ -6,6 +6,13 @@
 #include <stdint.h>
 
 namespace driver {
+
+	enum keyboard_layout {
+		keymap_de_e = 0,
+		keymap_fr_e = 1,
+		keymap_us_e = 2
+	};
+
 	class KeyboardEventHandler {
 		public:
 			KeyboardEventHandler();
@@ -23,6 +30,8 @@ namespace driver {
 		public:
 			KeyboardDriver(KeyboardEventHandler* handler);
 			~KeyboardDriver();
+
+			uint8_t keymap;
 
 			virtual void handle();
 			virtual bool is_presend();

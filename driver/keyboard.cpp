@@ -158,6 +158,7 @@ void KeyboardEventHandler::KeyDown(char c) {
 
 KeyboardDriver::KeyboardDriver(KeyboardEventHandler* handler) : interrupts::InterruptHandler(0x21), dataport(0x60), commandport(0x64) {
 	this->handler = handler;
+	this->keymap = keymap_us_e;
 }
 
 void KeyboardDriver::activate() {
@@ -181,6 +182,20 @@ void KeyboardDriver::handle(){
 		return;
 	
 	if(key < 0x80){
-		handler->KeyDown(keymap_de(key));
+
+		switch(this->keymap) {
+			case keymap_de_e:
+				handler->KeyDown(keymap_de(key));
+				break;
+			case keymap_fr_e:
+				handler->KeyDown(keymap_fr(key));
+				break;
+			case keymap_us_e:
+				handler->KeyDown(keymap_us(key));
+				break;
+			default:
+				renderer::global_font_renderer->printf("Invalid keymap selected\n");
+				break;
+		}
 	}
 }
