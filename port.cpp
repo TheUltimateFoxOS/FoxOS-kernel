@@ -2,6 +2,7 @@
 
 Port8Bit::Port8Bit(uint16_t port){
 	portnumber = port;
+	offset = 0;
 }
 
 Port8Bit::~Port8Bit(){
@@ -10,17 +11,18 @@ Port8Bit::~Port8Bit(){
 
 uint8_t Port8Bit::Read(){
 	uint8_t result;
-	__asm__ ("inb %1, %0" : "=a" (result) : "Nd" (portnumber));
+	__asm__ ("inb %1, %0" : "=a" (result) : "Nd" (portnumber + offset));
 	return result;
 }
 
 void Port8Bit::Write(uint8_t data){
-	__asm__ ("outb %0, %1" : : "a" (data), "Nd" (portnumber));
+	__asm__ ("outb %0, %1" : : "a" (data), "Nd" (portnumber + offset));
 }
 
 
 Port16Bit::Port16Bit(uint16_t port){
 	portnumber = port;
+	offset = 0;
 }
 
 Port16Bit::~Port16Bit(){
@@ -29,16 +31,17 @@ Port16Bit::~Port16Bit(){
 
 uint16_t Port16Bit::Read(){
     uint16_t result;
-    __asm__ volatile("inw %1, %0" : "=a" (result) : "Nd" (portnumber));
+    __asm__ volatile("inw %1, %0" : "=a" (result) : "Nd" (portnumber + offset));
     return result;
 }
 
 void Port16Bit::Write(uint16_t data){
-	asm volatile ("outw %0, %1" : : "a" (data), "Nd" (portnumber));
+	asm volatile ("outw %0, %1" : : "a" (data), "Nd" (portnumber + offset));
 }
 
 Port32Bit::Port32Bit(uint16_t port){
 	portnumber = port;
+	offset = 0;
 }
 
 Port32Bit::~Port32Bit(){
@@ -47,12 +50,12 @@ Port32Bit::~Port32Bit(){
 
 uint32_t Port32Bit::Read(){
 	uint32_t result;
-	asm volatile ("inl %1, %0" : "=a" (result) : "d" (portnumber));
+	asm volatile ("inl %1, %0" : "=a" (result) : "d" (portnumber + offset));
 	return result;
 }
 
 void Port32Bit::Write(uint32_t data){
-	asm volatile ("outl %0, %1" : : "a" (data), "Nd" (portnumber));
+	asm volatile ("outl %0, %1" : : "a" (data), "Nd" (portnumber + offset));
 }
 
 void io_wait() {

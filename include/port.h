@@ -5,6 +5,7 @@ class Port8Bit{
 	private:
 		uint16_t portnumber;
 	public:
+		uint16_t offset;
 		Port8Bit(uint16_t port);
 		~Port8Bit();
 		
@@ -16,6 +17,7 @@ class Port16Bit{
 	private:
 		uint16_t portnumber;
 	public:
+		uint16_t offset;
 		Port16Bit(uint16_t port);
 		~Port16Bit();
 		
@@ -27,6 +29,7 @@ class Port32Bit{
 	private:
 		uint16_t portnumber;
 	public:
+		uint16_t offset;
 		Port32Bit(uint16_t port);
 		~Port32Bit();
 		
