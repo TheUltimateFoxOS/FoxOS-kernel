@@ -32,6 +32,7 @@ namespace driver {
 			~KeyboardDriver();
 
 			uint8_t keymap;
+			bool l_shift = false;
 
 			virtual void handle();
 			virtual bool is_presend();
