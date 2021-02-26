@@ -57,12 +57,5 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	driver_manager.activate_all(false);
 
-	driver::Serial s = driver::Serial(0x3f8);
-	s.write_serial('h');
-
-	while(true) {
-		renderer::global_font_renderer->printf("%c", s.read_serial());
-	}
-
 	while (true);
 }
