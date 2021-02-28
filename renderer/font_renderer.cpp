@@ -87,8 +87,13 @@ void FontRenderer::putc(char c) {
 	}
 
 	if(cursor_position.x + 16 > target_frame_buffer->width || c == '\n') {
-		cursor_position.x = 0;
-		cursor_position.y += 16;
+		if (cursor_position.y + 16 + 1 > target_frame_buffer->height) {
+			global_renderer2D->scroll_down();
+			cursor_position.x = 0;
+		} else {
+			cursor_position.x = 0;
+			cursor_position.y += 16;
+		}
 	} else {
 		cursor_position.x += 8;
 	}

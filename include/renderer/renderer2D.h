@@ -2,6 +2,7 @@
 
 #include <renderer/framebuffer.h>
 #include <renderer/point.h>
+#include <renderer/mouse_utils.h>
 
 #include <stdarg.h>
 #include <stdint.h>
@@ -22,6 +23,7 @@ namespace renderer {
 
 			void clear_mouse_cursor(uint8_t* mouse_pointer, renderer::point_t pos);
 			void draw_overlay_mouse_cursor(uint8_t* mouse_pointer, renderer::point_t pos, uint32_t colour);
+			void scroll_down();
 			bool mouse_drawn;
 	};
 
