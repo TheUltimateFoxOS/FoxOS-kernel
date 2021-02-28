@@ -4,6 +4,7 @@
 #include <renderer/framebuffer.h>
 #include <renderer/point.h>
 #include <renderer/font.h>
+
 #include <stdarg.h>
 #include <stdint.h>
 #include <memory.h>
