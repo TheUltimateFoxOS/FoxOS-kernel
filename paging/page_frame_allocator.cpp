@@ -42,7 +42,7 @@ void PageFrameAllocator::read_EFI_memory_map(efi_memory_descriptor_t* m_map, siz
 		}
 	}
 
-	reserve_pages(0, 0x1000); // reserver between 0 and Ox10000000
+	reserve_pages(0, 0x100); // reserver between 0 and Ox10000000
 	lock_pages(page_bitmap.buffer, page_bitmap.size / 4096 + 1);
 }
 
