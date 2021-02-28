@@ -157,7 +157,7 @@ void setup_renderers(bootinfo_t* bootinfo) {
 void prepare_acpi(bootinfo_t* bootinfo) {
 	pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (bootinfo->rsdp->xsdt_address);
 
-    pci::acpi::mcfg_header_t* mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table(xsdt, (char*) "MCFG");
+	pci::acpi::mcfg_header_t* mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table(xsdt, (char*) "MCFG");
 
 	if(mcfg == NULL) {
 		renderer::global_font_renderer->printf("%fNo mcfg found!%r\n", 0xffff0000);
