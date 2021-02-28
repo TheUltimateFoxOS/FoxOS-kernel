@@ -33,14 +33,17 @@ void PageFrameAllocator::read_EFI_memory_map(efi_memory_descriptor_t* m_map, siz
 
 	init_bitmap(bitmapsize, largest_free_mem_seg);
 
-	lock_pages(page_bitmap.buffer, page_bitmap.size / 4096 + 1);
+	reserve_pages(0, memorysize / 4096 + 1);
 
 	for (int i = 0; i < m_mapEntries; i++){
 		efi_memory_descriptor_t* desc = (efi_memory_descriptor_t*)((uint64_t)m_map + (i * m_map_desc_size));
-		if (desc->type != 7){ // not efiConventionalMemory
-			reserve_pages(desc->phys_addr, desc->num_pages);
+		if (desc->type == 7){ // efiConventionalMemory
+			unreserve_pages(desc->phys_addr, desc->num_pages);
 		}
 	}
+
+	reserve_pages(0, 0x1000); // reserver between 0 and Ox10000000
+	lock_pages(page_bitmap.buffer, page_bitmap.size / 4096 + 1);
 }
 
 void PageFrameAllocator::init_bitmap(size_t bitmapsize, void* bufferAddress){
