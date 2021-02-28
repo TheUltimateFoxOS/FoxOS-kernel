@@ -1,7 +1,6 @@
 #include <util.h>
 
 KernelInfo kernel_info;
-PageTableManager page_table_manager = NULL;
 void prepare_memory(bootinfo_t* bootinfo) {
 	uint64_t m_map_entrys = bootinfo->m_map_size / bootinfo->m_map_desc_size;
 
@@ -15,22 +14,22 @@ void prepare_memory(bootinfo_t* bootinfo) {
 	PageTable* PML4 = (PageTable*)GlobalAllocator.request_page();
 	memset(PML4, 0, 0x1000);
 
-	page_table_manager = PageTableManager(PML4);
+	g_page_table_manager = PageTableManager(PML4);
 
 	for (uint64_t t = 0; t < get_memory_size(bootinfo->m_map, m_map_entrys, bootinfo->m_map_size); t+= 0x1000){
-		page_table_manager.map_memory((void*)t, (void*)t);
+		g_page_table_manager.map_memory((void*)t, (void*)t);
 	}
 
 	uint64_t fbBase = (uint64_t)bootinfo->framebuffer->base_address;
 	uint64_t fbSize = (uint64_t)bootinfo->framebuffer->buffer_size + 0x1000;
 	GlobalAllocator.lock_pages((void*)fbBase, fbSize / 0x1000 + 1);
 	for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
-		page_table_manager.map_memory((void*)t, (void*)t);
+		g_page_table_manager.map_memory((void*)t, (void*)t);
 	}
 
 	asm ("mov %0, %%cr3" : : "r" (PML4));
 
-	kernel_info.page_table_manager = &page_table_manager;
+	kernel_info.page_table_manager = &g_page_table_manager;
 }
 
 interrupts::idt_t idtr;
@@ -151,6 +150,20 @@ void setup_renderers(bootinfo_t* bootinfo) {
 	renderer::global_renderer2D = &r2d;
 }
 
+void prepare_acpi(bootinfo_t* bootinfo) {
+	pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (bootinfo->rsdp->xsdt_address);
+
+    pci::acpi::mcfg_header_t* mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table(xsdt, (char*) "MCFG");
+
+	if(mcfg == NULL) {
+		renderer::global_font_renderer->printf("%fNo mcfg found!%r\n", 0xffff0000);
+		renderer::global_font_renderer->printf("%fAborting acpi preparation!%r\n", 0xffff0000);
+		return;
+	}
+
+	pci::enumerate_pci(mcfg);
+}
+
 KernelInfo init_kernel(bootinfo_t* bootinfo) {
 
 	gdt_descriptor_t gdt_descriptor;
@@ -166,6 +179,8 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 	setup_renderers(bootinfo);
 
 	prepare_interrupts();
+
+	prepare_acpi(bootinfo);
 
 	asm ("sti"); //Re-enable interrupts
 

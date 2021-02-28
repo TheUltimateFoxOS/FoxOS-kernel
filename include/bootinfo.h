@@ -5,6 +5,7 @@
 #include <renderer/framebuffer.h>
 #include <stdint.h>
 #include <efi_mem.h>
+#include <pci/acpi.h>
 
 struct bootinfo_t {
 	psf1_font_t* font;
@@ -12,6 +13,7 @@ struct bootinfo_t {
 	efi_memory_descriptor_t* m_map;
 	uint64_t m_map_size;
 	uint64_t m_map_desc_size;
+	pci::acpi::rsdp2_t* rsdp;
 };
 
 #endif

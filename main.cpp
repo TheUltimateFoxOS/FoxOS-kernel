@@ -55,6 +55,8 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	renderer::global_font_renderer->printf("Im now colored %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
 
+	renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
+
 	driver_manager.activate_all(false);
 
 	while (true);

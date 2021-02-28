@@ -22,5 +22,8 @@
 #include <interrupts/idt.h>
 #include <interrupts/interrupts.h>
 
+#include <pci/acpi.h>
+#include <pci/pci.h>
+
 void prepare_memory(bootinfo_t* boot_info);
 KernelInfo init_kernel(bootinfo_t* boot_info);
