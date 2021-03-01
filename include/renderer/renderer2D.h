@@ -2,7 +2,7 @@
 
 #include <renderer/framebuffer.h>
 #include <renderer/point.h>
-#include <renderer/mouse_utils.h>
+#include <renderer/mouse_renderer.h>
 
 #include <stdarg.h>
 #include <stdint.h>

@@ -136,14 +136,10 @@ void prepare_interrupts(){
 	pci2_data.Write(0b11101111);
 }
 
-renderer::MouseUtils mu = renderer::MouseUtils();
 renderer::FontRenderer fr = renderer::FontRenderer(NULL, NULL);
 renderer::MouseRenderer mr = renderer::MouseRenderer();
 renderer::Renderer2D r2d = renderer::Renderer2D(NULL);
 void setup_renderers(bootinfo_t* bootinfo) {
-	mu = renderer::MouseUtils();
-	renderer::global_mouse_utils = &mu;
-
 	fr = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
 	renderer::global_font_renderer = &fr;
 

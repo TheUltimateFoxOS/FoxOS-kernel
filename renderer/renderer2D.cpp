@@ -67,7 +67,7 @@ void Renderer2D::draw_overlay_mouse_cursor(uint8_t* mouse_pointer, point_t pos, 
 }
 
 void Renderer2D::scroll_down() {
-	global_renderer2D->clear_mouse_cursor(global_mouse_utils->get_mouse_pointer(), global_mouse_utils->mouse_position);
+	global_renderer2D->clear_mouse_cursor(global_mouse_renderer->get_mouse_pointer(), global_mouse_renderer->mouse_position);
 	for (unsigned long y = 0; y <= 16; y++) { // clear the first line
 		for (unsigned long x = 0; x <= target_frame_buffer->width; x++) {
 			*(uint32_t*)((uint64_t)target_frame_buffer->base_address + (x*4) + (y * target_frame_buffer->pixels_per_scanline * 4)) = 0x00000000;
@@ -84,5 +84,5 @@ void Renderer2D::scroll_down() {
 			*(uint32_t*)((uint64_t)target_frame_buffer->base_address + (x*4) + (y * target_frame_buffer->pixels_per_scanline * 4)) = 0x00000000;
 		}
 	}
-	global_renderer2D->draw_overlay_mouse_cursor(global_mouse_utils->get_mouse_pointer(), global_mouse_utils->mouse_position, 0xffffffff);
+	global_renderer2D->draw_overlay_mouse_cursor(global_mouse_renderer->get_mouse_pointer(), global_mouse_renderer->mouse_position, 0xffffffff);
 }
