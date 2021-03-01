@@ -19,50 +19,50 @@ MouseDriver::MouseDriver(MouseEventHandler* handler) : interrupts::InterruptHand
 }
 
 void MouseDriver::MouseWait() {
-    uint32_t timeout = 1000;
-    while (timeout--){
-        if ((commandport.Read() & 0b10) == 0){
-            return;
-        }
-    }
+	uint32_t timeout = 1000;
+	while (timeout--){
+		if ((commandport.Read() & 0b10) == 0){
+			return;
+		}
+	}
 }
 
 void MouseDriver::MouseWaitInput() {
-    uint32_t timeout = 1000;
-    while (timeout--){
-        if (commandport.Read() & 0b1){
-            return;
-        }
-    }
+	uint32_t timeout = 1000;
+	while (timeout--){
+		if (commandport.Read() & 0b1){
+			return;
+		}
+	}
 }
 
 void MouseDriver::MouseWrite(uint8_t value) {
-    MouseWait();
-    commandport.Write(0xD4);
-    MouseWait();
-    dataport.Write(value);
+	MouseWait();
+	commandport.Write(0xD4);
+	MouseWait();
+	dataport.Write(value);
 }
 
 uint8_t MouseDriver::MouseRead() {
-    MouseWaitInput();
-    return dataport.Read();
+	MouseWaitInput();
+	return dataport.Read();
 }
 
 void MouseDriver::activate() {
 	commandport.Write(0xa8);
-    MouseWait();
-    commandport.Write(0x20);
-    MouseWaitInput();
-    uint8_t status = dataport.Read();
-    status |= 0b10;
-    MouseWait();
-    commandport.Write(0x60);
-    MouseWait();
-    dataport.Write(status);
-    MouseWrite(0xf6);
-    MouseRead();
-    MouseWrite(0xf4);
-    MouseRead();
+	MouseWait();
+	commandport.Write(0x20);
+	MouseWaitInput();
+	uint8_t status = dataport.Read();
+	status |= 0b10;
+	MouseWait();
+	commandport.Write(0x60);
+	MouseWait();
+	dataport.Write(status);
+	MouseWrite(0xf6);
+	MouseRead();
+	MouseWrite(0xf4);
+	MouseRead();
 }
 
 bool MouseDriver::is_presend() {
@@ -71,50 +71,49 @@ bool MouseDriver::is_presend() {
 
 void MouseDriver::handle() {
 	uint8_t data = MouseRead();
-    
-    switch(mouse_cycle) {
-        case 0:
-            if(mouse_packet_ready)
-                break;
-            if ((data & 0b00001000) == 0)
-                break;
-            mouse_packet[0] = data;
-            mouse_cycle++;
-            break;
-        case 1:
-            if(mouse_packet_ready)
-                break;
-            mouse_packet[1] = data;
-            mouse_cycle++;
-            break;
-        case 2:
-            if(mouse_packet_ready)
-                break;
-            mouse_packet[2] = data;
-            mouse_packet_ready = true;
-            mouse_cycle = 0;
-            break;
-    }
+	static bool skip = true;
+	if (skip) {
+		skip = false;
+		return;
+	}
+	
+	switch(mouse_cycle) {
+		case 0:
+			if ((data & 0b00001000) == 0)
+				break;
+			mouse_packet[0] = data;
+			mouse_cycle++;
+			break;
+		case 1:
+			mouse_packet[1] = data;
+			mouse_cycle++;
+			break;
+		case 2:
+			mouse_packet[2] = data;
+			mouse_packet_ready = true;
+			mouse_cycle = 0;
+			break;
+	}
 
-    if(!mouse_packet_ready)
-        return;
+	if(!mouse_packet_ready)
+		return;
 
-    if(handler != 0) {
-        handler->OnMouseMove(mouse_packet);
+	if(handler != 0) {
+		handler->OnMouseMove(mouse_packet);
 
-        if(mouse_packet[0] & 1) {
-            handler->OnMouseDown(LeftButton);
-        }
-	    
-        if((mouse_packet[0] >> 1) & 1) {
-            handler->OnMouseDown(RightButton);
-        }
+		if(mouse_packet[0] & 1) {
+			handler->OnMouseDown(LeftButton);
+		}
 		
-        if((mouse_packet[0] >> 2) & 1) {
-            handler->OnMouseDown(MiddleButton);
-        }
+		if((mouse_packet[0] >> 1) & 1) {
+			handler->OnMouseDown(RightButton);
+		}
+		
+		if((mouse_packet[0] >> 2) & 1) {
+			handler->OnMouseDown(MiddleButton);
+		}
 
-    }
+	}
 
-    mouse_packet_ready = false;
+	mouse_packet_ready = false;
 }
