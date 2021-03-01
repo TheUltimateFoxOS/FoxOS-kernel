@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include "stddef.h"
 #include "bitmap.h"
-#include "memory.h"
+
+#include <memory/memory.h>
 
 class PageFrameAllocator {
 	public:

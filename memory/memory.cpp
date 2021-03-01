@@ -1,4 +1,4 @@
-#include <memory.h>
+#include <memory/memory.h>
 
 uint64_t get_memory_size(efi_memory_descriptor_t* m_map, uint64_t m_map_entries, uint64_t m_map_desc_dize) {
     static uint64_t memorySizeBytes = 0;

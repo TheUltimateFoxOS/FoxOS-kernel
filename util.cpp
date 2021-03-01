@@ -180,6 +180,8 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 
 	memset(bootinfo->framebuffer->base_address, 0, bootinfo->framebuffer->buffer_size);
 
+	initialize_heap((void*) 0x0000100000000000, 0x10);
+
 	setup_renderers(bootinfo);
 
 	prepare_interrupts();

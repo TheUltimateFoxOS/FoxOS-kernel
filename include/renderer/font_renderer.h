@@ -7,7 +7,7 @@
 
 #include <stdarg.h>
 #include <stdint.h>
-#include <memory.h>
+#include <memory/memory.h>
 
 namespace renderer {
 	class FontRenderer {

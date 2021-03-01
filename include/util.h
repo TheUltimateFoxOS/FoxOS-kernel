@@ -3,12 +3,14 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <efi_mem.h>
-#include <memory.h>
 #include <bitmap.h>
 #include <bootinfo.h>
 #include <kernel_info.h>
 #include <gdt.h>
 #include <port.h>
+
+#include <memory/memory.h>
+#include <memory/heap.h>
 
 #include <renderer/font_renderer.h>
 #include <renderer/mouse_renderer.h>
