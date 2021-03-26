@@ -2,8 +2,6 @@
 
 using namespace driver;
 
-
-
 Serial::Serial(uint16_t port_n) : port(port_n) {
 	port.offset = 1;
 	port.Write(0x00);

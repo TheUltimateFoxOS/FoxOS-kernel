@@ -1,6 +1,9 @@
 #include <driver/driver.h>
+#include <renderer/font_renderer.h>
 
 using namespace driver;
+
+DriverManager* driver::global_driver_manager;
 
 Driver::Driver() {
 
@@ -27,14 +30,18 @@ void DriverManager::add_driver(Driver* driver) {
 	this->num_drivers++;
 }
 
+void DriverManager::activate_driver(bool force, Driver* driver) {
+	if(force) {
+		driver->activate();
+	} else {
+		if(driver->is_presend()) {
+			driver->activate();
+		}
+	}
+}
+
 void DriverManager::activate_all(bool force) {
 	for(int i = 0; i < this->num_drivers; i++) {
-		if(force) {
-			this->drivers[i]->activate();
-		} else {
-			if(this->drivers[i]->is_presend()) {
-				this->drivers[i]->activate();
-			}
-		}
+		activate_driver(force, this->drivers[i]);
 	}
 }
