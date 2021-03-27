@@ -77,25 +77,34 @@ void FontRenderer::putc(char c) {
 	if(c == '\b') {
 		uint32_t* pix_ptr = (uint32_t*) target_frame_buffer->base_address;
 		for (unsigned long y = cursor_position.y; y < cursor_position.y + 16; y++){
-			for (unsigned long x = cursor_position.x; x < cursor_position.x+8; x++){
+			for (unsigned long x = cursor_position.x; x < cursor_position.x + 8; x++){
 				*(unsigned int*)(pix_ptr + x + (y * target_frame_buffer->pixels_per_scanline)) = 0;
 			}
 		}
 
-		cursor_position.x -= 8;
+		if (cursor_position.x - 16 < 0) {
+			cursor_position.x = target_frame_buffer->width - 8;
+			if (cursor_position.y - 16 < 0) {
+				cursor_position.y = 0;
+			} else {
+				cursor_position.y -= 16;
+			}
+		} else {
+			cursor_position.x -= 8;
+		}
 		return;
 	}
 
 	if(cursor_position.x + 16 > target_frame_buffer->width || c == '\n') {
-		if (cursor_position.y + 16 + 1 > target_frame_buffer->height) {
-			global_renderer2D->scroll_down();
-			cursor_position.x = 0;
-		} else {
-			cursor_position.x = 0;
-			cursor_position.y += 16;
-		}
+		cursor_position.x = 0;
+		cursor_position.y += 16;
 	} else {
 		cursor_position.x += 8;
+	}
+
+	if (cursor_position.y + 16 > target_frame_buffer->height) {
+		global_renderer2D->scroll_down();
+		cursor_position.y -= 16;
 	}
 
 	if(c == '\n') {
@@ -106,7 +115,7 @@ void FontRenderer::putc(char c) {
 	char* font_ptr = (char*) font->glyph_buffer + (c * font->psf1_Header->charsize);
 
 	for (unsigned long y = cursor_position.y; y < cursor_position.y + 16; y++){
-		for (unsigned long x = cursor_position.x; x < cursor_position.x+8; x++){
+		for (unsigned long x = cursor_position.x; x < cursor_position.x + 8; x++){
 			if ((*font_ptr & (0b10000000 >> (x - cursor_position.x))) > 0){
 					*(unsigned int*)(pix_ptr + x + (y * target_frame_buffer->pixels_per_scanline)) = color;
 				}

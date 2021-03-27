@@ -6,7 +6,6 @@
 #include <stdint.h>
 
 namespace driver {
-
 	enum keyboard_layout {
 		keymap_de_e = 0,
 		keymap_fr_e = 1,

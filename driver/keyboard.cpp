@@ -115,8 +115,8 @@ char keymap_us(uint8_t key, bool l_shift){
 			case 0x09: return('8'); break;
 			case 0x0A: return('9'); break;
 			case 0x0B: return('0'); break;
-			case 0x0C: return('-'); break;
-			case 0x0D: return('='); break;
+			case 0x0C: return('_'); break;
+			case 0x0D: return('+'); break;
 			case 0x0E: return('\b'); break;
 			case 0x10: return('Q'); break;
 			case 0x11: return('W'); break;
@@ -149,9 +149,9 @@ char keymap_us(uint8_t key, bool l_shift){
 			case 0x30: return('B'); break;
 			case 0x31: return('N'); break;
 			case 0x32: return('M'); break;
-			case 0x33: return(','); break;
-			case 0x34: return('.'); break;
-			case 0x35: return('/'); break;
+			case 0x33: return('<'); break;
+			case 0x34: return('>'); break;
+			case 0x35: return('?'); break;
 			case 0x1C: return('\n'); break;
 			case 0x39: return(' '); break;
 			default:
@@ -160,16 +160,18 @@ char keymap_us(uint8_t key, bool l_shift){
 	}
 	else{
 		switch(key){
-			case 0x02: return('1'); break;
-			case 0x03: return('2'); break;
-			case 0x04: return('3'); break;
-			case 0x05: return('4'); break;
-			case 0x06: return('5'); break;
-			case 0x07: return('6'); break;
-			case 0x08: return('7'); break;
-			case 0x09: return('8'); break;
-			case 0x0A: return('9'); break;
-			case 0x0B: return('0'); break;
+			case 0x02: return('!'); break;
+			case 0x03: return('"'); break;
+			case 0x04: break; //Pound symbol
+			case 0x05: return('$'); break;
+			case 0x06: return('%'); break;
+			case 0x07: return('^'); break;
+			case 0x08: return('&'); break;
+			case 0x09: return('*'); break;
+			case 0x0A: return('('); break;
+			case 0x0B: return(')'); break;
+			case 0x0C: return('-'); break;
+			case 0x0D: return('='); break;
 			case 0x0E: return('\b'); break;
 			case 0x10: return('q'); break;
 			case 0x11: return('w'); break;
@@ -202,8 +204,8 @@ char keymap_us(uint8_t key, bool l_shift){
 			case 0x30: return('b'); break;
 			case 0x31: return('n'); break;
 			case 0x32: return('m'); break;
-			case 0x33: return('<'); break;
-			case 0x34: return('>'); break;
+			case 0x33: return(','); break;
+			case 0x34: return('.'); break;
 			case 0x35: return('/'); break;
 			case 0x1C: return('\n'); break;
 			case 0x39: return(' '); break;

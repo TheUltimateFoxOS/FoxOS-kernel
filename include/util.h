@@ -27,5 +27,7 @@
 #include <pci/acpi.h>
 #include <pci/pci.h>
 
+#include <driver/driver.h>
+
 void prepare_memory(bootinfo_t* boot_info);
 KernelInfo init_kernel(bootinfo_t* boot_info);

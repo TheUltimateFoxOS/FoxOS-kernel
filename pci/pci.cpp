@@ -1,4 +1,6 @@
 #include <pci/pci.h>
+#include <driver/ahci.h>
+#include <driver/driver.h>
 
 using namespace pci;
 
@@ -18,17 +20,32 @@ void enumerate_function(uint64_t address, uint64_t function) {
 		return;
 	} 
 
-	renderer::global_font_renderer->printf("Vendor id: 0x%x, Device id: 0x%x\n", pci_device_header->vendor_id, pci_device_header->device_id);
+	renderer::global_font_renderer->printf("Vendor name: %s, ", get_vendor_name(pci_device_header->vendor_id));
+	renderer::global_font_renderer->printf("Device name: %s, ", get_device_name(pci_device_header->vendor_id, pci_device_header->device_id));
+	renderer::global_font_renderer->printf("Device class: %s, ", device_classes[pci_device_header->class_]);
+	renderer::global_font_renderer->printf("Sub class name: %s, ", get_subclass_name(pci_device_header->class_, pci_device_header->subclass));
+	renderer::global_font_renderer->printf("Prog interface name: %s\n", get_prog_IF_name(pci_device_header->class_, pci_device_header->subclass, pci_device_header->prog_if));
+
+	//renderer::global_font_renderer->printf("class: 0x%x, subclass: 0x%x, prog_if: 0x%x\n", pci_device_header->class_, pci_device_header->subclass, pci_device_header->prog_if);
+	switch (pci_device_header->class_) {
+		case 0x01: //mass storage controller
+			switch (pci_device_header->subclass) {
+				case 0x06: //serial ata
+					switch (pci_device_header->prog_if) {
+						case 0x01: //AHCI 1.0 device
+							driver::AHCI ahci_driver = driver::AHCI(pci_device_header);
+					}
+			}
+	}
 }
 
-void enumerate_device(uint64_t address, uint64_t device) {
+void enumerate_device(uint64_t bus_address, uint64_t device) {
 	uint64_t offset = device << 15;
 
-	uint64_t function_address = address + offset;
+	uint64_t device_address = bus_address + offset;
+	g_page_table_manager.map_memory((void*) device_address, (void*) device_address);
 
-	g_page_table_manager.map_memory((void*) function_address, (void*) function_address);
-
-	pci_device_header_t* pci_device_header = (pci_device_header_t*) function_address;
+	pci_device_header_t* pci_device_header = (pci_device_header_t*) device_address;
 
 	if(pci_device_header->device_id == 0) {
 		return;
@@ -38,18 +55,17 @@ void enumerate_device(uint64_t address, uint64_t device) {
 	} 
 
 	for (uint64_t function = 0; function < 8; function++){
-		enumerate_function(device, function);
+		enumerate_function(device_address, function);
 	}
 }
 
-void enumerate_bus(uint64_t address, uint64_t device) {
-	uint64_t offset = device << 20;
+void enumerate_bus(uint64_t base_address, uint64_t bus) {
+	uint64_t offset = bus << 20;
 
-	uint64_t function_address = address + offset;
+	uint64_t bus_address = base_address + offset;
+	g_page_table_manager.map_memory((void*) bus_address, (void*) bus_address);
 
-	g_page_table_manager.map_memory((void*) function_address, (void*) function_address);
-
-	pci_device_header_t* pci_device_header = (pci_device_header_t*) function_address;
+	pci_device_header_t* pci_device_header = (pci_device_header_t*) bus_address;
 
 	if(pci_device_header->device_id == 0) {
 		return;
@@ -58,8 +74,8 @@ void enumerate_bus(uint64_t address, uint64_t device) {
 		return;
 	} 
 
-	for (uint64_t device_n = 0; device_n < 8; device_n++){
-		enumerate_device(device, device_n);
+	for (uint64_t device = 0; device < 32; device++){
+		enumerate_device(bus_address, device);
 	}
 }
 

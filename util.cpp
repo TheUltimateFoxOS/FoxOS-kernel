@@ -139,7 +139,8 @@ void prepare_interrupts(){
 renderer::FontRenderer fr = renderer::FontRenderer(NULL, NULL);
 renderer::MouseRenderer mr = renderer::MouseRenderer();
 renderer::Renderer2D r2d = renderer::Renderer2D(NULL);
-void setup_renderers(bootinfo_t* bootinfo) {
+driver::DriverManager dm;
+void setup_globals(bootinfo_t* bootinfo) {
 	fr = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
 	renderer::global_font_renderer = &fr;
 
@@ -148,6 +149,8 @@ void setup_renderers(bootinfo_t* bootinfo) {
 
 	r2d = renderer::Renderer2D(bootinfo->framebuffer);
 	renderer::global_renderer2D = &r2d;
+
+	driver::global_driver_manager = &dm;
 }
 
 void prepare_acpi(bootinfo_t* bootinfo) {
@@ -178,7 +181,7 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 
 	initialize_heap((void*) 0x0000100000000000, 0x10);
 
-	setup_renderers(bootinfo);
+	setup_globals(bootinfo);
 
 	prepare_interrupts();
 
