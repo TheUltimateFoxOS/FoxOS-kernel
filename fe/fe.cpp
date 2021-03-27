@@ -38,7 +38,8 @@
 #define GCMARKBIT		 ( 0x2 )
 #define GCSTACKSIZE	 ( 256 )
 
-#define exit(code)		renderer::global_font_renderer->printf("EXIT: %d", code);
+#define exit(code)		renderer::global_font_renderer->printf("EXIT: %d", code); \
+						while(1);
 
 enum {
  P_LET, P_SET, P_IF, P_FN, P_MAC, P_WHILE, P_QUOTE, P_AND, P_OR, P_DO, P_CONS,
@@ -612,8 +613,10 @@ fe_Object* fe_nextarg(fe_Context *ctx, fe_Object **arg) {
 
 
 static fe_Object* checktype(fe_Context *ctx, fe_Object *obj, int type) {
+	char buf[64];
 	if (type(obj) != type) {
-		fe_error(ctx, "TypeError");
+		sprintf(buf, "expected %s, got %s", typenames[type], typenames[type(obj)]);
+		fe_error(ctx, buf);
 	}
 	return obj;
 }

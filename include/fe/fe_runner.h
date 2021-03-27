@@ -13,7 +13,7 @@ class FeRunner {
 
 		fe_Context* ctx;
 
-		char buf[64000];
+		char buf[1024 * 1024];
 
 	public:
 		FeRunner();

@@ -1,0 +1,12 @@
+(= reverse (fn (lst)
+	(let res nil)
+	(while lst
+		(= res (cons (car lst) res))
+		(= lst (cdr lst))
+	)
+	res
+))
+
+(= animals '("cat" "dog" "fox"))
+
+(print (reverse animals)) 
