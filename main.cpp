@@ -64,7 +64,7 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	renderer::global_font_renderer->printf("Running fe now :D\n");
 
 	FeRunner runner;
-	runner.run_code("( = reverse (fn (lst) (let res nil) (while lst ( = res (cons (car lst) res)) ( = lst (cdr lst))) res)) (= animals '(\"cat\" \"dog\" \"fox\")) (print (reverse animals))");
+	runner.run_code((char*) "( = reverse (fn (lst) (let res nil) (while lst ( = res (cons (car lst) res)) ( = lst (cdr lst))) res)) (= animals '(\"cat\" \"dog\" \"fox\")) (print (reverse animals))");
 
 	while (true) {
 		asm ("hlt");

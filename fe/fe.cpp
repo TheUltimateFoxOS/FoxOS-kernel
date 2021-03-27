@@ -1026,7 +1026,7 @@ fe_Object* read_data(fe_Context *ctx, fe_ReadFn fn, void *udata) {
 			//uh_oh();
 			n = strtod(buf, &p);	/* try to read as number */
 			if (p != buf && strchr(delimiter, *p)) { return fe_number(ctx, n); }
-			if (!strcmp(buf, "nil")) { return &nil; }
+			if (!strcmp(buf, (char*) "nil")) { return &nil; }
 			return fe_symbol(ctx, buf);
 	}
 }
