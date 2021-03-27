@@ -20,7 +20,7 @@
 ** IN THE SOFTWARE.
 */
 
-#include "fe.h"
+#include <fe/fe.h>
 
 #define unused(x)		 ( (void) (x) )
 #define car(x)				( (x)->car.o )
@@ -947,7 +947,7 @@ void fe_set(fe_Context *ctx, fe_Object *sym, fe_Object *v) {
 
 static fe_Object rparen;
 
-static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
+fe_Object* read_data(fe_Context *ctx, fe_ReadFn fn, void *udata) {
 	const char *delimiter = " \n\t\r();";
 	fe_Object *v, *res, **tail;
 	fe_Number n;
@@ -969,7 +969,7 @@ static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
 
 		case ';':
 			while (chr && chr != '\n') { chr = fn(ctx, udata); }
-			return read_(ctx, fn, udata);
+			return read_data(ctx, fn, udata);
 
 		case ')':
 			return &rparen;
@@ -979,7 +979,7 @@ static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
 			tail = &res;
 			gc = fe_savegc(ctx);
 			fe_pushgc(ctx, res); /* to cause error on too-deep nesting */
-			while ( (v = read_(ctx, fn, udata)) != &rparen ) {
+			while ( (v = read_data(ctx, fn, udata)) != &rparen ) {
 				if (v == NULL) { fe_error(ctx, "unclosed list"); }
 				if (type(v) == FE_TSYMBOL && streq(car(cdr(v)), ".")) {
 					/* dotted pair */
@@ -1033,7 +1033,7 @@ static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
 
 
 fe_Object* fe_read(fe_Context *ctx, fe_ReadFn fn, void *udata) {
-	fe_Object* obj = read_(ctx, fn, udata);
+	fe_Object* obj = read_data(ctx, fn, udata);
 	if (obj == &rparen) { fe_error(ctx, "stray ')'"); }
 	return obj;
 }
@@ -1319,93 +1319,3 @@ void fe_close(fe_Context *ctx) {
 	ctx->symlist = &nil;
 	collectgarbage(ctx);
 }
-
-
-#include <memory/heap.h>
-
-char* code = "( = reverse (fn (lst) (let res nil) (while lst ( = res (cons (car lst) res)) ( = lst (cdr lst))) res)) (= animals '(\"cat\" \"dog\" \"fox\")) (print (reverse animals))";
-size_t code_size = 161;
-int index = 0;
-
-char reader(fe_Context* ctx, void* udata) {
-
-	char tmp = code[index];
-
-	//renderer::global_font_renderer->printf("Loading char %c at index %d, code_size %d!\n", tmp, index, code_size);
-
-	index++;
-	if(index > code_size) {
-		renderer::global_font_renderer->printf("Done!\n");
-		return '\0';
-	} else {
-		return tmp;
-	}
-}
-
-static char buf[64000];
-
-void run_test() {
-	fe_Context *ctx = fe_open(buf, sizeof(buf));
-
-	int gc = fe_savegc(ctx);
-
-	for (;;) {
-		fe_Object *obj = read_(ctx, reader, 0);
-
-		/* break if there's nothing left to read */
-		if (!obj) { break; }
-
-		/* evaluate read object */
-		fe_eval(ctx, obj);
-
-		/* restore GC stack which would now contain both the read object and
-		** result from evaluation */
-		fe_restoregc(ctx, gc);
-	}
-
-	fe_close(ctx);
-}
-
-#ifdef FE_STANDALONE
-
-#include <setjmp.h>
-
-static jmp_buf toplevel;
-static char buf[64000];
-
-static void onerror(fe_Context *ctx, const char *msg, fe_Object *cl) {
-	unused(ctx), unused(cl);
-	frenderer::global_font_renderer->printf(stderr, "error: %s\n", msg);
-	longjmp(toplevel, -1);
-}
-
-
-int main(int argc, char **argv) {
-	int gc;
-	fe_Object *obj;
-	FILE *volatile fp = stdin;
-	fe_Context *ctx = fe_open(buf, sizeof(buf));
-
-	/* init input file */
-	if (argc > 1) {
-		fp = fopen(argv[1], "rb");
-		if (!fp) { fe_error(ctx, "could not open input file"); }
-	}
-
-	if (fp == stdin) { fe_handlers(ctx)->error = onerror; }
-	gc = fe_savegc(ctx);
-	setjmp(toplevel);
-
-	/* re(p)l */
-	for (;;) {
-		fe_restoregc(ctx, gc);
-		if (fp == stdin) { renderer::global_font_renderer->printf("> "); }
-		if (!(obj = fe_readfp(ctx, fp))) { break; }
-		obj = fe_eval(ctx, obj);
-		if (fp == stdin) { fe_writefp(ctx, obj, stdout); renderer::global_font_renderer->printf("\n"); }
-	}
-
-	return EXIT_SUCCESS;
-}
-
-#endif

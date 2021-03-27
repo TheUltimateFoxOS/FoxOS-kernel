@@ -16,7 +16,7 @@
 #include <driver/driver.h>
 #include <driver/serial.h>
 
-#include "fe/fe.h"
+#include <fe/fe_runner.h>
 
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
 	public:
@@ -60,7 +60,11 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	driver::global_driver_manager->activate_all(false);
 
-	run_test();
+
+	renderer::global_font_renderer->printf("Running fe now :D\n");
+
+	FeRunner runner;
+	runner.run_code("( = reverse (fn (lst) (let res nil) (while lst ( = res (cons (car lst) res)) ( = lst (cdr lst))) res)) (= animals '(\"cat\" \"dog\" \"fox\")) (print (reverse animals))");
 
 	while (true) {
 		asm ("hlt");
