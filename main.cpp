@@ -15,6 +15,8 @@
 #include <driver/driver.h>
 #include <driver/serial.h>
 
+#include "fe/fe.h"
+
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
 	public:
 		void KeyDown(char c){
@@ -66,6 +68,8 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	free(address);
 	renderer::global_font_renderer->printf("Testing malloc after free: 0x%x\n", (uint64_t)malloc(0x100));
+
+	run_test();
 
 	while (true);
 }

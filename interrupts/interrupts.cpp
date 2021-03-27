@@ -204,7 +204,8 @@ void interrupts::intr_common_handler(int intr_num, struct interrupt_frame* frame
 
 	if(intr_num <= 0x1f) {
 		Panic p = Panic(intr_num);
-		p.do_it();
+		//p.do_it();
+		while(1);
 	}
 
 	if(intr_num >= 0x20 && intr_num <= 0x2f) {
