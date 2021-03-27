@@ -147,9 +147,162 @@ int strcmp(char *str1, char *str2){
 
 #define uh_oh() not_implemented(__FILE__, __LINE__);
 
+#define isspace(c) (c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r' || c == ' ')
+
 void not_implemented(const char* __file, unsigned int __line) {
 	renderer::global_font_renderer->printf("The feature in the file: %s at the line: %d isn't implemented yet!\n@Glowman554 please do that as soon as posible.\n", __file, __line);
 	while(1);
+}
+
+
+static int maxExponent = 511;
+
+static double powersOf10[] = {
+	10.,
+	100.,
+	1.0e4,
+	1.0e8,
+	1.0e16,
+	1.0e32,
+	1.0e64,
+	1.0e128,
+	1.0e256
+};
+
+
+double strtod(const char* string, char** endPtr) 
+{
+	bool sign, expSign = false;
+	double fraction, dblExp, *d;
+	register const char *p;
+	register int c;
+	int exp = 0;
+	int fracExp = 0;		
+	int mantSize;		
+	int decPt;			
+	const char *pExp;
+
+	p = string;
+	while (isspace(*p)) {
+		p += 1;
+	}
+	if (*p == '-') {
+		sign = true;
+		p += 1;
+	} else {
+		if (*p == '+') {
+			p += 1;
+		}
+		sign = false;
+	}
+
+	decPt = -1;
+	for (mantSize = 0; ; mantSize += 1) {
+		c = *p;
+		if (!isdigit(c)) {
+			if ((c != '.') || (decPt >= 0)) {
+				break;
+			}
+			decPt = mantSize;
+		}
+		p += 1;
+	}
+	
+	pExp  = p;
+	p -= mantSize;
+	if (decPt < 0) {
+		decPt = mantSize;
+	} else {
+		mantSize -= 1;
+	}
+	if (mantSize > 18) {
+		fracExp = decPt - 18;
+		mantSize = 18;
+	} else {
+		fracExp = decPt - mantSize;
+	}
+	if (mantSize == 0) {
+		fraction = 0.0;
+		p = string;
+		goto done;
+	} else {
+		int frac1, frac2;
+		frac1 = 0;
+		for ( ; mantSize > 9; mantSize -= 1) {
+			c = *p;
+			p += 1;
+			if (c == '.') {
+				c = *p;
+				p += 1;
+			}
+			frac1 = 10*frac1 + (c - '0');
+		}
+		frac2 = 0;
+		for (; mantSize > 0; mantSize -= 1) {
+			c = *p;
+			p += 1;
+			if (c == '.') {
+				c = *p;
+				p += 1;
+			}
+			frac2 = 10*frac2 + (c - '0');
+		}
+		fraction = (1.0e9 * frac1) + frac2;
+	}
+
+	p = pExp;
+	if ((*p == 'E') || (*p == 'e')) {
+		p += 1;
+		if (*p == '-') {
+			expSign = true;
+			p += 1;
+		} else {
+			if (*p == '+') {
+				p += 1;
+			}
+			expSign = false;
+		}
+		while (isdigit(*p)) {
+			exp = exp * 10 + (*p - '0');
+			p += 1;
+		}
+	}
+	if (expSign) {
+		exp = fracExp - exp;
+	} else {
+		exp = fracExp + exp;
+	}
+	
+	if (exp < 0) {
+		expSign = true;
+		exp = -exp;
+	} else {
+		expSign = false;
+	}
+	if (exp > maxExponent) {
+		exp = maxExponent;
+	}
+	dblExp = 1.0;
+	for (d = powersOf10; exp != 0; exp >>= 1, d += 1) {
+		if (exp & 01) {
+			dblExp *= *d;
+		}
+	}
+	if (expSign) {
+		fraction /= dblExp;
+	} else {
+		fraction *= dblExp;
+	}
+
+done:
+	if (endPtr != NULL) {
+		*endPtr = (char *) p;
+	}
+
+	if (sign) {
+		return -fraction;
+	}
+	return fraction;
 }
 
 
@@ -870,8 +1023,8 @@ static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
 			} while (chr && !strchr(delimiter, chr));
 			*p = '\0';
 			ctx->nextchr = chr;
-			uh_oh();
-			//n = strtod(buf, &p);	/* try to read as number */
+			//uh_oh();
+			n = strtod(buf, &p);	/* try to read as number */
 			if (p != buf && strchr(delimiter, *p)) { return fe_number(ctx, n); }
 			if (!strcmp(buf, "nil")) { return &nil; }
 			return fe_symbol(ctx, buf);
@@ -1170,18 +1323,19 @@ void fe_close(fe_Context *ctx) {
 
 #include <memory/heap.h>
 
-char* code = "hello";
-size_t code_size = 5;
+char* code = "( = reverse (fn (lst) (let res nil) (while lst ( = res (cons (car lst) res)) ( = lst (cdr lst))) res)) (= animals '(\"cat\" \"dog\" \"fox\")) (print (reverse animals))";
+size_t code_size = 161;
 int index = 0;
 
 char reader(fe_Context* ctx, void* udata) {
 
 	char tmp = code[index];
 
-	renderer::global_font_renderer->printf("Loading char %c at index %d!\n", tmp, index);
+	//renderer::global_font_renderer->printf("Loading char %c at index %d, code_size %d!\n", tmp, index, code_size);
 
 	index++;
-	if(index == code_size) {
+	if(index > code_size) {
+		renderer::global_font_renderer->printf("Done!\n");
 		return '\0';
 	} else {
 		return tmp;
