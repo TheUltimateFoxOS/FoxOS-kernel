@@ -4,14 +4,15 @@ KernelInfo kernel_info;
 void prepare_memory(bootinfo_t* bootinfo) {
 	uint64_t m_map_entrys = bootinfo->m_map_size / bootinfo->m_map_desc_size;
 
-	GlobalAllocator.read_EFI_memory_map(bootinfo->m_map, bootinfo->m_map_size, bootinfo->m_map_desc_size);
+	global_allocator = PageFrameAllocator();
+	global_allocator.read_EFI_memory_map(bootinfo->m_map, bootinfo->m_map_size, bootinfo->m_map_desc_size);
 
 	uint64_t kernel_size = (uint64_t)&kernel_end - (uint64_t)&kernel_start;
 	uint64_t kernel_pages = (uint64_t)kernel_size / 4096 + 1;
 
-	GlobalAllocator.lock_pages(&kernel_start, kernel_pages);
+	global_allocator.lock_pages(&kernel_start, kernel_pages);
 
-	PageTable* PML4 = (PageTable*)GlobalAllocator.request_page();
+	PageTable* PML4 = (PageTable*)global_allocator.request_page();
 	memset(PML4, 0, 0x1000);
 
 	g_page_table_manager = PageTableManager(PML4);
@@ -22,7 +23,7 @@ void prepare_memory(bootinfo_t* bootinfo) {
 
 	uint64_t fbBase = (uint64_t)bootinfo->framebuffer->base_address;
 	uint64_t fbSize = (uint64_t)bootinfo->framebuffer->buffer_size + 0x1000;
-	GlobalAllocator.lock_pages((void*)fbBase, fbSize / 0x1000 + 1);
+	global_allocator.lock_pages((void*)fbBase, fbSize / 0x1000 + 1);
 	for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
 		g_page_table_manager.map_memory((void*)t, (void*)t);
 	}
@@ -44,7 +45,7 @@ void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_
 
 void prepare_interrupts(){
     idtr.limit = 0x0FFF;
-    idtr.offset = (uint64_t) GlobalAllocator.request_page();
+    idtr.offset = (uint64_t) global_allocator.request_page();
 
 	set_idt_gate((void*) interrupts::intr_handler_0, 0, idt_ta_interrupt_gate, 0x08); 
 	set_idt_gate((void*) interrupts::intr_handler_1, 1, idt_ta_interrupt_gate, 0x08); 
@@ -94,7 +95,6 @@ void prepare_interrupts(){
 	set_idt_gate((void*) interrupts::intr_handler_45, 45, idt_ta_interrupt_gate, 0x08); 
 	set_idt_gate((void*) interrupts::intr_handler_46, 46, idt_ta_interrupt_gate, 0x08); 
 	set_idt_gate((void*) interrupts::intr_handler_47, 47, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) interrupts::intr_handler_48, 48, idt_ta_interrupt_gate, 0x08); 
 
     asm ("lidt %0" : : "m" (idtr));
 
@@ -132,7 +132,7 @@ void prepare_interrupts(){
 	io_wait();
 	pci2_data.Write(a2);
 
-	pic1_data.Write(0b11111001);
+	pic1_data.Write(0b11111000);
 	pci2_data.Write(0b11101111);
 }
 

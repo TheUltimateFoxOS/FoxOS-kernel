@@ -193,15 +193,8 @@ __attribute__((interrupt)) void interrupts::intr_handler_46(struct interrupt_fra
 __attribute__((interrupt)) void interrupts::intr_handler_47(struct interrupt_frame* frame) {
 	intr_common_handler(47, frame);
 }
- 
-__attribute__((interrupt)) void interrupts::intr_handler_48(struct interrupt_frame* frame) {
-	intr_common_handler(48, frame);
-}
- 
-
 
 void interrupts::intr_common_handler(int intr_num, struct interrupt_frame* frame) {
-
 	if(intr_num <= 0x1f) {
 		Panic p = Panic(intr_num);
 		//p.do_it();
@@ -211,6 +204,10 @@ void interrupts::intr_common_handler(int intr_num, struct interrupt_frame* frame
 	if(intr_num >= 0x20 && intr_num <= 0x2f) {
 		if(handlers[intr_num] != NULL) {
 			handlers[intr_num]->handle();
+		}
+
+		if(static_handlers[intr_num] != NULL) {
+			(*(static_handlers[intr_num]))(intr_num);
 		}
 
 		if (intr_num >= 0x28) {

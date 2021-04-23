@@ -50,7 +50,7 @@ void AHCI::probe_ports() {
 }
 
 AHCI::AHCI(pci::pci_device_header_t* pci_base_address) {
-	renderer::global_font_renderer->printf("AHCI driver created.\n");
+	renderer::global_font_renderer->printf("AHCI driver instance initialized.\n");
 	this->pci_base_address = pci_base_address;
 
 	ABAR = (HBA_memory*)((pci::pci_header_0_t*)pci_base_address)->BAR5;

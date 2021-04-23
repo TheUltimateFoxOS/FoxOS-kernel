@@ -63,8 +63,6 @@ namespace interrupts {
 	__attribute__((interrupt)) void intr_handler_45(struct interrupt_frame* frame);
 	__attribute__((interrupt)) void intr_handler_46(struct interrupt_frame* frame);
 	__attribute__((interrupt)) void intr_handler_47(struct interrupt_frame* frame);
-	__attribute__((interrupt)) void intr_handler_48(struct interrupt_frame* frame);
 
 	void intr_common_handler(int intr_num, struct interrupt_frame* frame);
-	
 }

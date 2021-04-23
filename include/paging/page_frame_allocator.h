@@ -28,4 +28,4 @@ class PageFrameAllocator {
 	void unreserve_pages(void* address, uint64_t page_count);
 };
 
-extern PageFrameAllocator GlobalAllocator;
+extern PageFrameAllocator global_allocator;

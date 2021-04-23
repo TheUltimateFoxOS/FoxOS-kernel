@@ -17,7 +17,7 @@ void PageTableManager::map_memory(void* virtual_memory, void* physical_memory){
 	PDE = PML4->entries[indexer.PDP_i];
 	PageTable* PDP;
 	if (!PDE.get_flag(PT_Flag::present)){
-		PDP = (PageTable*)GlobalAllocator.request_page();
+		PDP = (PageTable*)global_allocator.request_page();
 		memset(PDP, 0, 0x1000);
 		PDE.set_address((uint64_t)PDP >> 12);
 		PDE.set_flag(PT_Flag::present, true);
@@ -33,7 +33,7 @@ void PageTableManager::map_memory(void* virtual_memory, void* physical_memory){
 	PDE = PDP->entries[indexer.PD_i];
 	PageTable* PD;
 	if (!PDE.get_flag(PT_Flag::present)){
-		PD = (PageTable*)GlobalAllocator.request_page();
+		PD = (PageTable*)global_allocator.request_page();
 		memset(PD, 0, 0x1000);
 		PDE.set_address((uint64_t)PD >> 12);
 		PDE.set_flag(PT_Flag::present, true);
@@ -48,7 +48,7 @@ void PageTableManager::map_memory(void* virtual_memory, void* physical_memory){
 	PDE = PD->entries[indexer.PT_i];
 	PageTable* PT;
 	if (!PDE.get_flag(PT_Flag::present)){
-		PT = (PageTable*)GlobalAllocator.request_page();
+		PT = (PageTable*)global_allocator.request_page();
 		memset(PT, 0, 0x1000);
 		PDE.set_address((uint64_t)PT >> 12);
 		PDE.set_flag(PT_Flag::present, true);

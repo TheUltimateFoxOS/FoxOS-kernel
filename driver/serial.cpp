@@ -41,3 +41,12 @@ void Serial::write_serial(char a) {
 	port.offset = 0;
 	port.Write(a);
 }
+
+void Serial::write_serial(const char* str) {
+	char* chr = (char*)str;
+
+	while(*chr != 0){
+		write_serial(*chr);
+		chr++;
+	}
+}

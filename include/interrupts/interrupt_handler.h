@@ -3,8 +3,9 @@
 #include <interrupts/interrupts.h>
 #include <stdint.h>
 
-namespace interrupts {
+typedef void (*intr_handler_ptr)(uint8_t);
 
+namespace interrupts {
 	class InterruptHandler {
 		protected:
 			uint8_t int_num;
@@ -15,4 +16,8 @@ namespace interrupts {
 	};
 
 	extern interrupts::InterruptHandler* handlers[256];
+
+	extern intr_handler_ptr static_handlers[256];
+
+	void register_interrupt_handler(uint8_t intr, intr_handler_ptr handler);
 }

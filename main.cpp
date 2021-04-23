@@ -18,6 +18,8 @@
 
 #include <fe/fe_runner.h>
 
+#include <scheduling/pit/pit.h>
+
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
 	public:
 		void KeyDown(char c){
@@ -46,6 +48,7 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	renderer::global_font_renderer->printf("Im now colored %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
 
+	//Keyboard and mouse
 	PrintfKeyboardEventHandler kbhandler;
 	driver::KeyboardDriver keyboard_driver(&kbhandler);
 
@@ -60,7 +63,7 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	driver::global_driver_manager->activate_all(false);
 
-
+	//fe stuff
 	renderer::global_font_renderer->printf("Running fe now :D\n");
 
 	FeRunner runner;
@@ -71,8 +74,15 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	runner.run_code((char*) fe_push);
 	runner.run_code((char*) fe_reverse);
 
-	while (true) {
-		asm ("hlt");
+	//PIT stuff
+	PIT::init_pit(2000);
+
+	for (int t = 0; t < 2000; t++) {
+		
 	}
 
+	while (true) {
+		renderer::global_font_renderer->printf("I");
+		PIT::sleep(10);
+	}
 }

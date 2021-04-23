@@ -19,6 +19,6 @@ namespace driver {
 
 			char read_serial();
 			void write_serial(char a);
-
+			void write_serial(const char* str);
 	};
 }

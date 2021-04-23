@@ -3,6 +3,8 @@
 #include <paging/page_frame_allocator.h>
 #include <paging/page_table_manager.h>
 
+#include <renderer/font_renderer.h>
+
 void* heap_start;
 void* heap_end;
 HeapSegHdr* last_hdr;
@@ -11,7 +13,7 @@ void initialize_heap(void* heap_address, size_t page_count){
     void* pos = heap_address;
 
     for (size_t i = 0; i < page_count; i++){
-        g_page_table_manager.map_memory(pos, GlobalAllocator.request_page());
+        g_page_table_manager.map_memory(pos, global_allocator.request_page());
         pos = (void*)((size_t)pos + 0x1000);
     }
 
@@ -90,7 +92,7 @@ void expand_heap(size_t length){
     HeapSegHdr* new_segment = (HeapSegHdr*)heap_end;
 
     for (size_t i = 0; i < page_count; i++){
-        g_page_table_manager.map_memory(heap_end, GlobalAllocator.request_page());
+        g_page_table_manager.map_memory(heap_end, global_allocator.request_page());
         heap_end = (void*)((size_t)heap_end + 0x1000);
     }
 
@@ -113,9 +115,9 @@ void HeapSegHdr::combine_forward(){
         next->next->last = this;
     }
 
-	next = next->next;
-
     length = length + next->length + sizeof(HeapSegHdr);
+
+	next = next->next;
 }
 
 void HeapSegHdr::combine_backward(){
