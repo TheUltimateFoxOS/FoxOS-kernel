@@ -34,8 +34,7 @@ void enumerate_function(uint64_t address, uint64_t function) {
 				case 0x06: //serial ata
 					switch (pci_device_header->prog_if) {
 						case 0x01: //AHCI 1.0 device
-							//new driver::AHCI(pci_device_header);
-							renderer::global_font_renderer->printf("AHCI needs re-enabling later\n");
+							new driver::AHCI(pci_device_header);
 					}
 			}
 	}

@@ -42,7 +42,7 @@ void PageFrameAllocator::read_EFI_memory_map(efi_memory_descriptor_t* m_map, siz
 		}
 	}
 
-	reserve_pages(0, 0x100); // reserver between 0 and Ox10000000
+	reserve_pages(0, 0x100); // reserve between 0 and Ox10000000
 	lock_pages(page_bitmap.buffer, page_bitmap.size / 4096 + 1);
 }
 
@@ -57,12 +57,12 @@ void PageFrameAllocator::init_bitmap(size_t bitmapsize, void* buffer_address){
 uint64_t page_bitmap_index = 0;
 void* PageFrameAllocator::request_page(){
 	for (; page_bitmap_index < page_bitmap.size * 8; page_bitmap_index++){
-		if (page_bitmap[page_bitmap_index] == true) continue;
-		lock_page((void*)(page_bitmap_index * 4096));
-		return (void*)(page_bitmap_index * 4096);
-	}
+        if (page_bitmap[page_bitmap_index] == true) continue;
+        lock_page((void*)(page_bitmap_index * 4096));
+        return (void*)(page_bitmap_index * 4096);
+    }
 
-	return NULL; // Page Frame Swap to file
+    return NULL; // Page Frame Swap to file
 }
 
 void PageFrameAllocator::free_page(void* address){

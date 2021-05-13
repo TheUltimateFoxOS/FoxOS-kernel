@@ -2,7 +2,7 @@
 
 KernelInfo kernel_info;
 void prepare_memory(bootinfo_t* bootinfo) {
-	uint64_t m_map_entrys = bootinfo->m_map_size / bootinfo->m_map_desc_size;
+	uint64_t m_map_entries = bootinfo->m_map_size / bootinfo->m_map_desc_size;
 
 	global_allocator = PageFrameAllocator();
 	global_allocator.read_EFI_memory_map(bootinfo->m_map, bootinfo->m_map_size, bootinfo->m_map_desc_size);
@@ -17,7 +17,7 @@ void prepare_memory(bootinfo_t* bootinfo) {
 
 	g_page_table_manager = PageTableManager(PML4);
 
-	for (uint64_t t = 0; t < get_memory_size(bootinfo->m_map, m_map_entrys, bootinfo->m_map_size); t+= 0x1000){
+	for (uint64_t t = 0; t < get_memory_size(bootinfo->m_map, m_map_entries, bootinfo->m_map_size); t+= 0x1000){
 		g_page_table_manager.map_memory((void*)t, (void*)t);
 	}
 
@@ -35,15 +35,14 @@ void prepare_memory(bootinfo_t* bootinfo) {
 
 interrupts::idt_t idtr;
 
-void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector){
-
+void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector) {
     interrupts::idt_desc_entry_t* interrupt = (interrupts::idt_desc_entry_t*)(idtr.offset + entry_offset * sizeof(interrupts::idt_desc_entry_t));
     interrupt->set_offset((uint64_t) handler);
     interrupt->type_attr = type_attr;
     interrupt->selector = selector;
 }
 
-void prepare_interrupts(){
+void prepare_interrupts() {
     idtr.limit = 0x0FFF;
     idtr.offset = (uint64_t) global_allocator.request_page();
 
@@ -158,17 +157,15 @@ void prepare_acpi(bootinfo_t* bootinfo) {
 
 	pci::acpi::mcfg_header_t* mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table(xsdt, (char*) "MCFG");
 
-	if(mcfg == NULL) {
+	if (mcfg == NULL) {
 		renderer::global_font_renderer->printf("%fNo mcfg found!%r\n", 0xffff0000);
 		renderer::global_font_renderer->printf("%fAborting acpi preparation!%r\n", 0xffff0000);
-		return;
+	} else {
+		pci::enumerate_pci(mcfg);
 	}
-
-	pci::enumerate_pci(mcfg);
 }
 
 KernelInfo init_kernel(bootinfo_t* bootinfo) {
-
 	gdt_descriptor_t gdt_descriptor;
 	gdt_descriptor.size = sizeof(gdt_t) - 1;
 	gdt_descriptor.offset = (uint64_t) &default_gdt;

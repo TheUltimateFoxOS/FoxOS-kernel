@@ -1,5 +1,9 @@
 #include <bitmap.h>
 
+bool Bitmap::operator[](uint64_t index){
+	return get(index);
+}
+
 bool Bitmap::get(uint64_t index) {
 	if (index > size * 8) return false;
 
@@ -11,10 +15,6 @@ bool Bitmap::get(uint64_t index) {
 	}
 	
 	return false;
-}
-
-bool Bitmap::operator[](uint64_t index){
-	return get(index);
 }
 
 bool Bitmap::set(uint64_t index, bool value){

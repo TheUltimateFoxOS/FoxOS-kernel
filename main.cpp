@@ -51,12 +51,10 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//Keyboard and mouse
 	PrintfKeyboardEventHandler kbhandler;
 	driver::KeyboardDriver keyboard_driver(&kbhandler);
-
 	driver::global_driver_manager->add_driver(&keyboard_driver);
 
 	MouseRendererMouseEventHandler mhandler;
 	driver::MouseDriver mouse_driver(&mhandler);
-
 	driver::global_driver_manager->add_driver(&mouse_driver);
 
 	renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
@@ -74,15 +72,7 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	runner.run_code((char*) fe_push);
 	runner.run_code((char*) fe_reverse);
 
-	//PIT stuff
-	PIT::init_pit(2000);
-
-	for (int t = 0; t < 2000; t++) {
-		
-	}
-
 	while (true) {
-		renderer::global_font_renderer->printf("I");
-		PIT::sleep(10);
+		asm ("hlt");
 	}
 }
