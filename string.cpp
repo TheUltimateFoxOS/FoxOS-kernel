@@ -78,7 +78,7 @@ char* strchr(const char* s, int c) {
 	return NULL;
 }
 
-char* strrchr (const char* s, int c) {
+char* strrchr(const char* s, int c) {
 	const char *found, *p;
 
 	c = (unsigned char) c;
@@ -106,4 +106,42 @@ int strncmp(const char* s1, const char* s2, size_t n ) {
 	} else {
 		return (*(unsigned char*) s1 - *(unsigned char*) s2);
 	}
+}
+
+void* memcpy(void* dest, const void* src, size_t n){
+	unsigned char* d = (unsigned char*) dest;
+	const unsigned char* s = (unsigned char*) src;
+
+	while (n--) {
+		*d++ = *s++;
+	}
+
+	return dest;
+}
+
+int memcmp(const void * _s1, const void* _s2, size_t n) {
+
+	const unsigned char* s1 = (unsigned char*) _s1;
+	const unsigned char* s2 = (unsigned char*) _s2;
+
+	while(n--) {
+		if(*s1 != *s2) {
+			return *s1 - *s2;
+		}
+		++s1;
+		++s2;
+	}
+	return 0;
+}
+
+char* strncpy(char* _dst, const char* _src, size_t count) {
+	size_t len = strlen((char*) _src);
+	if(count < len) {
+		len = count;
+	}
+	memcpy(_dst, _src, len);
+	for(size_t i = len; i < count; ++i) {
+		_dst[i] = 0;
+	}
+	return _dst;
 }
