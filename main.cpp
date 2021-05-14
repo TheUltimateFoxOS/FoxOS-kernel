@@ -15,6 +15,7 @@
 #include <driver/mouse.h>
 #include <driver/driver.h>
 #include <driver/serial.h>
+#include <driver/ata.h>
 
 #include <fe/fe_runner.h>
 
@@ -56,6 +57,16 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	MouseRendererMouseEventHandler mhandler;
 	driver::MouseDriver mouse_driver(&mhandler);
 	driver::global_driver_manager->add_driver(&mouse_driver);
+
+	driver::AdvancedTechnologyAttachment ata0m(true, 0x1F0);
+	driver::AdvancedTechnologyAttachment ata0s(false, 0x1F0);
+	driver::AdvancedTechnologyAttachment ata1m(true, 0x170);
+	driver::AdvancedTechnologyAttachment ata1s(false, 0x170);
+
+	driver::global_driver_manager->add_driver(&ata0m);
+	driver::global_driver_manager->add_driver(&ata0s);
+	driver::global_driver_manager->add_driver(&ata1m);
+	driver::global_driver_manager->add_driver(&ata1s);
 
 	renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
 
