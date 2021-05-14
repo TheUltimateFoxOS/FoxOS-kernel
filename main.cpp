@@ -22,10 +22,12 @@
 
 #include <scheduling/pit/pit.h>
 
+#include <shell/shell.h>
+
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
 	public:
 		void KeyDown(char c){
-			renderer::global_font_renderer->printf("%c", c);
+			shell::global_shell->keypress(c);
 		}
 };
 
@@ -94,6 +96,8 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	}
 
 	renderer::global_font_renderer->printf("\n");
+
+	shell::global_shell->init_shell();
 
 	while (true) {
 		asm ("hlt");

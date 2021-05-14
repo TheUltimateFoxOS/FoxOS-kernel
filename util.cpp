@@ -140,7 +140,7 @@ renderer::MouseRenderer mr = renderer::MouseRenderer();
 renderer::Renderer2D r2d = renderer::Renderer2D(NULL);
 driver::DriverManager dm;
 driver::disk::DiskManager disk_manager;
-
+shell::Shell sh;
 void setup_globals(bootinfo_t* bootinfo) {
 	fr = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
 	renderer::global_font_renderer = &fr;
@@ -154,6 +154,9 @@ void setup_globals(bootinfo_t* bootinfo) {
 	driver::global_driver_manager = &dm;
 
 	driver::disk::global_disk_manager = &disk_manager;
+
+	sh = shell::Shell();
+	shell::global_shell = &sh;
 }
 
 void prepare_acpi(bootinfo_t* bootinfo) {

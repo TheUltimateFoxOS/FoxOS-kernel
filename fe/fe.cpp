@@ -21,6 +21,7 @@
 */
 
 #include <fe/fe.h>
+#include <string.h>
 
 #define unused(x)		 ( (void) (x) )
 #define car(x)				( (x)->car.o )
@@ -100,50 +101,6 @@ int __res;										\
 __res = ((unsigned long) n) % (unsigned) base;	\
 n = ((unsigned long) n) / (unsigned) base;		\
 __res; })
-
-int strlen(char *src){
-	int i = 0;
-	while (*src++)
-		i++;
-	return i;
-}
-
-
-char* strchr(const char* s, int c) {
-	if(s == NULL) {
-		return NULL;
-	}
-	while(*s) {
-		if(*s == (char) c) {
-			return (char*) s;
-		}
-		s++;
-	}
-	return NULL;
-}
-
-size_t strnlen(const char *s, size_t maxlen) {
-	size_t i;
-	for (i = 0; i < maxlen; ++i)
-	if (s[i] == '\0')
-		break;
-	return i;
-}
-
-int strcmp(char *str1, char *str2){
-	int i = 0;
-	int failed = 0;
-	while(str1[i] != '\0' && str2[i] != '\0'){
-		if(str1[i] != str2[i]){
-			failed = 1;
-			break;
-		}
-		i++;
-	}
-	if( (str1[i] == '\0' && str2[i] != '\0') || (str1[i] != '\0' && str2[i] == '\0') )
-		failed = 1;
-	return failed;
-}
 
 
 #define uh_oh() not_implemented(__FILE__, __LINE__);
