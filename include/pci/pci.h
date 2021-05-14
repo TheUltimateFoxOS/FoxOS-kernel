@@ -4,6 +4,8 @@
 #include <pci/acpi.h>
 #include <paging/page_table_manager.h>
 #include <renderer/font_renderer.h>
+#include <driver/serial.h>
+
 
 namespace pci {
 	struct pci_device_header_t {

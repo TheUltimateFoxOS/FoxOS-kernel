@@ -14,7 +14,6 @@
 #include <driver/keyboard.h>
 #include <driver/mouse.h>
 #include <driver/driver.h>
-#include <driver/serial.h>
 #include <driver/disk/ata.h>
 #include <driver/disk/disk.h>
 
@@ -50,7 +49,6 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	renderer::global_font_renderer->printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
 	renderer::global_font_renderer->printf("This is free software, and you are welcome to redistribute it.\n\n");
 
-	renderer::global_font_renderer->printf("Im now colored %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
 
 	//Keyboard and mouse
 	PrintfKeyboardEventHandler kbhandler;
@@ -71,31 +69,35 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	driver::global_driver_manager->add_driver(&ata1m);
 	driver::global_driver_manager->add_driver(&ata1s);
 
-	renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
 
 	driver::global_driver_manager->activate_all(false);
 
+	//renderer::global_font_renderer->printf("Im now colored %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
+
+	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
+
+
 	//fe stuff
-	renderer::global_font_renderer->printf("Running fe now :D\n");
+	//renderer::global_font_renderer->printf("Running fe now :D\n");
 
-	FeRunner runner;
+	//FeRunner runner;
 
-	extern const char fe_push[];
-	extern const char fe_reverse[];
+	//extern const char fe_push[];
+	//extern const char fe_reverse[];
 
-	runner.run_code((char*) fe_push);
-	runner.run_code((char*) fe_reverse);
+	//runner.run_code((char*) fe_push);
+	//runner.run_code((char*) fe_reverse);
 
 	// disk read stuff
-	char* buffer = (char*) global_allocator.request_page();
+	//char* buffer = (char*) global_allocator.request_page();
 
-	driver::disk::global_disk_manager->read(0, 0, 1, buffer);
+	//driver::disk::global_disk_manager->read(0, 0, 1, buffer);
 
-	for (int t = 0; t < 512; t++){
-		renderer::global_font_renderer->printf("%c", buffer[t]);
-	}
+	//for (int t = 0; t < 512; t++){
+	//	renderer::global_font_renderer->printf("%c", buffer[t]);
+	//}
 
-	renderer::global_font_renderer->printf("\n");
+	//renderer::global_font_renderer->printf("\n");
 
 	shell::global_shell->init_shell();
 

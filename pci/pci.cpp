@@ -21,11 +21,11 @@ void enumerate_function(uint64_t address, uint64_t function) {
 		return;
 	} 
 
-	renderer::global_font_renderer->printf("Vendor name: %s, ", get_vendor_name(pci_device_header->vendor_id));
-	renderer::global_font_renderer->printf("Device name: %s, ", get_device_name(pci_device_header->vendor_id, pci_device_header->device_id));
-	renderer::global_font_renderer->printf("Device class: %s, ", device_classes[pci_device_header->class_]);
-	renderer::global_font_renderer->printf("Sub class name: %s, ", get_subclass_name(pci_device_header->class_, pci_device_header->subclass));
-	renderer::global_font_renderer->printf("Prog interface name: %s\n", get_prog_IF_name(pci_device_header->class_, pci_device_header->subclass, pci_device_header->prog_if));
+	driver::global_serial_driver->printf("Vendor name: %s, ", get_vendor_name(pci_device_header->vendor_id));
+	driver::global_serial_driver->printf("Device name: %s, ", get_device_name(pci_device_header->vendor_id, pci_device_header->device_id));
+	driver::global_serial_driver->printf("Device class: %s, ", device_classes[pci_device_header->class_]);
+	driver::global_serial_driver->printf("Sub class name: %s, ", get_subclass_name(pci_device_header->class_, pci_device_header->subclass));
+	driver::global_serial_driver->printf("Prog interface name: %s\n", get_prog_IF_name(pci_device_header->class_, pci_device_header->subclass, pci_device_header->prog_if));
 
 	//renderer::global_font_renderer->printf("class: 0x%x, subclass: 0x%x, prog_if: 0x%x\n", pci_device_header->class_, pci_device_header->subclass, pci_device_header->prog_if);
 	switch (pci_device_header->class_) {

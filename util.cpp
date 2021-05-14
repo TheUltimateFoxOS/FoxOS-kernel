@@ -141,6 +141,7 @@ renderer::Renderer2D r2d = renderer::Renderer2D(NULL);
 driver::DriverManager dm;
 driver::disk::DiskManager disk_manager;
 shell::Shell sh;
+
 void setup_globals(bootinfo_t* bootinfo) {
 	fr = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
 	renderer::global_font_renderer = &fr;
@@ -152,6 +153,8 @@ void setup_globals(bootinfo_t* bootinfo) {
 	renderer::global_renderer2D = &r2d;
 
 	driver::global_driver_manager = &dm;
+
+	driver::global_serial_driver = new driver::Serial(0x3f8);
 
 	driver::disk::global_disk_manager = &disk_manager;
 

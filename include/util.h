@@ -29,6 +29,7 @@
 
 #include <driver/driver.h>
 #include <driver/disk/disk.h>
+#include <driver/serial.h>
 
 #include <shell/shell.h>
 
