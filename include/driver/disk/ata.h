@@ -3,11 +3,12 @@
 
 #include <stdint.h>
 #include <driver/driver.h>
+#include <driver/disk/disk.h>
 #include <port.h>
 
 namespace driver {
 
-	class AdvancedTechnologyAttachment: public Driver {
+	class AdvancedTechnologyAttachment: public Driver, public disk::Disk {
 		private:
 			bool master;
 			Port16Bit dataPort;
@@ -33,6 +34,9 @@ namespace driver {
 
 			virtual void activate();
 			virtual bool is_presend();
+
+			virtual void read(uint64_t sector, uint32_t sector_count, void* buffer);
+			virtual void write(uint64_t sector, uint32_t sector_count, void* buffer);
 	};
 
 }

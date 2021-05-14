@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <pci/pci.h>
 #include <driver/driver.h>
+#include <driver/disk/disk.h>
 
 namespace driver {
 	#define ATA_DEV_BUSY 0x80
@@ -137,7 +138,7 @@ namespace driver {
 	};
 	
 
-	class AHCI_port {
+	class AHCI_port : public disk::Disk {
 		public:
 			HBA_port* hba_port;
 			port_type_t port_type;
@@ -148,7 +149,7 @@ namespace driver {
 			void stop_command();
 			void start_command();
 
-			bool read(uint64_t sector, uint32_t sector_count, void* buffer);
+			virtual void read(uint64_t sector, uint32_t sector_count, void* buffer);
 	};
 
 	class AHCI : public Driver {

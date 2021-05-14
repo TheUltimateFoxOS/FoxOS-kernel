@@ -1,5 +1,5 @@
 #include <pci/pci.h>
-#include <driver/ahci.h>
+#include <driver/disk/ahci.h>
 #include <driver/driver.h>
 #include <memory/heap.h>
 

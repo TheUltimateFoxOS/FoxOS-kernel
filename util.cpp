@@ -139,6 +139,8 @@ renderer::FontRenderer fr = renderer::FontRenderer(NULL, NULL);
 renderer::MouseRenderer mr = renderer::MouseRenderer();
 renderer::Renderer2D r2d = renderer::Renderer2D(NULL);
 driver::DriverManager dm;
+driver::disk::DiskManager disk_manager;
+
 void setup_globals(bootinfo_t* bootinfo) {
 	fr = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
 	renderer::global_font_renderer = &fr;
@@ -150,6 +152,8 @@ void setup_globals(bootinfo_t* bootinfo) {
 	renderer::global_renderer2D = &r2d;
 
 	driver::global_driver_manager = &dm;
+
+	driver::disk::global_disk_manager = &disk_manager;
 }
 
 void prepare_acpi(bootinfo_t* bootinfo) {

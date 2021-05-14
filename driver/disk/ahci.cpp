@@ -1,4 +1,4 @@
-#include <driver/ahci.h>
+#include <driver/disk/ahci.h>
 #include <memory/heap.h>
 #include <paging/page_frame_allocator.h>
 
@@ -82,6 +82,8 @@ void AHCI_port::configure() {
 	}
 
 	start_command();
+
+	disk::global_disk_manager->add_disk(this);
 }
 
 void AHCI_port::stop_command() {
@@ -104,13 +106,14 @@ void AHCI_port::start_command() {
 	hba_port->cmd_sts |= HBA_PxCMD_ST;
 }
 
-bool AHCI_port::read(uint64_t sector, uint32_t sector_count, void* buffer) {
+void AHCI_port::read(uint64_t sector, uint32_t sector_count, void* buffer) {
 	uint64_t spin = 0;
 	while ((hba_port->task_file_data & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000) {
 		spin ++;
 	}
 	if (spin == 1000000) {
-		return false;
+		//return false;
+		return;
 	}
 
 	uint32_t sector_low = (uint32_t) sector;
@@ -153,13 +156,14 @@ bool AHCI_port::read(uint64_t sector, uint32_t sector_count, void* buffer) {
 
 	while (true) {
 		if((hba_port->command_issue == 0)) break;
-		if(hba_port->interrupt_status & HBA_PxIS_TFES)
-		{
-			return false;
+		if(hba_port->interrupt_status & HBA_PxIS_TFES) {
+			//return false;
+			return;
 		}
 	}
 
-	return true;
+	//return true;
+	return;
 }
 
 AHCI::AHCI(pci::pci_device_header_t* pci_base_address) {
@@ -180,13 +184,6 @@ AHCI::AHCI(pci::pci_device_header_t* pci_base_address) {
 
 		port->buffer = (uint8_t*)global_allocator.request_page();
 		memset(port->buffer, 0, 0x1000);
-
-		port->read(0, 4, port->buffer);
-		for (int t = 0; t < 1024; t++){
-			renderer::global_font_renderer->printf("%c", port->buffer[t]);
-		}
-
-		renderer::global_font_renderer->printf("\n");
 	}
 }
 

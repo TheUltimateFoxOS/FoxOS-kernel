@@ -15,7 +15,8 @@
 #include <driver/mouse.h>
 #include <driver/driver.h>
 #include <driver/serial.h>
-#include <driver/ata.h>
+#include <driver/disk/ata.h>
+#include <driver/disk/disk.h>
 
 #include <fe/fe_runner.h>
 
@@ -82,6 +83,17 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	runner.run_code((char*) fe_push);
 	runner.run_code((char*) fe_reverse);
+
+	// disk read stuff
+	char* buffer = (char*) global_allocator.request_page();
+
+	driver::disk::global_disk_manager->read(0, 0, 1, buffer);
+
+	for (int t = 0; t < 512; t++){
+		renderer::global_font_renderer->printf("%c", buffer[t]);
+	}
+
+	renderer::global_font_renderer->printf("\n");
 
 	while (true) {
 		asm ("hlt");

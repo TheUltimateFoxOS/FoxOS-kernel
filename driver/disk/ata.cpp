@@ -1,4 +1,4 @@
-#include <driver/ata.h>
+#include <driver/disk/ata.h>
 
 using namespace driver;
 
@@ -6,6 +6,10 @@ using namespace driver;
 AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(bool master, uint16_t portBase): dataPort(portBase), error_port(portBase + 0x1), sector_count_port(portBase + 0x2), lba_low_port(portBase + 0x3), lba_mid_port(portBase + 0x4), lba_hi_port(portBase + 0x5), device_port(portBase + 0x6), command_port(portBase + 0x7), control_port(portBase + 0x206) {
 	this->master = master;
 	this->bytes_per_sector = 512;
+
+	if(this->is_presend()) {
+		disk::global_disk_manager->add_disk(this);
+	}
 }
 
 AdvancedTechnologyAttachment::~AdvancedTechnologyAttachment() {
@@ -147,4 +151,12 @@ void AdvancedTechnologyAttachment::flush() {
 	if(status & 0x01) {
 		return;
 	}
+}
+
+void AdvancedTechnologyAttachment::read(uint64_t sector, uint32_t sector_count, void* buffer) {
+	this->read28(sector, (uint8_t*) buffer, sector_count * 512);
+}
+
+void AdvancedTechnologyAttachment::write(uint64_t sector, uint32_t sector_count, void* buffer) {
+	this->write28(sector, (uint8_t*) buffer, sector_count * 512);
 }
