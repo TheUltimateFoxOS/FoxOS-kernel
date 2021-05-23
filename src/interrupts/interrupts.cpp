@@ -197,7 +197,7 @@ __attribute__((interrupt)) void interrupts::intr_handler_47(struct interrupt_fra
 void interrupts::intr_common_handler(int intr_num, struct interrupt_frame* frame) {
 	if(intr_num <= 0x1f) {
 		Panic p = Panic(intr_num);
-		//p.do_it();
+		p.do_it();
 		while(1);
 	}
 

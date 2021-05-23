@@ -12,7 +12,7 @@ void* pci::acpi::find_table(sdt_header_t* sdt_header, char* signature) {
 			if(new_header->signature[i] != signature[i]) {
 				break;
 			}
-			if(t == 3) {
+			if(i == 3) {
 				return new_header;
 			}
 		}
