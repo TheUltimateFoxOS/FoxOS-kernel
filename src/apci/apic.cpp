@@ -6,6 +6,7 @@ void start_smp() {
 	volatile uint8_t aprunning = 0;
 	uint8_t bspid;
 	uint8_t bspdone = 0;
+	uint8_t* loool = (uint8_t*) 0x0;
 
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(bspid) : : );
 
@@ -16,6 +17,7 @@ void start_smp() {
 	g_page_table_manager.map_memory((void*) lapic_ptr, (void*) lapic_ptr);
 
 	for (int i = 0; i < numcore; i++) {
+		*loool = 0;
 		if(lapic_ids[i] == bspid) {
 			continue;
 		}
@@ -46,6 +48,11 @@ void start_smp() {
 
 			do { __asm__ __volatile__ ("pause" : : : "memory"); }while(*((volatile uint32_t*)(lapic_ptr + 0x300)) & (1 << 12));
 		}
+
+		do {
+			driver::global_serial_driver->printf("Waiting for cpu %d!\n", i);
+		} while (*loool == 0);
+		
 
 		driver::global_serial_driver->printf("Processor %d init done!\n", i);
 		
