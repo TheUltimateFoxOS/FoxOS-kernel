@@ -33,5 +33,8 @@
 
 #include <shell/shell.h>
 
+#include <apic/madt.h>
+#include <apic/apic.h>
+
 void prepare_memory(bootinfo_t* boot_info);
 KernelInfo init_kernel(bootinfo_t* boot_info);

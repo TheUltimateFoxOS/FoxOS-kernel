@@ -173,6 +173,10 @@ void prepare_acpi(bootinfo_t* bootinfo) {
 	} else {
 		pci::enumerate_pci(mcfg);
 	}
+
+	uint8_t* madt = (uint8_t*) pci::acpi::find_table(xsdt, (char*) "APIC");
+
+	parse_madt(madt);
 }
 
 KernelInfo init_kernel(bootinfo_t* bootinfo) {
@@ -195,6 +199,10 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 	prepare_acpi(bootinfo);
 
 	asm ("sti"); //Re-enable interrupts
+
+	PIT::init_pit(65535);
+
+	start_smp();
 
 	return kernel_info;
 }
