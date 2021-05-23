@@ -27,13 +27,17 @@ void start_smp() {
 		*((volatile uint32_t*)(lapic_ptr + 0x310)) = (*((volatile uint32_t*)(lapic_ptr + 0x310)) & 0x00ffffff) | (i << 24);
 		*((volatile uint32_t*)(lapic_ptr + 0x300)) = (*((volatile uint32_t*)(lapic_ptr + 0x300)) & 0xfff00000) | 0x00C500;
 
-		do { __asm__ __volatile__ ("pause" : : : "memory"); }while(*((volatile uint32_t*)(lapic_ptr + 0x300)) & (1 << 12));
+		do {
+			__asm__ __volatile__ ("pause" : : : "memory");
+		} while(*((volatile uint32_t*)(lapic_ptr + 0x300)) & (1 << 12));
 
 
 		*((volatile uint32_t*)(lapic_ptr + 0x310)) = (*((volatile uint32_t*)(lapic_ptr + 0x310)) & 0x00ffffff) | (i << 24);
 		*((volatile uint32_t*)(lapic_ptr + 0x300)) = (*((volatile uint32_t*)(lapic_ptr + 0x300)) & 0xfff00000) | 0x008500;
 
-		do { __asm__ __volatile__ ("pause" : : : "memory"); }while(*((volatile uint32_t*)(lapic_ptr + 0x300)) & (1 << 12));
+		do {
+			__asm__ __volatile__ ("pause" : : : "memory");
+		} while(*((volatile uint32_t*)(lapic_ptr + 0x300)) & (1 << 12));
 
 
 		PIT::sleep(10);
@@ -46,7 +50,9 @@ void start_smp() {
 
 			PIT::sleep(1);
 
-			do { __asm__ __volatile__ ("pause" : : : "memory"); }while(*((volatile uint32_t*)(lapic_ptr + 0x300)) & (1 << 12));
+			do {
+				__asm__ __volatile__ ("pause" : : : "memory");
+			} while(*((volatile uint32_t*)(lapic_ptr + 0x300)) & (1 << 12));
 		}
 
 		do {
