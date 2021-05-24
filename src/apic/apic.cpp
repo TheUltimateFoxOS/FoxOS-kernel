@@ -34,6 +34,12 @@ extern "C" void ap_main() {
 }
 
 int run_on_ap(void_function function) {
+	if(numcore == 1) {
+		driver::global_serial_driver->printf("Only 1 core in system running on bsp!\n");
+		(*(function))();
+		return -1;
+	}
+
 	while(true) {
 		for (int i = 0; i < numcore; i++) {
 			if(cpus[i].presend) {
