@@ -1,0 +1,102 @@
+[extern intr_common_handler_c]
+
+%macro intr_stub 1
+	GLOBAL intr_stub_%1
+intr_stub_%1:
+	push 0
+	push %1
+	jmp intr_common_handler
+%endmacro
+
+%macro intr_stub_err 1
+	GLOBAL intr_stub_%1
+intr_stub_%1:
+	push %1
+	jmp intr_common_handler
+%endmacro
+
+%macro pusha 0
+    push rax
+    push rcx
+    push rdx
+    push rbx
+    push rbp
+    push rsi
+    push rdi
+%endmacro
+
+%macro popa 0
+    pop rdi
+    pop rsi
+    pop rbp
+    pop rbx
+    pop rdx
+    pop rcx
+    pop rax
+%endmacro
+
+intr_stub 0
+intr_stub 1
+intr_stub 2
+intr_stub 3
+intr_stub 4
+intr_stub 5
+intr_stub 6
+intr_stub 7
+intr_stub_err 8
+intr_stub 9
+intr_stub_err 10
+intr_stub_err 11
+intr_stub_err 12
+intr_stub_err 13
+intr_stub_err 14
+intr_stub 15
+intr_stub 16
+intr_stub_err 17
+intr_stub 18
+
+intr_stub 32
+intr_stub 33
+
+intr_stub 34
+intr_stub 35
+intr_stub 36
+intr_stub 37
+intr_stub 38
+intr_stub 39
+intr_stub 40
+intr_stub 41
+intr_stub 42
+intr_stub 43
+intr_stub 44
+intr_stub 45
+intr_stub 46
+intr_stub 47
+
+intr_stub 48
+
+intr_common_handler:
+	pusha
+
+	mov rax, cr0
+	push rax
+	mov rax, cr2
+	push rax
+	mov rax, cr3
+	push rax
+	mov rax, cr4
+	push rax
+
+	mov rdi, rsp
+
+	call intr_common_handler_c
+
+	pop rax
+	pop rax
+	pop rax
+	pop rax
+	popa
+
+	add rsp, 16
+
+	iretq
