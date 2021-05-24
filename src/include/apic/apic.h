@@ -7,6 +7,7 @@
 #include <paging/page_table_manager.h>
 #include <paging/page_frame_allocator.h>
 #include <renderer/font_renderer.h>
+#include <util.h>
 #include <gdt.h>
 
 struct trampoline_data {

@@ -1,7 +1,6 @@
 #include <apic/apic.h>
 
 extern "C" void ap_trampoline();
-
 extern "C" void ap_trampoline_data();
 
 trampoline_data* data;
@@ -12,6 +11,9 @@ bool bspdone = 0;
 extern "C" void hello() {
 	data->status = 2;
 	while(!bspdone);
+
+    asm ("lidt %0" : : "m" (idtr));
+
 
 	driver::global_serial_driver->printf("Hello!\n");
 }
