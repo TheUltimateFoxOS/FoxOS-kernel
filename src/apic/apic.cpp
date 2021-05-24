@@ -5,20 +5,53 @@ extern "C" void ap_trampoline_data();
 
 trampoline_data* data;
 
-bool bspdone = 0;
+bool bspdone = false;
 
+cpu* cpus;
 
-extern "C" void hello() {
-	data->status = 2;
+extern "C" void ap_main() {
+	uint8_t id;
+	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
+
+	cpus[id].presend = true;
+
+	asm ("lidt %0" : : "m" (idtr));
+
+	data->status = ap_status::init_done;
+	cpus[id].status = ap_status::wait_for_work;
+
 	while(!bspdone);
 
-    asm ("lidt %0" : : "m" (idtr));
 
+	while (true) {
+		if(cpus[id].status == ap_status::please_work) {
+			cpus[id].status = ap_status::running;
+			(*(cpus[id].function))();
+			cpus[id].status = ap_status::wait_for_work;
+		} else {
+		}
+	}
+}
 
-	driver::global_serial_driver->printf("Hello!\n");
+int run_on_ap(void_function function) {
+	while(true) {
+		for (int i = 0; i < numcore; i++) {
+			if(cpus[i].presend) {
+				if(cpus[i].status == ap_status::wait_for_work) {
+					driver::global_serial_driver->printf("Running function at 0x%x on ap %d!\n", function, i);
+					cpus[i].function = function;
+					cpus[i].status = ap_status::please_work;
+					return i;
+				}
+			}
+		}
+	}
+	
 }
 
 void start_smp() {
+	cpus = (cpu*) global_allocator.request_page();
+
 	volatile uint8_t aprunning = 0;
 	uint8_t bspid;
 
@@ -44,7 +77,7 @@ void start_smp() {
 		data->status = 0;
 		data->gdt = (uint64_t) &gdt_descriptor;
 		data->stack_ptr = (uint64_t) global_allocator.request_page();
-		data->entry = (uint64_t) &hello;
+		data->entry = (uint64_t) &ap_main;
 
 		__asm__ __volatile__ ("mov %%cr3, %%rax" : "=a"(data->pagetable));
 
@@ -84,7 +117,7 @@ void start_smp() {
 		do {
 			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d!\n", i, data->status);
 			PIT::sleep_d(5);
-		} while (data->status != 2);
+		} while (data->status != ap_status::init_done);
 		
 
 		driver::global_serial_driver->printf("cpu %d init done!\n", i);
@@ -92,5 +125,4 @@ void start_smp() {
 	}
 
 	bspdone = true;
-	
 }

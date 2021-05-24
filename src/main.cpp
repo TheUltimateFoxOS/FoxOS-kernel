@@ -103,11 +103,15 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	// fat32 stuff
 
-	fat32::disk_id = 0; // set to first disk
-	uint8_t fs_buf[512];
-	fat32::fs_info_t fs_info = fat32::read_info(fs_buf); // read fs info
+	run_on_ap((void_function) []() {
+		fat32::disk_id = 0; // set to first disk
+		uint8_t fs_buf[512];
+		fat32::fs_info_t fs_info = fat32::read_info(fs_buf); // read fs info
 
-    show_info(fs_info); // print fs info to serial console
+		show_info(fs_info); // print fs info to serial console
+	});
+
+
 
 	//fat32::sector_buffer_t sector_buffer;
 	//fat32::file_info_t fp;
@@ -117,8 +121,11 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	//fat32::fread(b, 4096, &fp, fs_info, &sector_buffer); // read file
 	//driver::global_serial_driver->printf("%s", b);
+	
+	run_on_ap((void_function) []() {
 
-	shell::global_shell->init_shell();
+		shell::global_shell->init_shell();
+	});
 
 	while (true) {
 		asm ("hlt");
