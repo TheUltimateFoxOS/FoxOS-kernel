@@ -2,11 +2,20 @@
 
 extern "C" void ap_trampoline();
 
+extern "C" void ap_trampoline_data();
+
+trampoline_data* data;
+
+extern "C" void hello() {
+	data->status = 2;	
+}
+
 void start_smp() {
 	volatile uint8_t aprunning = 0;
 	uint8_t bspid;
 	uint8_t bspdone = 0;
-	uint8_t* loool = (uint8_t*) 0x0;
+
+	data = (trampoline_data*) (((uint64_t) &ap_trampoline_data - (uint64_t) &ap_trampoline) + 0x8000);
 
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(bspid) : : );
 
@@ -17,10 +26,19 @@ void start_smp() {
 	g_page_table_manager.map_memory((void*) lapic_ptr, (void*) lapic_ptr);
 
 	for (int i = 0; i < numcore; i++) {
-		*loool = 0;
 		if(lapic_ids[i] == bspid) {
 			continue;
 		}
+
+		gdt_descriptor_t* gdt_descriptor = (gdt_descriptor_t*) 0x0;
+		gdt_descriptor->size = sizeof(gdt_t) - 1;
+		gdt_descriptor->offset = (uint64_t) &default_gdt;
+
+		data->status = 0;
+		data->stack_ptr = (uint64_t) global_allocator.request_page();
+		data->entry = (uint64_t) &hello;
+
+		__asm__ __volatile__ ("mov %%cr3, %%rax" : "=a"(data->pagetable));
 
 
 		*((volatile uint32_t*)(lapic_ptr + 0x280)) = 0;
@@ -56,8 +74,9 @@ void start_smp() {
 		}
 
 		do {
-			driver::global_serial_driver->printf("Waiting for cpu %d!\n", i);
-		} while (*loool == 0);
+			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d, data* %x!\n", i, data->status, &data->status);
+			PIT::sleep_d(5);
+		} while (data->status != 10);
 		
 
 		driver::global_serial_driver->printf("Processor %d init done!\n", i);
