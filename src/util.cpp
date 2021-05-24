@@ -129,8 +129,30 @@ driver::DriverManager dm;
 driver::disk::DiskManager disk_manager;
 shell::Shell sh;
 
+extern uint8_t default_font[];
+
 void setup_globals(bootinfo_t* bootinfo) {
-	fr = renderer::FontRenderer(bootinfo->framebuffer, bootinfo->font);
+	driver::global_serial_driver = new driver::Serial(0x3f8);
+
+	psf1_header_t* font_header = (psf1_header_t*) malloc(sizeof(psf1_header_t));
+	memcpy(font_header, default_font, sizeof(psf1_header_t));
+
+	if(font_header->magic[0] != PSF1_MAGIC0 || font_header->magic[1] != PSF1_MAGIC1) {
+		driver::global_serial_driver->printf("Looks like the font is corrupted continuing anyways!\n");
+	}
+
+	uint64_t glyph_buffer_size = font_header->charsize * 256;
+	if(font_header->mode == 1) {
+		glyph_buffer_size = font_header->charsize * 512;
+	}
+
+	void* glyph_buffer = malloc(glyph_buffer_size);
+	memcpy(glyph_buffer, (void*) default_font + sizeof(psf1_header_t), glyph_buffer_size);
+	psf1_font_t* finished_font = (psf1_font_t*) malloc(sizeof(psf1_font_t));
+	finished_font->psf1_Header = font_header;
+	finished_font->glyph_buffer = glyph_buffer;
+
+	fr = renderer::FontRenderer(bootinfo->framebuffer, finished_font);
 	renderer::global_font_renderer = &fr;
 
 	mr = renderer::MouseRenderer();
@@ -140,8 +162,6 @@ void setup_globals(bootinfo_t* bootinfo) {
 	renderer::global_renderer2D = &r2d;
 
 	driver::global_driver_manager = &dm;
-
-	driver::global_serial_driver = new driver::Serial(0x3f8);
 
 	driver::disk::global_disk_manager = &disk_manager;
 

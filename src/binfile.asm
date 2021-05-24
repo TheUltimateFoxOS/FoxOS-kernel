@@ -9,3 +9,5 @@
 
 inc_bin fe_push, "fe/script/push.fe"
 inc_bin fe_reverse, "fe/script/reverse.fe"
+
+inc_bin default_font, "res/zap-light16.psf"
