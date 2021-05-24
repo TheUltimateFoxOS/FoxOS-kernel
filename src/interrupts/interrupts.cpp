@@ -195,21 +195,6 @@ __attribute__((interrupt)) void interrupts::intr_handler_47(struct interrupt_fra
 }
 
 void interrupts::intr_common_handler(int intr_num, struct interrupt_frame* frame) {
-	/*uint64_t cr0, cr2, cr3;
-	__asm__ __volatile__ (
-		"mov %%cr0, %%rax\n\t"
-		"mov %%eax, %0\n\t"
-		"mov %%cr2, %%rax\n\t"
-		"mov %%eax, %1\n\t"
-		"mov %%cr3, %%rax\n\t"
-		"mov %%eax, %2\n\t"
-	: "=m" (cr0), "=m" (cr2), "=m" (cr3)
-	:
-	: "%rax"
-	);*/
-
-	//renderer::global_font_renderer->printf("CR2: 0x%x\n", cr2);
-
 	if(intr_num <= 0x1f) {
 		Panic p = Panic(intr_num);
 		p.do_it();

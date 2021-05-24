@@ -6,14 +6,19 @@ extern "C" void ap_trampoline_data();
 
 trampoline_data* data;
 
+bool bspdone = 0;
+
+
 extern "C" void hello() {
-	data->status = 2;	
+	data->status = 2;
+	while(!bspdone);
+
+	driver::global_serial_driver->printf("Hello!\n");
 }
 
 void start_smp() {
 	volatile uint8_t aprunning = 0;
 	uint8_t bspid;
-	uint8_t bspdone = 0;
 
 	data = (trampoline_data*) (((uint64_t) &ap_trampoline_data - (uint64_t) &ap_trampoline) + 0x8000);
 
@@ -21,7 +26,7 @@ void start_smp() {
 
 	g_page_table_manager.map_memory((void*) 0x8000, (void*) 0x8000);
 
-	memcpy((void*) 0x8000, (void*) &ap_trampoline, 64);
+	memcpy((void*) 0x8000, (void*) &ap_trampoline, 4096);
 
 	g_page_table_manager.map_memory((void*) lapic_ptr, (void*) lapic_ptr);
 
@@ -30,11 +35,12 @@ void start_smp() {
 			continue;
 		}
 
-		gdt_descriptor_t* gdt_descriptor = (gdt_descriptor_t*) 0x0;
-		gdt_descriptor->size = sizeof(gdt_t) - 1;
-		gdt_descriptor->offset = (uint64_t) &default_gdt;
+		gdt_descriptor_t gdt_descriptor;
+		gdt_descriptor.size = sizeof(gdt_t) - 1;
+		gdt_descriptor.offset = (uint64_t) &default_gdt;
 
 		data->status = 0;
+		data->gdt = (uint64_t) &gdt_descriptor;
 		data->stack_ptr = (uint64_t) global_allocator.request_page();
 		data->entry = (uint64_t) &hello;
 
@@ -74,15 +80,15 @@ void start_smp() {
 		}
 
 		do {
-			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d, data* %x!\n", i, data->status, &data->status);
+			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d!\n", i, data->status);
 			PIT::sleep_d(5);
-		} while (data->status != 10);
+		} while (data->status != 2);
 		
 
-		driver::global_serial_driver->printf("Processor %d init done!\n", i);
+		driver::global_serial_driver->printf("cpu %d init done!\n", i);
 		
 	}
 
-	bspdone = 1;
+	bspdone = true;
 	
 }

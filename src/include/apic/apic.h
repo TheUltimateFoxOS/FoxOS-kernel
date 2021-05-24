@@ -12,6 +12,7 @@
 struct trampoline_data {
 	uint8_t status;
 	uint64_t pagetable;
+	uint64_t gdt;
 	uint64_t stack_ptr;
 	uint64_t entry;
 } __attribute__((packed));

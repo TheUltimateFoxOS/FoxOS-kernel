@@ -75,9 +75,9 @@ char* Panic::get_panic_message() {
 }
 
 void Panic::do_it() {
-	//renderer::global_font_renderer->color = 0xfff37835;
-	//renderer::global_font_renderer->clear();
-	//renderer::global_font_renderer->cursor_position = {0, 0};
+	renderer::global_font_renderer->color = 0xfff37835;
+	renderer::global_font_renderer->clear();
+	renderer::global_font_renderer->cursor_position = {0, 0};
 	renderer::global_font_renderer->color = 0xffffffff;
 	renderer::global_font_renderer->printf("Kernel PANIC -> %s (0x%x)\n\n", this->get_panic_message(), this->intr);
 	renderer::global_font_renderer->printf("Kernel version: %d\n", VERSION);
