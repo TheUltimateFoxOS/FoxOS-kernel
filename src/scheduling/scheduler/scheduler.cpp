@@ -2,22 +2,8 @@
 
 void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector);
 
-void a() {
-	while(true) {
-		driver::global_serial_driver->putc('A');
-	}
-}
-
-void b() {
-	while(true) {
-		driver::global_serial_driver->putc('B');
-	}
-}
 
 void init_sched() {
-	new_task((void*) a);
-	new_task((void*) b);
-
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 	cpus[id].scheduling = true;

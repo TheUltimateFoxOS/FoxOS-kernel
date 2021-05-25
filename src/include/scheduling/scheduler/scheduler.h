@@ -6,5 +6,3 @@
 void init_sched();
 void new_task(void* entry);
 extern "C" void schedule(s_registers* regs);
-
-extern "C" void intr_stub_sched();
