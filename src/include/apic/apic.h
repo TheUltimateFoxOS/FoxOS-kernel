@@ -45,6 +45,7 @@ struct cpu {
 	void_function function;
 	task_state tasks[32];
 	int current_task;
+	bool scheduling;
 };
 
 void start_smp();

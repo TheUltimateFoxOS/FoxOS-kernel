@@ -90,43 +90,7 @@ intr_stub 45
 intr_stub 46
 intr_stub 47
 
-intr_stub 48
-
-[GLOBAL intr_stub_sched]
-intr_stub_sched:
-	push 0
-	push 0
-
-	pusha
-
-	mov rax, cr0
-	push rax
-	mov rax, cr2
-	push rax
-	mov rax, cr3
-	push rax
-	mov rax, cr4
-	push rax
-
-	mov rdi, rsp
-	call schedule
-
-	pop rax
-	pop rax
-	pop rax
-	pop rax
-	popa
-
-	add rsp, 16
-
-	mov ax, 0x10
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov ss, ax
-	
-	iretq		
+intr_stub 48		
 
 intr_common_handler:
 	pusha

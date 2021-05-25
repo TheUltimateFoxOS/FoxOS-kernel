@@ -2,6 +2,7 @@
 
 using namespace interrupts;
 
+extern "C" void schedule(s_registers* regs);
 
 extern "C" void intr_common_handler_c(s_registers* regs) {
 	if(regs->interrupt_number <= 0x1f) {
@@ -11,6 +12,10 @@ extern "C" void intr_common_handler_c(s_registers* regs) {
 	}
 
 	if(regs->interrupt_number >= 0x20 && regs->interrupt_number <= 0x2f) {
+		if(regs->interrupt_number == 0x20) {
+			schedule(regs);
+		}
+		
 		if(handlers[regs->interrupt_number] != NULL) {
 			handlers[regs->interrupt_number]->handle();
 		}
