@@ -22,6 +22,7 @@
 #include <fe/fe_runner.h>
 
 #include <scheduling/pit/pit.h>
+#include <scheduling/scheduler/scheduler.h>
 
 #include <shell/shell.h>
 
@@ -126,6 +127,10 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 		shell::global_shell->init_shell();
 	});
+
+	init_sched();
+
+	
 
 	while (true) {
 		asm ("hlt");

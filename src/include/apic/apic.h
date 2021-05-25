@@ -9,6 +9,7 @@
 #include <renderer/font_renderer.h>
 #include <util.h>
 #include <gdt.h>
+#include <scheduling/scheduler/scheduler.h>
 
 typedef void (*void_function)();
 
@@ -30,10 +31,22 @@ enum ap_status {
 	running
 };
 
+struct task_state {
+	s_registers regs;
+	bool active;
+	bool first_sched;
+	void* stack;
+};
+
+
 struct cpu {
 	bool presend;
 	uint8_t status;
 	void_function function;
+	task_state tasks[32];
+	int current_task;
 };
 
 void start_smp();
+
+extern cpu* cpus;
