@@ -90,7 +90,6 @@ intr_stub 45
 intr_stub 46
 intr_stub 47
 
-intr_stub 48		
 
 intr_common_handler:
 	pusha

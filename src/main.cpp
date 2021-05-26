@@ -44,6 +44,15 @@ class MouseRendererMouseEventHandler : public driver::MouseEventHandler{
 		}
 };
 
+extern "C" void syscall_test(s_registers* regs) {
+	driver::global_serial_driver->printf("Hello from the syscall %d!\n", regs->rax);
+}
+
+extern "C" void syscall_test2(s_registers* regs) {
+	driver::global_serial_driver->printf("Hello from the syscall %d!\n", regs->rax);
+}
+
+
 extern "C" void _start(bootinfo_t* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
@@ -147,6 +156,8 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 			driver::global_serial_driver->printf("D");
 		}
 	});
+
+	asm ("mov $0, %rax; int $0x30; mov $1, %rax; int $0x30; mov $2, %rax; int $0x30");
 
 	init_sched();
 

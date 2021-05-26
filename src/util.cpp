@@ -81,6 +81,7 @@ void prepare_interrupts() {
 	set_idt_gate((void*) intr_stub_45, 45, idt_ta_interrupt_gate, 0x08); 
 	set_idt_gate((void*) intr_stub_46, 46, idt_ta_interrupt_gate, 0x08); 
 	set_idt_gate((void*) intr_stub_47, 47, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_48, 48, idt_ta_interrupt_gate, 0x08);
 
     asm ("lidt %0" : : "m" (idtr));
 
