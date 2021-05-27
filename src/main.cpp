@@ -159,6 +159,8 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	asm ("mov $0, %rax; int $0x30; mov $1, %rax; int $0x30; mov $2, %rax; int $0x30");
 
+	renderer::global_font_renderer->printf("Address of load_gdt %x", resolve_symbol("load_gdt"));
+
 	init_sched();
 
 	while (true) {

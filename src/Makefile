@@ -18,7 +18,16 @@ LDFLAGS = -static -Bsymbolic -nostdlib -Tlink.ld
 
 foxkrnl.elf: $(OBJS)
 	@echo LD $^
-	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^
+	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@.tmp $^
+
+	sh syms.sh $(BUILDDIR)/$@.tmp
+
+	$(CC) -fno-pic -fpie -xc -c syms.gen -o $(OBJDIR)/syms.o
+
+	@echo LD $^ $(OBJDIR)/syms.o
+	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^ $(OBJDIR)/syms.o
+
+	rm syms.gen
 
 
 $(OBJDIR)/%.o: %.cpp
