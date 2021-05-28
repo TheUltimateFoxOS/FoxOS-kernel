@@ -26,6 +26,8 @@
 
 #include <shell/shell.h>
 
+#include "examples/exampels.h"
+
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
 	public:
 		void KeyDown(char c){
@@ -44,15 +46,6 @@ class MouseRendererMouseEventHandler : public driver::MouseEventHandler{
 		}
 };
 
-extern "C" void syscall_test(s_registers* regs) {
-	driver::global_serial_driver->printf("Hello from the syscall %d!\n", regs->rax);
-}
-
-extern "C" void syscall_test2(s_registers* regs) {
-	driver::global_serial_driver->printf("Hello from the syscall %d!\n", regs->rax);
-}
-
-patch_t* p;
 
 extern "C" void _start(bootinfo_t* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
@@ -89,84 +82,15 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
 
-
-	//fe stuff
-	//renderer::global_font_renderer->printf("Running fe now :D\n");
-
-	//FeRunner runner;
-
-	//extern const char fe_push[];
-	//extern const char fe_reverse[];
-
-	//runner.run_code((char*) fe_push);
-	//runner.run_code((char*) fe_reverse);
-
-	// disk read stuff
-	//char* buffer = (char*) global_allocator.request_page();
-
-	//driver::disk::global_disk_manager->read(0, 0, 1, buffer);
-
-	//for (int t = 0; t < 512; t++){
-	//	renderer::global_font_renderer->printf("%c", buffer[t]);
-	//}
-
-	//renderer::global_font_renderer->printf("\n");
-
-	// fat32 stuff
-
-	run_on_ap((void_function) []() {
-		fat32::disk_id = 0; // set to first disk
-		uint8_t fs_buf[512];
-		fat32::fs_info_t fs_info = fat32::read_info(fs_buf); // read fs info
-
-		show_info(fs_info); // print fs info to serial console
-	});
-
-
-
-	//fat32::sector_buffer_t sector_buffer;
-	//fat32::file_info_t fp;
-	//fat32::fopen("/STARTUP.NSH", "r", &fp, fs_info, &sector_buffer); // open file
-
-	//uint8_t* b = (uint8_t*) global_allocator.request_page();
-
-	//fat32::fread(b, 4096, &fp, fs_info, &sector_buffer); // read file
-	//driver::global_serial_driver->printf("%s", b);
 	
-	run_on_ap((void_function) []() {
-		shell::global_shell->init_shell();
-	});
+	shell::global_shell->init_shell();
 
-	/*new_task((void*) (void_function) []() {
-		while (true) {
-			driver::global_serial_driver->printf("A");
-		}
-	});
-	new_task((void*) (void_function) []() {
-		while (true) {
-			driver::global_serial_driver->printf("B");
-		}
-	});
-	new_task((void*) (void_function) []() {
-		while (true) {
-			driver::global_serial_driver->printf("C");
-		}
-	});
-	new_task((void*) (void_function) []() {
-		while (true) {
-			driver::global_serial_driver->printf("D");
-		}
-	});*/
-
-	renderer::global_font_renderer->printf("Address of load_gdt %x", resolve_symbol("load_gdt"));
-	p = patch("schedule", (uint64_t) (void_function) []() {
-		driver::global_serial_driver->printf("SCHEDULE");
-		unpatch(p);
-	});
-
-	asm ("mov $0, %rax; int $0x30; mov $1, %rax; int $0x30; mov $2, %rax; int $0x30");
-
-	init_sched();
+	test_patch();
+	//fe_test();
+	//disk_test();
+	//fat32_test();
+	//syscall_test();
+	//test_scheduler();
 
 	while (true) {
 		asm ("hlt");
