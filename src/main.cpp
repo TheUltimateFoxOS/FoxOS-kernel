@@ -88,7 +88,7 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//disk_test();
 	//fat32_test();
 	//syscall_test();
-	//test_scheduler();
+	test_scheduler();
 
 	while (true) {
 		asm ("hlt");

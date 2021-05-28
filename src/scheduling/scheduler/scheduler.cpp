@@ -15,7 +15,7 @@ void init_sched() {
 	}
 }
 
-void new_task(void* entry) {
+uint64_t new_task(void* entry) {
 	void* stack = global_allocator.request_page();
 
 	uint8_t id;
@@ -28,10 +28,30 @@ void new_task(void* entry) {
 			cpus[id].tasks[i].first_sched = true;
 			cpus[id].tasks[i].stack = stack;
 			cpus[id].tasks[i].active = true;
-			return;
+			return ENCODE_PID(id, i);
 		}
 	}
 
+}
+
+void kill_task(uint64_t pid) {
+	uint64_t cpu_id, task_id;
+	DECODE_PID(pid, cpu_id, task_id);
+
+	global_allocator.free_page(cpus[cpu_id].tasks[task_id].stack);
+	cpus[cpu_id].tasks[task_id].active = false;
+}
+
+void task_exit() {
+	uint8_t id;
+	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
+
+	global_allocator.free_page(cpus[id].tasks[cpus[id].current_task].stack);
+	cpus[id].tasks[cpus[id].current_task].active = false;
+
+	while(1) {
+		__asm__ __volatile__ ("hlt");
+	}
 }
 
 extern "C" void schedule(s_registers* regs) {
