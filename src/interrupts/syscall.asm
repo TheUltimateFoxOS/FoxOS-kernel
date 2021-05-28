@@ -44,6 +44,7 @@ intr_stub_%1:
 
 intr_stub 48
 
+[GLOBAL syscall_handler]
 syscall_handler:
 	pusha
 	mov r15, cr0

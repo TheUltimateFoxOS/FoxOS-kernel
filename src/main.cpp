@@ -52,6 +52,7 @@ extern "C" void syscall_test2(s_registers* regs) {
 	driver::global_serial_driver->printf("Hello from the syscall %d!\n", regs->rax);
 }
 
+patch_t* p;
 
 extern "C" void _start(bootinfo_t* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
@@ -136,7 +137,7 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 		shell::global_shell->init_shell();
 	});
 
-	new_task((void*) (void_function) []() {
+	/*new_task((void*) (void_function) []() {
 		while (true) {
 			driver::global_serial_driver->printf("A");
 		}
@@ -155,11 +156,15 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 		while (true) {
 			driver::global_serial_driver->printf("D");
 		}
+	});*/
+
+	renderer::global_font_renderer->printf("Address of load_gdt %x", resolve_symbol("load_gdt"));
+	p = patch("schedule", (uint64_t) (void_function) []() {
+		driver::global_serial_driver->printf("SCHEDULE");
+		unpatch(p);
 	});
 
 	asm ("mov $0, %rax; int $0x30; mov $1, %rax; int $0x30; mov $2, %rax; int $0x30");
-
-	renderer::global_font_renderer->printf("Address of load_gdt %x", resolve_symbol("load_gdt"));
 
 	init_sched();
 
