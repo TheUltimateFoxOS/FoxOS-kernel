@@ -26,7 +26,7 @@
 
 #include <shell/shell.h>
 
-#include "examples/exampels.h"
+#include "examples/examples.h"
 
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
 	public:
@@ -78,10 +78,8 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	driver::global_driver_manager->activate_all(false);
 
-	//renderer::global_font_renderer->printf("Im now colored %fString: %s, Hex: 0x%x, Dec: %d, Char: %c %rand now im white\n\n", 0xff00ff00, "Hello World!", 0xf00d, 1001, 'X');
-
+	//font_renderer_test();
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
-
 	
 	shell::global_shell->init_shell();
 
