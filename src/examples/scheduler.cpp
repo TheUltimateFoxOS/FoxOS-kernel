@@ -1,26 +1,22 @@
 #include <scheduling/scheduler/scheduler.h>
 #include <driver/serial.h>
 
+uint64_t task2;
+
 void test_scheduler() {
 	uint64_t task1 = new_task((void*) (void_function) []() {
-		while (true) {
-			driver::global_serial_driver->printf("A");
-		}
+		driver::global_serial_driver->printf("A");
+		task_exit();
 	});
-	uint64_t task2 = new_task((void*) (void_function) []() {
+	task2 = new_task((void*) (void_function) []() {
 		while (true) {
 			driver::global_serial_driver->printf("B");
 		}
 	});
 	uint64_t task3 = new_task((void*) (void_function) []() {
-		while (true) {
-			driver::global_serial_driver->printf("C");
-		}
-	});
-	uint64_t task4 = new_task((void*) (void_function) []() {
-		while (true) {
-			driver::global_serial_driver->printf("D");
-		}
+		kill_task(task2);
+		driver::global_serial_driver->printf("C");
+		task_exit();
 	});
 
 	init_sched();
