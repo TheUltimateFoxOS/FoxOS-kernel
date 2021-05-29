@@ -33,7 +33,7 @@ void Shell::run_command() {
 		return;
 	}
 
-	if (strcmp(command_buffer, "test") == 0) {
+	if (strcmp(command_buffer, (char*)"test") == 0) {
 		renderer::global_font_renderer->printf("\nHello World!");
 	} else {
 		renderer::global_font_renderer->printf("\nUnknown command: %s", command_buffer);

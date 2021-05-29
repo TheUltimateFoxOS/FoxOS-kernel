@@ -49,7 +49,7 @@ bool AdvancedTechnologyAttachment::is_presend() {
 
 	for(int i = 0; i < 256; i++) {
 		uint16_t data = dataPort.Read();
-		char *text = "  \0";
+		char *text = (char*) "  \0";
 		text[0] = (data >> 8) & 0xFF;
 		text[1] = data & 0xFF;
 	}

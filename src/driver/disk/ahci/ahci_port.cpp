@@ -17,7 +17,7 @@ void AHCI_port::configure() {
 	void* new_base = global_allocator.request_page();
 	hba_port->command_list_base = (uint32_t)(uint64_t)new_base;
 	hba_port->command_list_base_upper = (uint32_t)((uint64_t)new_base >> 32);
-	memset((void*)(hba_port->command_list_base), 0, 1024);
+	memset((void*)(uint64_t)(hba_port->command_list_base), 0, 1024);
 
 	void* fis_base = global_allocator.request_page();
 	hba_port->fis_base_address = (uint32_t)(uint64_t)fis_base;
@@ -75,12 +75,12 @@ void AHCI_port::read(uint64_t sector, uint32_t sector_count, void* buffer) {
 
 	hba_port->interrupt_status = (uint32_t)-1; // Clear pending interrupt bits
 
-	HBA_command_header* cmd_header = (HBA_command_header*)hba_port->command_list_base;
+	HBA_command_header* cmd_header = (HBA_command_header*)(uint64_t)hba_port->command_list_base;
 	cmd_header->command_fis_length = sizeof(FIS_REG_H2D)/ sizeof(uint32_t); //command FIS size;
 	cmd_header->write = 0; // Indicate a read
 	cmd_header->prdt_length = 1;
 
-	HBA_command_table* commandTable = (HBA_command_table*)(cmd_header->command_table_base_address);
+	HBA_command_table* commandTable = (HBA_command_table*)(uint64_t)(cmd_header->command_table_base_address);
 	memset(commandTable, 0, sizeof(HBA_command_table) + (cmd_header->prdt_length-1)*sizeof(HBA_PRDT_entry));
 
 	commandTable->prdt_entry[0].data_base_address = (uint32_t)(uint64_t)buffer;
@@ -134,12 +134,12 @@ void AHCI_port::write(uint64_t sector, uint32_t sector_count, void* buffer) {
 
 	hba_port->interrupt_status = (uint32_t)-1; // Clear pending interrupt bits
 
-	HBA_command_header* cmd_header = (HBA_command_header*)hba_port->command_list_base;
+	HBA_command_header* cmd_header = (HBA_command_header*)(uint64_t)hba_port->command_list_base;
 	cmd_header->command_fis_length = sizeof(FIS_REG_H2D)/ sizeof(uint32_t); //command FIS size;
 	cmd_header->write = 1; // Indicate a write
 	cmd_header->prdt_length = 1;
 
-	HBA_command_table* commandTable = (HBA_command_table*)(cmd_header->command_table_base_address);
+	HBA_command_table* commandTable = (HBA_command_table*)(uint64_t)(cmd_header->command_table_base_address);
 	memset(commandTable, 0, sizeof(HBA_command_table) + (cmd_header->prdt_length-1)*sizeof(HBA_PRDT_entry));
 
 	commandTable->prdt_entry[0].data_base_address = (uint32_t)(uint64_t)buffer;
