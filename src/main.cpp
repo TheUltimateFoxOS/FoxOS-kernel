@@ -19,8 +19,6 @@
 
 #include <fs/fat32.h>
 
-#include <fe/fe_runner.h>
-
 #include <scheduling/pit/pit.h>
 #include <scheduling/scheduler/scheduler.h>
 
@@ -56,15 +54,17 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	renderer::global_font_renderer->printf("This is free software, and you are welcome to redistribute it.\n\n");
 
 
-	//Keyboard and mouse
+	//Keyboard driver
 	PrintfKeyboardEventHandler kbhandler;
 	driver::KeyboardDriver keyboard_driver(&kbhandler);
 	driver::global_driver_manager->add_driver(&keyboard_driver);
 
+	//Mouse driver
 	MouseRendererMouseEventHandler mhandler;
 	driver::MouseDriver mouse_driver(&mhandler);
 	driver::global_driver_manager->add_driver(&mouse_driver);
 
+	//ATA driver
 	driver::AdvancedTechnologyAttachment ata0m(true, 0x1F0);
 	driver::AdvancedTechnologyAttachment ata0s(false, 0x1F0);
 	driver::AdvancedTechnologyAttachment ata1m(true, 0x170);
@@ -75,16 +75,17 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	driver::global_driver_manager->add_driver(&ata1m);
 	driver::global_driver_manager->add_driver(&ata1s);
 
-
+	//Activate drivers
 	driver::global_driver_manager->activate_all(false);
 
 	//font_renderer_test();
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
-	
+
 	shell::global_shell->init_shell();
 
 	test_patch();
 	//fe_test();
+	basic_test();
 	//disk_test();
 	//fat32_test();
 	//syscall_test();

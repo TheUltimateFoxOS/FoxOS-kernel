@@ -1,4 +1,4 @@
-#include <fe/fe_runner.h>
+#include <scripting_languages/fe/fe_runner.h>
 
 void fe_test() {
 	renderer::global_font_renderer->printf("Running fe now :D\n");

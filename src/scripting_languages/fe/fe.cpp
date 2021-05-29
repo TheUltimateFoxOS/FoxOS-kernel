@@ -20,7 +20,7 @@
 ** IN THE SOFTWARE.
 */
 
-#include <fe/fe.h>
+#include <scripting_languages/fe/fe.h>
 #include <string.h>
 
 #define unused(x)		 ( (void) (x) )
