@@ -148,7 +148,7 @@ void setup_globals(bootinfo_t* bootinfo) {
 	}
 
 	void* glyph_buffer = malloc(glyph_buffer_size);
-	memcpy(glyph_buffer, (void*) default_font + sizeof(psf1_header_t), glyph_buffer_size);
+	memcpy(glyph_buffer, (void*) ((uint64_t) default_font + sizeof(psf1_header_t)), glyph_buffer_size);
 	psf1_font_t* finished_font = (psf1_font_t*) malloc(sizeof(psf1_font_t));
 	finished_font->psf1_Header = font_header;
 	finished_font->glyph_buffer = glyph_buffer;

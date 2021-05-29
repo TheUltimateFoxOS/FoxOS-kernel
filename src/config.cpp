@@ -6,7 +6,7 @@ uint64_t resolve_symbol(char* name) {
 			return __kernel_symtab[i].addr;
 		}
 	}
-	return NULL;
+	return (uint64_t) NULL;
 }
 
 //	db 0x49, 0xbf, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0 ; mov r15, someval
@@ -16,7 +16,7 @@ patch_t* patch(char* name, uint64_t new_func) {
 	uint64_t old_func = resolve_symbol(name);
 	patch_t* patch = (patch_t*) malloc(sizeof(patch_t));
 
-	if(old_func != NULL) {
+	if(old_func != (uint64_t) NULL) {
 		memcpy(patch->old_code, (void*) old_func, 13);
 		patch->old_addr = (void*) old_func;
 

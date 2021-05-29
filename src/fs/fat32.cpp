@@ -437,7 +437,7 @@ int fat32::touch(const char* filename, fs_info_t fs_info, sector_buffer_t* buffe
 	} while(entry.filename[0] != '\x00');
 
 	// Back up one entry, this is where we put the new filename entry
-	fseek(fp, -sizeof(directory_entry_t), fp->pos, fs_info, buffer);
+	fseek(fp, (int32_t) -sizeof(directory_entry_t), fp->pos, fs_info, buffer);
 	cluster = find_free_cluster(0, fs_info, buffer);
 	set_fat_entry(cluster, FAT_MASK_EOC, fs_info, buffer); // Marks the new cluster as the last one (but no longer free)
 

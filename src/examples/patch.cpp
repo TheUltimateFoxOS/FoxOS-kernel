@@ -13,7 +13,7 @@ void usefull_function2() {
 }
 
 void test_patch() {
-	p = patch("_Z16usefull_functionv", resolve_symbol("_Z17usefull_function2v"));
+	p = patch((char*) "_Z16usefull_functionv", resolve_symbol((char*) "_Z17usefull_function2v"));
 	usefull_function();
 	usefull_function();
 }

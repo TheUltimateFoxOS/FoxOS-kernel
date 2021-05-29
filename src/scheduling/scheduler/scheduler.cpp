@@ -32,6 +32,8 @@ uint64_t new_task(void* entry) {
 		}
 	}
 
+	return 0;
+
 }
 
 void kill_task(uint64_t pid) {
