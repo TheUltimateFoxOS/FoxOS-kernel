@@ -1,4 +1,5 @@
 #include <config.h>
+
 #include <driver/serial.h>
 
 patch_t* p;

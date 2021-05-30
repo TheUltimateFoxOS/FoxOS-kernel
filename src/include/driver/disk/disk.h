@@ -2,7 +2,6 @@
 #define DISK_H
 
 #include <stdint.h>
-#include <renderer/font_renderer.h>
 
 #define DISK_NUM 265
 

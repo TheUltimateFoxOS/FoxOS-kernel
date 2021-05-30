@@ -1,7 +1,8 @@
 #pragma once
 
-#include <renderer/font_renderer.h>
 #include <config.h>
+
+#include <renderer/font_renderer.h>
 
 namespace interrupts {
 

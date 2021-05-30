@@ -1,9 +1,6 @@
 #pragma once
 
-#include <interrupts/panic.h>
 #include <stdint.h>
-#include <renderer/font_renderer.h>
-#include <interrupts/interrupt_handler.h>
 #include <port.h>
 
 #define PIC_EOI 0x20

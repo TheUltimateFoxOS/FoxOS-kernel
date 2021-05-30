@@ -1,4 +1,8 @@
 #include <interrupts/interrupts.h>
+#include <interrupts/panic.h>
+#include <interrupts/interrupt_handler.h>
+
+#include <renderer/font_renderer.h>
 
 using namespace interrupts;
 

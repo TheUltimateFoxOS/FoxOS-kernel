@@ -1,7 +1,10 @@
 #include <scheduling/scheduler/scheduler.h>
 
-void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector);
+#include <paging/page_frame_allocator.h>
 
+#include <interrupts/idt.h>
+
+void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector);
 
 void init_sched() {
 	uint8_t id;

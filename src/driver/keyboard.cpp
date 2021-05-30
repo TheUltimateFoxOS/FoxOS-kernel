@@ -1,5 +1,7 @@
 #include <driver/keyboard.h>
 
+#include <renderer/font_renderer.h>
+
 using namespace driver;
 
 char keymap_de(uint8_t key, bool l_shift){

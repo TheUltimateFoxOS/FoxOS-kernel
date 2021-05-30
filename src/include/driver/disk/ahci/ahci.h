@@ -1,17 +1,19 @@
 #pragma once
 
 #include <stdint.h>
+
 #include <pci/pci.h>
+
 #include <driver/driver.h>
 #include <driver/disk/disk.h>
 
 namespace driver {
 	#define ATA_DEV_BUSY 0x80
-    #define ATA_DEV_DRQ 0x08
-    #define ATA_CMD_READ_DMA_EX 0x25
+	#define ATA_DEV_DRQ 0x08
+	#define ATA_CMD_READ_DMA_EX 0x25
 	#define ATA_CMD_WRITE_DMA_EX 0x35
 
-    #define HBA_PxIS_TFES (1 << 30)
+	#define HBA_PxIS_TFES (1 << 30)
 
 	enum port_type_t {
 		None = 0,
@@ -22,15 +24,15 @@ namespace driver {
 	};
 
 	enum FIS_TYPE{
-        FIS_TYPE_REG_H2D = 0x27,
-        FIS_TYPE_REG_D2H = 0x34,
-        FIS_TYPE_DMA_ACT = 0x39,
-        FIS_TYPE_DMA_SETUP = 0x41,
-        FIS_TYPE_DATA = 0x46,
-        FIS_TYPE_BIST = 0x58,
-        FIS_TYPE_PIO_SETUP = 0x5F,
-        FIS_TYPE_DEV_BITS = 0xA1,
-    };
+		FIS_TYPE_REG_H2D = 0x27,
+		FIS_TYPE_REG_D2H = 0x34,
+		FIS_TYPE_DMA_ACT = 0x39,
+		FIS_TYPE_DMA_SETUP = 0x41,
+		FIS_TYPE_DATA = 0x46,
+		FIS_TYPE_BIST = 0x58,
+		FIS_TYPE_PIO_SETUP = 0x5F,
+		FIS_TYPE_DEV_BITS = 0xA1,
+	};
 
 	struct HBA_port {
 		uint32_t command_list_base;

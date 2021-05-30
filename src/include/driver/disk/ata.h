@@ -2,9 +2,10 @@
 #define ATA_H
 
 #include <stdint.h>
+#include <port.h>
+
 #include <driver/driver.h>
 #include <driver/disk/disk.h>
-#include <port.h>
 
 namespace driver {
 

@@ -1,11 +1,12 @@
 #pragma once
 
+#include <stdarg.h>
+#include <stdint.h>
+
 #include <renderer/framebuffer.h>
 #include <renderer/point.h>
 #include <renderer/mouse_renderer.h>
 
-#include <stdarg.h>
-#include <stdint.h>
 #include <memory/memory.h>
 
 namespace renderer {
@@ -15,7 +16,7 @@ namespace renderer {
 			framebuffer_t* target_frame_buffer;
 
 			void put_pix(uint32_t x, uint32_t y, uint32_t colour);
-    		uint32_t get_pix(uint32_t x, uint32_t y);
+			uint32_t get_pix(uint32_t x, uint32_t y);
 
 
 			uint32_t mouse_cursor_buffer[16 * 16];

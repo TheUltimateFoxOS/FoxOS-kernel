@@ -2,7 +2,6 @@
 
 #include <scripting_languages/fe/fe.h>
 
-
 char static_reader(fe_Context* ctx, void* udata);
 
 class FeRunner {

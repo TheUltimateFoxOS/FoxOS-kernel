@@ -1,4 +1,5 @@
 #include <scheduling/scheduler/scheduler.h>
+
 #include <driver/serial.h>
 
 uint64_t task2;

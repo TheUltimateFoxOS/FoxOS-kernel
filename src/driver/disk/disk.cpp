@@ -1,5 +1,7 @@
 #include <driver/disk/disk.h>
 
+#include <renderer/font_renderer.h>
+
 using namespace driver;
 using namespace driver::disk;
 

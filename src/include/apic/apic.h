@@ -1,15 +1,9 @@
 #pragma once
 
 #include <stdint.h>
-#include <apic/madt.h>
 #include <string.h>
-#include <scheduling/pit/pit.h>
-#include <paging/page_table_manager.h>
-#include <paging/page_frame_allocator.h>
-#include <renderer/font_renderer.h>
-#include <util.h>
-#include <gdt.h>
-#include <scheduling/scheduler/scheduler.h>
+
+#include <interrupts/interrupts.h>
 
 typedef void (*void_function)();
 

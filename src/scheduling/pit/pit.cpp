@@ -1,5 +1,7 @@
 #include <scheduling/pit/pit.h>
+
 #include <port.h>
+
 #include <interrupts/interrupt_handler.h>
 
 namespace PIT {

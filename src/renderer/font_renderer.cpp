@@ -1,4 +1,5 @@
 #include <renderer/font_renderer.h>
+#include <renderer/renderer2D.h>
 
 using namespace renderer;
 
@@ -153,14 +154,14 @@ void FontRenderer::putn(unsigned long x, int base) {
 
 void FontRenderer::clear() {
 	uint64_t base = (uint64_t) target_frame_buffer->base_address;
-    uint64_t bytes_per_scanline = target_frame_buffer->pixels_per_scanline * 4;
-    uint64_t fb_height = target_frame_buffer->height;
-    uint64_t fb_size = target_frame_buffer->buffer_size;
+	uint64_t bytes_per_scanline = target_frame_buffer->pixels_per_scanline * 4;
+	uint64_t fb_height = target_frame_buffer->height;
+	uint64_t fb_size = target_frame_buffer->buffer_size;
 
-    for (int vertical_scanline = 0; vertical_scanline < fb_height; vertical_scanline ++){
-        uint64_t pix_ptr_base = base + (bytes_per_scanline * vertical_scanline);
-        for (uint32_t* pixPtr = (uint32_t*)pix_ptr_base; pixPtr < (uint32_t*)(pix_ptr_base + bytes_per_scanline); pixPtr ++){
-            *pixPtr = color;
-        }
-    }
+	for (int vertical_scanline = 0; vertical_scanline < fb_height; vertical_scanline ++){
+		uint64_t pix_ptr_base = base + (bytes_per_scanline * vertical_scanline);
+		for (uint32_t* pixPtr = (uint32_t*)pix_ptr_base; pixPtr < (uint32_t*)(pix_ptr_base + bytes_per_scanline); pixPtr ++){
+			*pixPtr = color;
+		}
+	}
 }

@@ -1,4 +1,7 @@
 #include <fs/fat32.h>
+
+#include <driver/serial.h>
+
 #include <paging/page_frame_allocator.h>
 
 void fat32_test() {
@@ -6,7 +9,6 @@ void fat32_test() {
 	uint8_t fs_buf[512];
 	fat32::fs_info_t fs_info = fat32::read_info(fs_buf); // read fs info
 	show_info(fs_info); // print fs info to serial console
-
 
 
 	fat32::sector_buffer_t sector_buffer;

@@ -1,4 +1,5 @@
 #include <interrupts/interrupts.h>
+
 #include <driver/serial.h>
 
 extern "C" void syscall_test(s_registers* regs) {

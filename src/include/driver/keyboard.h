@@ -1,9 +1,11 @@
 #pragma once
 
-#include <driver/driver.h>
-#include <port.h>
-#include <interrupts/interrupt_handler.h>
 #include <stdint.h>
+#include <port.h>
+
+#include <driver/driver.h>
+
+#include <interrupts/interrupt_handler.h>
 
 namespace driver {
 	enum keyboard_layout {

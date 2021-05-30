@@ -1,7 +1,9 @@
 #include <paging/page_table_manager.h>
 #include <paging/page_map_indexer.h>
-#include <stdint.h>
 #include <paging/page_frame_allocator.h>
+
+#include <stdint.h>
+
 #include <memory/memory.h>
 
 PageTableManager g_page_table_manager = NULL;

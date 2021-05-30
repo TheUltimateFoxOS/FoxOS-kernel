@@ -1,6 +1,9 @@
 #include <string.h>
+
 #include <shell/shell.h>
+
 #include <renderer/font_renderer.h>
+
 #include <paging/page_frame_allocator.h>
 
 using namespace shell;
@@ -26,6 +29,7 @@ void Shell::run_command() {
 
 	if (buffer_len == 0) {
 		print_nl();
+		command_running = false;
 		return;
 	}
 

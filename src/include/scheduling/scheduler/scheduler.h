@@ -1,7 +1,8 @@
 #pragma once
-#include <interrupts/interrupts.h>
-#include <interrupts/idt.h>
+
 #include <apic/apic.h>
+
+#include <interrupts/interrupts.h>
 
 #define ENCODE_PID(cpu_id, task_slot) cpu_id + task_slot * 255
 #define DECODE_PID(pit, cpu_id, task_slot) cpu_id = pit % 255; task_slot = (pit - cpu_id) / 255

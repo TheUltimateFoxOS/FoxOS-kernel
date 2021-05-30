@@ -135,5 +135,4 @@ void Serial::printf(const char* fmt, ...){
 
 out:
 	va_end(ap);
-
 }

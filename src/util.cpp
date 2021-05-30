@@ -1,5 +1,39 @@
 #include <util.h>
 
+#include <stdint.h>
+#include <stddef.h>
+#include <efi_mem.h>
+#include <bitmap.h>
+#include <gdt.h>
+#include <port.h>
+
+#include <memory/memory.h>
+#include <memory/heap.h>
+
+#include <renderer/font_renderer.h>
+#include <renderer/mouse_renderer.h>
+#include <renderer/renderer2D.h>
+
+#include <paging/paging.h>
+#include <paging/page_frame_allocator.h>
+#include <paging/page_map_indexer.h>
+#include <paging/page_table_manager.h>
+
+#include <scheduling/pit/pit.h>
+#include <interrupts/interrupts.h>
+
+#include <pci/acpi.h>
+#include <pci/pci.h>
+
+#include <driver/driver.h>
+#include <driver/disk/disk.h>
+#include <driver/serial.h>
+
+#include <shell/shell.h>
+
+#include <apic/madt.h>
+#include <apic/apic.h>
+
 KernelInfo kernel_info;
 void prepare_memory(bootinfo_t* bootinfo) {
 	uint64_t m_map_entries = bootinfo->m_map_size / bootinfo->m_map_desc_size;
@@ -36,54 +70,54 @@ void prepare_memory(bootinfo_t* bootinfo) {
 interrupts::idt_t idtr;
 
 void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector) {
-    interrupts::idt_desc_entry_t* interrupt = (interrupts::idt_desc_entry_t*)(idtr.offset + entry_offset * sizeof(interrupts::idt_desc_entry_t));
-    interrupt->set_offset((uint64_t) handler);
-    interrupt->type_attr = type_attr;
-    interrupt->selector = selector;
+	interrupts::idt_desc_entry_t* interrupt = (interrupts::idt_desc_entry_t*)(idtr.offset + entry_offset * sizeof(interrupts::idt_desc_entry_t));
+	interrupt->set_offset((uint64_t) handler);
+	interrupt->type_attr = type_attr;
+	interrupt->selector = selector;
 }
 
 void prepare_interrupts() {
-    idtr.limit = 0x0FFF;
-    idtr.offset = (uint64_t) global_allocator.request_page();
+	idtr.limit = 0x0FFF;
+	idtr.offset = (uint64_t) global_allocator.request_page();
 
-	set_idt_gate((void*) intr_stub_0, 0, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_1, 1, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_2, 2, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_3, 3, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_4, 4, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_5, 5, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_6, 6, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_7, 7, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_8, 8, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_9, 9, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_10, 10, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_11, 11, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_12, 12, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_13, 13, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_14, 14, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_15, 15, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_16, 16, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_17, 17, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_18, 18, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_32, 32, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_33, 33, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_34, 34, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_35, 35, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_36, 36, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_37, 37, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_38, 38, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_39, 39, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_40, 40, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_41, 41, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_42, 42, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_43, 43, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_44, 44, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_45, 45, idt_ta_interrupt_gate, 0x08); 
-	set_idt_gate((void*) intr_stub_46, 46, idt_ta_interrupt_gate, 0x08); 
+	set_idt_gate((void*) intr_stub_0, 0, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_1, 1, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_2, 2, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_3, 3, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_4, 4, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_5, 5, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_6, 6, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_7, 7, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_8, 8, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_9, 9, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_10, 10, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_11, 11, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_12, 12, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_13, 13, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_14, 14, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_15, 15, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_16, 16, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_17, 17, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_18, 18, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_32, 32, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_33, 33, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_34, 34, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_35, 35, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_36, 36, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_37, 37, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_38, 38, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_39, 39, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_40, 40, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_41, 41, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_42, 42, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_43, 43, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_44, 44, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_45, 45, idt_ta_interrupt_gate, 0x08);
+	set_idt_gate((void*) intr_stub_46, 46, idt_ta_interrupt_gate, 0x08);
 	set_idt_gate((void*) intr_stub_47, 47, idt_ta_interrupt_gate, 0x08);
 	set_idt_gate((void*) intr_stub_48, 48, idt_ta_interrupt_gate, 0x08);
 
-    asm ("lidt %0" : : "m" (idtr));
+	asm ("lidt %0" : : "m" (idtr));
 
 	Port8Bit pic1_data(0x21);
 	Port8Bit pic1_command(0x20);

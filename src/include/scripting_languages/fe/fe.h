@@ -9,6 +9,7 @@
 #define FE_H
 
 #include <stddef.h>
+
 #include <renderer/font_renderer.h>
 
 #define FE_VERSION "1.0"

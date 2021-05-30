@@ -1,5 +1,9 @@
 #include <fs/fat32.h>
 
+#include <memory/memory.h>
+
+#include <driver/serial.h>
+
 using namespace fat32;
 
 int fat32::disk_id = 0;
@@ -180,7 +184,7 @@ file_info_t* fat32::find_file(uint32_t cluster, const char *filename, file_info_
 
 	for (; offset < fs_info.sectors_per_cluster*SECTOR_SIZE; offset += 0x20) {
 		directory_entry_t* CurrentOneFileInfo = (directory_entry_t *)&buffer->data[offset];
-		auto file_info=read_one_file_info(CurrentOneFileInfo, cluster, fs_info);
+		auto file_info = read_one_file_info(CurrentOneFileInfo, cluster, fs_info);
 		if ((file_info.attributes & 0x0f) == 0x0f) {
 			//part of long filename
 			strcpy(LongFileNameBuffer + strlen(LongFileNameBuffer), file_info.long_filename);

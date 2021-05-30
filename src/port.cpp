@@ -30,9 +30,9 @@ Port16Bit::~Port16Bit(){
 }
 
 uint16_t Port16Bit::Read(){
-    uint16_t result;
-    __asm__ volatile("inw %1, %0" : "=a" (result) : "Nd" ((uint16_t) portnumber + offset));
-    return result;
+	uint16_t result;
+	__asm__ volatile("inw %1, %0" : "=a" (result) : "Nd" ((uint16_t) portnumber + offset));
+	return result;
 }
 
 void Port16Bit::Write(uint16_t data){

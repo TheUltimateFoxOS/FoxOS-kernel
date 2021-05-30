@@ -1,12 +1,12 @@
 #pragma once
 
-#include <renderer/renderer2D.h>
+#include <stdarg.h>
+#include <stdint.h>
+
 #include <renderer/framebuffer.h>
 #include <renderer/point.h>
 #include <renderer/font.h>
 
-#include <stdarg.h>
-#include <stdint.h>
 #include <memory/memory.h>
 
 namespace renderer {

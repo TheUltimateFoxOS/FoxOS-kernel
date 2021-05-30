@@ -1,4 +1,18 @@
+#include <util.h>
+#include <gdt.h>
+
 #include <apic/apic.h>
+#include <apic/madt.h>
+
+#include <driver/serial.h>
+
+#include <scheduling/pit/pit.h>
+#include <scheduling/scheduler/scheduler.h>
+
+#include <paging/page_table_manager.h>
+#include <paging/page_frame_allocator.h>
+
+#include <renderer/font_renderer.h>
 
 extern "C" void ap_trampoline();
 extern "C" void ap_trampoline_data();

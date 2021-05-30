@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <driver/disk/disk.h>
-#include <driver/serial.h>
 #include <string.h>
+
+#include <driver/disk/disk.h>
 
 #define LONG_FILENAME_MAX_LEN 32
 #define FS_MAX_PATH 255
