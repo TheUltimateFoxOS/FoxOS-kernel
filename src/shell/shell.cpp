@@ -1,6 +1,6 @@
+#include <string.h>
 #include <shell/shell.h>
 #include <renderer/font_renderer.h>
-#include <string.h>
 #include <paging/page_frame_allocator.h>
 
 using namespace shell;
@@ -22,12 +22,14 @@ void Shell::print_nl() {
 }
 
 void Shell::run_command() {
+	command_running = true;
+
 	if (buffer_len == 0) {
 		print_nl();
 		return;
 	}
 
-	if (strcmp(command_buffer, (char*) "test") == 0) {
+	if (strcmp(command_buffer, "test") == 0) {
 		renderer::global_font_renderer->printf("\nHello World!");
 	} else {
 		renderer::global_font_renderer->printf("\nUnknown command: %s", command_buffer);
@@ -36,9 +38,16 @@ void Shell::run_command() {
 	memset(command_buffer, 0, 4096);
 	buffer_len = 0;
 	print_nl();
+
+	command_running = false;
 }
 
 void Shell::keypress(char key) {
+	if (command_running) {
+		//Send keys to running program
+		return;
+	}
+
 	if (key == 0) {
 		return;
 	}

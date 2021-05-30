@@ -5,6 +5,8 @@ namespace shell {
 		private:
 			char* command_buffer;
 			int buffer_len;
+
+			bool command_running;
 		public:
 			Shell();
 
