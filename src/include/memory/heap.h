@@ -15,6 +15,7 @@ struct HeapSegHdr{
 void initialize_heap(void* heap_address, size_t page_count);
 
 void* malloc(size_t size);
+void* realloc(void* ptr, size_t oldSize, size_t size);
 void free(void* address);
 
 void expand_heap(size_t length);
