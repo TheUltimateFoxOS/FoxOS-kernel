@@ -7,4 +7,16 @@ enum token_type_t {
 	label = 3
 };
 
+struct token_t {
+	token_type_t type;
+	char* contents;
+	int line_num;
+};
+
+struct lexer_out {
+	token_t* tokens;
+	int token_num;
+};
+
+
 void eval_BASIC(const char* code);

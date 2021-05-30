@@ -1,5 +1,7 @@
 #include <memory/heap.h>
 
+#include <string.h>
+
 #include <paging/page_frame_allocator.h>
 #include <paging/page_table_manager.h>
 
@@ -62,6 +64,24 @@ void* malloc(size_t size){
     }
     expand_heap(size);
     return malloc(size);
+}
+
+void* realloc(void* ptr, size_t oldSize, size_t size) {
+	if (size == 0) {
+		free(ptr);
+		return NULL;
+	} else if (!ptr) {
+		return malloc(size);
+	} else if (size <= oldSize) {
+		return ptr;
+	} else {
+		void* newPtr = malloc(size);
+		if (newPtr) {
+			memcpy(newPtr, ptr, oldSize);
+			free(ptr);
+		}
+		return newPtr;
+	}
 }
 
 HeapSegHdr* HeapSegHdr::split(size_t split_length){
