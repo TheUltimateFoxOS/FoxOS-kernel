@@ -18,6 +18,7 @@ namespace renderer {
 			psf1_font_t* font;
 			uint32_t color;
 
+			void vsprintf(const char* str, va_list ap);
 			void printf(const char* str, ...);
 			void putc(char c);
 			void puts(const char* s);

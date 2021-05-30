@@ -16,6 +16,7 @@ struct token_t {
 struct lexer_out {
 	token_t* tokens;
 	int token_num;
+	int failed;
 };
 
 

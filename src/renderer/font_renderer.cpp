@@ -12,12 +12,11 @@ FontRenderer::FontRenderer(framebuffer_t* target_frame_buffer, psf1_font_t* font
 	cursor_position = {0, 0};
 }
 
-void FontRenderer::printf(const char* str, ...) {
-	va_list ap;
+
+
+void FontRenderer::vsprintf(const char* str, va_list ap) {
 	const char* s;
 	unsigned long n;
-
-	va_start(ap, str);
 
 	while(*str) {
 		if(*str == '%') {
@@ -51,7 +50,7 @@ void FontRenderer::printf(const char* str, ...) {
 					this->putc('%');
 					break;
 				case '\0':
-					goto out;
+					return;
 					break;
 				default:
 					this->putc('%');
@@ -63,8 +62,13 @@ void FontRenderer::printf(const char* str, ...) {
 		}
 		str++;
 	}
+}
 
-out:
+void FontRenderer::printf(const char* str, ...) {
+	va_list ap;
+
+	va_start(ap, str);
+	vsprintf(str, ap);
 	va_end(ap);
 }
 

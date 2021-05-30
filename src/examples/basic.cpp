@@ -1,5 +1,7 @@
 #include <scripting_languages/basic/basic.h>
 
 void basic_test() {
-	eval_BASIC("PRINT \"Hello World\"\ntest:\nPRINT \"This is a test!\"");
+	extern const char basic_prog[];
+
+	eval_BASIC((char*) basic_prog);
 }

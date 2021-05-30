@@ -81,11 +81,12 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//font_renderer_test();
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
 
+	//fe_test();
+	basic_test();
+
 	shell::global_shell->init_shell();
 
 	test_patch();
-	//fe_test();
-	basic_test();
 	//disk_test();
 	//fat32_test();
 	//syscall_test();

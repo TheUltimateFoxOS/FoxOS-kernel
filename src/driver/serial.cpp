@@ -88,12 +88,10 @@ void Serial::putn(unsigned long x, int base){
 
 }
 
-void Serial::printf(const char* fmt, ...){
-	va_list ap;
+void Serial::vsprintf(const char* fmt, va_list ap){
 	const char* s;
 	unsigned long n;
 
-	va_start(ap, fmt);
 	while (*fmt) {
 		if (*fmt == '%') {
 			fmt++;
@@ -120,7 +118,7 @@ void Serial::printf(const char* fmt, ...){
 					this->putc('%');
 					break;
 				case '\0':
-					goto out;
+					return;
 				default:
 					this->putc('%');
 					this->putc(*fmt);
@@ -132,8 +130,12 @@ void Serial::printf(const char* fmt, ...){
 
 		fmt++;
 	}
+}
 
-out:
+void Serial::printf(const char* fmt, ...){
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsprintf(fmt, ap);
 	va_end(ap);
-
 }

@@ -25,6 +25,7 @@ namespace driver {
 			void putc(char c);
 			void puts(const char *s);
 			void putn(unsigned long x, int base);
+			void vsprintf(const char* fmt, va_list ap);
 			void printf(const char* fmt, ...);
 	};
 
