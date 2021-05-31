@@ -45,3 +45,4 @@ struct cpu {
 void start_smp();
 
 extern cpu* cpus;
+extern uint8_t bspid;

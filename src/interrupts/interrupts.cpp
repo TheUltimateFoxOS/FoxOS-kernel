@@ -4,6 +4,9 @@
 
 #include <renderer/font_renderer.h>
 
+#include <apic/apic.h>
+#include <apic/madt.h>
+
 using namespace interrupts;
 
 extern "C" void schedule(s_registers* regs);
@@ -18,6 +21,13 @@ extern "C" void intr_common_handler_c(s_registers* regs) {
 	if(regs->interrupt_number >= 0x20 && regs->interrupt_number <= 0x2f) {
 		if(regs->interrupt_number == 0x20) {
 			schedule(regs);
+			uint8_t id;
+			__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
+
+			if(id != bspid) {
+				*((volatile uint32_t*)(lapic_ptr + 0xb0)) = 0;
+				return;
+			}
 		}
 		
 		if(handlers[regs->interrupt_number] != NULL) {
