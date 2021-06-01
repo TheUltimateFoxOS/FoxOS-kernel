@@ -25,24 +25,14 @@ enum ap_status {
 	running
 };
 
-struct task_state {
-	s_registers regs;
-	bool active;
-	bool first_sched;
-	void* stack;
-};
-
 
 struct cpu {
 	bool presend;
 	uint8_t status;
 	void_function function;
-	task_state tasks[32];
-	int current_task;
-	bool scheduling;
 };
 
 void start_smp();
 
-extern cpu* cpus;
+extern cpu cpus[256];
 extern uint8_t bspid;

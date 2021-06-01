@@ -1,58 +1,89 @@
 #include <scheduling/scheduler/scheduler.h>
-
+#include <scheduling/scheduler/queue.h>
 #include <paging/page_frame_allocator.h>
+#include <memory/heap.h>
 
 #include <interrupts/idt.h>
 
-void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector);
+#include <apic/madt.h>
+
+uint64_t_queue task_queue[256];
+bool scheduling = false;
+bool spin_lock = false;
 
 void init_sched() {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
-	cpus[id].scheduling = true;
-
 	__asm__ __volatile__ ("sti");
+
+	for (int i = 0; i < numcore; i++) {
+		task* t = (task*) malloc(sizeof(task));
+		void* stack = global_allocator.request_page();
+
+		t->regs.rip = (uint64_t) (void_function) []() { while(1) { __asm__ __volatile__ ("hlt"); } };
+		t->regs.rsp = (uint64_t) stack + 4096;
+		t->first_sched = true;
+		t->stack = (uint64_t) stack;
+
+		task_queue[i].add((uint64_t) t);
+	}
+	
+
+	scheduling = true;
 
 	while(1) {
 		__asm__ __volatile__ ("hlt");
 	}
 }
 
-uint64_t new_task(void* entry) {
+task* new_task(void* entry) {
+	spin_lock = true;
+	__asm__ __volatile__ ("cli");
+
+	task* t = (task*) malloc(sizeof(task));
 	void* stack = global_allocator.request_page();
 
-	uint8_t id;
-	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
+	t->regs.rip = (uint64_t) entry;
+	t->regs.rsp = (uint64_t) stack + 4096;
+	t->first_sched = true;
+	t->kill_me = false;
+	t->stack = (uint64_t) stack;
 
-	for (int i = 0; i < 32; i++) {
-		if(!cpus[id].tasks[i].active) {
-			cpus[id].tasks[i].regs.rip = (uint64_t) entry;
-			cpus[id].tasks[i].regs.rsp = (uint64_t) stack + 4096;
-			cpus[id].tasks[i].first_sched = true;
-			cpus[id].tasks[i].stack = stack;
-			cpus[id].tasks[i].active = true;
-			return ENCODE_PID(id, i);
+	uint64_t min = 0xf0f0;
+	uint64_t idx = 0;
+
+	for (int i = 0; i < numcore; i++) {
+		if(task_queue[i].len < min) {
+			min = task_queue[i].len;
+			idx = i;
 		}
 	}
+	
 
-	return 0;
+	task_queue[idx].add((uint64_t) t);
 
-}
+	__asm__ __volatile__ ("sti");
+	spin_lock = false;
 
-void kill_task(uint64_t pid) {
-	uint64_t cpu_id, task_id;
-	DECODE_PID(pid, cpu_id, task_id);
-
-	global_allocator.free_page(cpus[cpu_id].tasks[task_id].stack);
-	cpus[cpu_id].tasks[task_id].active = false;
+	return t;
 }
 
 void task_exit() {
+	spin_lock = true;
+	__asm__ __volatile__ ("cli");
+
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
-	global_allocator.free_page(cpus[id].tasks[cpus[id].current_task].stack);
-	cpus[id].tasks[cpus[id].current_task].active = false;
+	task* t = (task*) task_queue[id].list[0];
+
+	global_allocator.free_page((void*) t->stack);
+	free(t);
+
+	task_queue[id].remove_first();
+
+	__asm__ __volatile__ ("sti");
+	spin_lock = false;
 
 	while(1) {
 		__asm__ __volatile__ ("hlt");
@@ -63,66 +94,63 @@ extern "C" void schedule(s_registers* regs) {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
-	if(!cpus[id].scheduling) {
+	while(spin_lock);
+
+	if(task_queue[id].len == 0 || !scheduling) {
 		return;
 	}
 
-	if(!cpus[id].tasks[cpus[id].current_task].first_sched) {
-		cpus[id].tasks[cpus[id].current_task].regs.rax = regs->rax;
-		cpus[id].tasks[cpus[id].current_task].regs.rbx = regs->rbx;
-		cpus[id].tasks[cpus[id].current_task].regs.rcx = regs->rcx;
-		cpus[id].tasks[cpus[id].current_task].regs.rdx = regs->rdx;
-		cpus[id].tasks[cpus[id].current_task].regs.r8 = regs->r8;
-		cpus[id].tasks[cpus[id].current_task].regs.r9 = regs->r9;
-		cpus[id].tasks[cpus[id].current_task].regs.r10 = regs->r10;
-		cpus[id].tasks[cpus[id].current_task].regs.r11 = regs->r11;
-		cpus[id].tasks[cpus[id].current_task].regs.r12 = regs->r12;
-		cpus[id].tasks[cpus[id].current_task].regs.r13 = regs->r13;
-		cpus[id].tasks[cpus[id].current_task].regs.r14 = regs->r14;
-		cpus[id].tasks[cpus[id].current_task].regs.r15 = regs->r15;
-		cpus[id].tasks[cpus[id].current_task].regs.rip = regs->rip;
-		cpus[id].tasks[cpus[id].current_task].regs.rsp = regs->rsp;
-		cpus[id].tasks[cpus[id].current_task].regs.rbp = regs->rbp;
-		cpus[id].tasks[cpus[id].current_task].regs.rdi = regs->rsi;
-		cpus[id].tasks[cpus[id].current_task].regs.rdi = regs->rdi;
+	task* t = (task*) task_queue[id].list[0];
+
+	if(!t->first_sched) {
+		t->regs.rax = regs->rax;
+		t->regs.rbx = regs->rbx;
+		t->regs.rcx = regs->rcx;
+		t->regs.rdx = regs->rdx;
+		t->regs.r8 = regs->r8;
+		t->regs.r9 = regs->r9;
+		t->regs.r10 = regs->r10;
+		t->regs.r11 = regs->r11;
+		t->regs.r12 = regs->r12;
+		t->regs.r13 = regs->r13;
+		t->regs.r14 = regs->r14;
+		t->regs.r15 = regs->r15;
+		t->regs.rip = regs->rip;
+		t->regs.rsp = regs->rsp;
+		t->regs.rbp = regs->rbp;
+		t->regs.rsi = regs->rsi;
+		t->regs.rdi = regs->rdi;
 	}
 
-	bool loop = false;
+	task_queue[id].next();
 
-	for (int i = cpus[id].current_task + 1; true; i++) {
-		if(loop) {
-			return;
-		}
+	t = (task*) task_queue[id].list[0];
 
-		if(i > 32) {
-			loop = true;
-			i = 0;
-		}
+	if(t->kill_me) {
+		global_allocator.free_page((void*) t->stack);
+		free(t);
 
-		if(cpus[id].tasks[i].active) {
-			cpus[id].current_task = i;
-
-			regs->rax = cpus[id].tasks[cpus[id].current_task].regs.rax;
-			regs->rbx = cpus[id].tasks[cpus[id].current_task].regs.rbx;
-			regs->rcx = cpus[id].tasks[cpus[id].current_task].regs.rcx;
-			regs->rdx = cpus[id].tasks[cpus[id].current_task].regs.rdx;
-			regs->r8 = cpus[id].tasks[cpus[id].current_task].regs.r8;
-			regs->r9 = cpus[id].tasks[cpus[id].current_task].regs.r9;
-			regs->r10 = cpus[id].tasks[cpus[id].current_task].regs.r10;
-			regs->r11 = cpus[id].tasks[cpus[id].current_task].regs.r11;
-			regs->r12 = cpus[id].tasks[cpus[id].current_task].regs.r12;
-			regs->r13 = cpus[id].tasks[cpus[id].current_task].regs.r13;
-			regs->r14 = cpus[id].tasks[cpus[id].current_task].regs.r14;
-			regs->r15 = cpus[id].tasks[cpus[id].current_task].regs.r15;
-			regs->rip = cpus[id].tasks[cpus[id].current_task].regs.rip;
-			regs->rsp = cpus[id].tasks[cpus[id].current_task].regs.rsp;
-			regs->rbp = cpus[id].tasks[cpus[id].current_task].regs.rbp;
-			regs->rsi = cpus[id].tasks[cpus[id].current_task].regs.rsi;
-			regs->rdi = cpus[id].tasks[cpus[id].current_task].regs.rdi;
-
-			cpus[id].tasks[cpus[id].current_task].first_sched = false;
-
-			return;
-		}
+		task_queue[id].remove_first();
+		t = (task*) task_queue[id].list[0];
 	}
+
+	regs->rax = t->regs.rax;
+	regs->rbx = t->regs.rbx;
+	regs->rcx = t->regs.rcx;
+	regs->rdx = t->regs.rdx;
+	regs->r8 = t->regs.r8;
+	regs->r9 = t->regs.r9;
+	regs->r10 = t->regs.r10;
+	regs->r11 = t->regs.r11;
+	regs->r12 = t->regs.r12;
+	regs->r13 = t->regs.r13;
+	regs->r14 = t->regs.r14;
+	regs->r15 = t->regs.r15;
+	regs->rip = t->regs.rip;
+	regs->rsp = t->regs.rsp;
+	regs->rbp = t->regs.rbp;
+	regs->rsi = t->regs.rsi;
+	regs->rdi = t->regs.rdi;
+
+	t->first_sched = false;
 }

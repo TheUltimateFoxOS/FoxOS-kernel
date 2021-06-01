@@ -1,11 +1,12 @@
 #include <scheduling/scheduler/scheduler.h>
+#include <scheduling/pit/pit.h>
 
 #include <driver/serial.h>
 
-uint64_t task2;
+task* task2;
 
 void test_scheduler() {
-	uint64_t task1 = new_task((void*) (void_function) []() {
+	task* task1 = new_task((void*) (void_function) []() {
 		driver::global_serial_driver->printf("A");
 		task_exit();
 	});
@@ -14,9 +15,13 @@ void test_scheduler() {
 			driver::global_serial_driver->printf("B");
 		}
 	});
-	uint64_t task3 = new_task((void*) (void_function) []() {
-		kill_task(task2);
+	task* task3 = new_task((void*) (void_function) []() {
 		driver::global_serial_driver->printf("C");
+		
+		int x = 10000000;
+		while(x--);
+
+		task2->kill_me = true;
 		task_exit();
 	});
 
