@@ -22,7 +22,7 @@ trampoline_data* data;
 bool bspdone = false;
 uint8_t bspid = 0;
 
-cpu* cpus;
+cpu cpus[256];
 
 extern "C" void ap_main() {
 	*((volatile uint32_t*)(lapic_ptr + 0xf0)) = *((volatile uint32_t*)(lapic_ptr + 0xf0)) | 0x1ff;
@@ -76,8 +76,6 @@ int run_on_ap(void_function function) {
 }
 
 void start_smp() {
-	cpus = (cpu*) global_allocator.request_page();
-
 	volatile uint8_t aprunning = 0;
 
 	data = (trampoline_data*) (((uint64_t) &ap_trampoline_data - (uint64_t) &ap_trampoline) + 0x8000);

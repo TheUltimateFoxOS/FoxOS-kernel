@@ -4,11 +4,14 @@
 
 #include <interrupts/interrupts.h>
 
-#define ENCODE_PID(cpu_id, task_slot) cpu_id + task_slot * 255
-#define DECODE_PID(pit, cpu_id, task_slot) cpu_id = pit % 255; task_slot = (pit - cpu_id) / 255
+struct task {
+	s_registers regs;
+	uint64_t stack;
+	bool first_sched;
+	bool kill_me;
+};
 
 void init_sched();
-uint64_t new_task(void* entry);
-void kill_task(uint64_t pid);
+task* new_task(void* entry);
 void task_exit();
 extern "C" void schedule(s_registers* regs);
