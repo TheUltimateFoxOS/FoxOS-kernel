@@ -8,9 +8,26 @@ ASMSRC = $(call rwildcard,./,*.asm)
 OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(CPPSRC))
 OBJS += $(patsubst %.asm, $(OBJDIR)/%.o, $(ASMSRC))
 
-CC = gcc
-ASM = nasm
-LD = ld
+TOOLCHAIN_BASE = /usr/local/foxos-x86_64_elf_gcc
+
+ifeq (,$(wildcard $(TOOLCHAIN_BASE)/bin/foxos-gcc))
+	CC = gcc
+else
+	CC = $(TOOLCHAIN_BASE)/bin/foxos-gcc
+endif
+
+ifeq (,$(wildcard $(TOOLCHAIN_BASE)/bin/foxos-nasm))
+	ASM = nasm
+else
+	ASM = $(TOOLCHAIN_BASE)/bin/foxos-nasm
+endif
+
+ifeq (,$(wildcard $(TOOLCHAIN_BASE)/bin/foxos-gcc))
+	LD = ld
+else
+	LD = $(TOOLCHAIN_BASE)/bin/foxos-ld
+endif
+
 
 CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -Iinclude -fno-use-cxa-atexit -fno-rtti -fno-exceptions -fno-leading-underscore -fno-exceptions -g
 ASMFLAGS = -f elf64
@@ -22,12 +39,15 @@ foxkrnl.elf: $(OBJS)
 
 	sh syms.sh $(BUILDDIR)/$@.tmp
 
-	$(CC) -fno-pic -fpie -xc -c syms.gen -o $(OBJDIR)/syms.o
+	$(CC) $(CFLAGS) -fno-pic -fpie -xc -c syms.gen -o $(OBJDIR)/syms.o
 
 	@echo LD $^ $(OBJDIR)/syms.o
 	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^ $(OBJDIR)/syms.o
 
 	rm syms.gen
+
+	@echo "\n\nCompiled using asm: $(ASM), cc: $(CC), ld: $(LD)\n\n"
+
 
 
 $(OBJDIR)/%.o: %.cpp

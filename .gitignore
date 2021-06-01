@@ -5,3 +5,6 @@
 ._*
 .DS_Store
 ._DS_Strore
+
+#toolchain build dir
+.toolchain
