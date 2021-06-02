@@ -8,7 +8,6 @@ task* task2;
 void test_scheduler() {
 	task* task1 = new_task((void*) (void_function) []() {
 		driver::global_serial_driver->printf("A");
-		task_exit();
 	});
 	task2 = new_task((void*) (void_function) []() {
 		while (true) {
@@ -22,7 +21,6 @@ void test_scheduler() {
 		while(x--);
 
 		task2->kill_me = true;
-		task_exit();
 	});
 
 	init_sched();

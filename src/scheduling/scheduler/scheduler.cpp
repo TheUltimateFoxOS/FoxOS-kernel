@@ -36,6 +36,8 @@ void init_sched() {
 	}
 }
 
+extern "C" void task_entry();
+
 task* new_task(void* entry) {
 	spin_lock = true;
 	__asm__ __volatile__ ("cli");
@@ -43,7 +45,8 @@ task* new_task(void* entry) {
 	task* t = (task*) malloc(sizeof(task));
 	void* stack = global_allocator.request_page();
 
-	t->regs.rip = (uint64_t) entry;
+	t->regs.rax = (uint64_t) entry;
+	t->regs.rip = (uint64_t) task_entry;
 	t->regs.rsp = (uint64_t) stack + 4096;
 	t->first_sched = true;
 	t->kill_me = false;
