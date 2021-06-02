@@ -234,6 +234,8 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 
 	initialize_heap((void*) 0x0000100000000000, 0x10);
 
+	init_fast_mem(); // we want to use as fast as possible fast memory functions
+
 	setup_globals(bootinfo);
 
 	prepare_interrupts();
