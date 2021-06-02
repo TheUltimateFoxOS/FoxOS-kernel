@@ -62,6 +62,5 @@ $(OBJDIR)/%.o: %.asm
 
 clean:
 	rm $(OBJS)
-	rm $(BUILDDIR)/foxkrnl.elf
 
 .PHONY: clean $(BUILDDIR)/foxkrnl.elf
