@@ -1,9 +1,14 @@
 #include <scripting_languages/basic/basic.h>
-#include <driver/serial.h>
-#include <renderer/font_renderer.h>
-#include <paging/page_frame_allocator.h>
-#include <memory/heap.h>
+
 #include <string.h>
+
+#include <driver/serial.h>
+
+#include <renderer/font_renderer.h>
+
+#include <paging/page_frame_allocator.h>
+
+#include <memory/heap.h>
 
 void BASIC_printf(const char* fmt, ...) {
 	va_list ap;
@@ -27,7 +32,15 @@ void BASIC_not_implemented(const char* text, int line_num) {
 	BASIC_printf("Not implemented line %d: %s\n", line_num, text);
 }
 
-token_t to_token(char* buffer, token_type_t type, int line_num) {
+
+BASIC::BASIC() {
+	tokens = (token_t*)malloc(sizeof(token_t));
+	token_num = 0;
+	token_iterator = 0;
+	prog_code = "";
+}
+
+token_t BASIC::to_token(char* buffer, token_type_t type, int line_num) {
 	token_t token;
 	token.type = type;
 	token.contents = (char*)malloc(sizeof(char) * strlen(buffer));
@@ -36,7 +49,9 @@ token_t to_token(char* buffer, token_type_t type, int line_num) {
 	return token;
 }
 
-lexer_out lex_BASIC(const char* code) {
+int BASIC::lex_BASIC(const char* code) {
+	prog_code = code;
+
 	char* buffer = (char*)global_allocator.request_page();
 	int buffer_len = 0;
 	int line_num = 1;
@@ -44,15 +59,11 @@ lexer_out lex_BASIC(const char* code) {
 	int state = 0;
 	token_type_t last_token_type = token_type_t::function;
 
-	token_t* tokens = (token_t*)malloc(sizeof(token_t));
-	int token_num = 0;
-
-	lexer_out out;
-	out.failed = 1;
-
 	if (tokens == NULL) {
 		BASIC_error("Memory allocation failed!");
-		return out;
+		global_allocator.free_page(buffer);
+
+		return 1;
 	}
 
 	while(*code) {
@@ -64,8 +75,8 @@ lexer_out lex_BASIC(const char* code) {
 				if (state == 1) {
 					BASIC_error("End of string not found!", line_num);
 					global_allocator.free_page(buffer);
-					free(tokens);
-					return out;
+
+					return 1;
 				}
 
 				token = to_token(buffer, last_token_type, line_num);
@@ -131,47 +142,41 @@ lexer_out lex_BASIC(const char* code) {
 
 	global_allocator.free_page(buffer);
 
-	out.tokens = tokens;
-	out.token_num = token_num - 1;
-	out.failed = 0;
-	return out;
+	token_num -= 1;
+	return 0;
 }
 
-int parse_BASIC(token_t* tokens, int token_num) {
-	int i = 0;
+int BASIC::parse_BASIC() {
+	int out_code = 0;
 
-	while (i <= token_num) {
-		token_t token = *(tokens+i);
-		i++;
+	while (token_iterator <= token_num) {
+		token_t token = *(tokens+token_iterator);
+		token_iterator++;
 
 		if (token.type == token_type_t::error) {
 			BASIC_error("Unknown error occured", token.line_num);
-			return -1;
+			out_code = -1;
+			break;
 		} else if (token.type == token_type_t::function) {
+			int func_code;
+
 			if (strcmp(token.contents, "PRINT") == 0 || strcmp(token.contents, "print") == 0) {
-				token_t string_token = *(tokens+i);
-				i++;
-
-				if (string_token.line_num == token.line_num) {
-					if (string_token.type == token_type_t::string) {
-						BASIC_printf("%s\n", string_token.contents);
-					} else {
-						BASIC_error("Tried to print a value that is not a string", string_token.line_num);
-						return 1;
-					}
-				} else {
-					BASIC_error("Could not find a value to print", token.line_num);
-					return 1;
-				}
-
-				free(string_token.contents);
+				func_code = basic_keyword_print(token);
+			} else if (strcmp(token.contents, "LIST") == 0 || strcmp(token.contents, "list") == 0) {
+				func_code = basic_keyword_list(token);
 			} else {
 				BASIC_error("Unknown token found", token.line_num);
-				return 1;
+				func_code = 1;
+			}
+
+			if (func_code != 0) {
+				out_code = func_code;
+				break;
 			}
 		} else if (token.type == token_type_t::string) {
 			BASIC_error("Unexpected string found", token.line_num);
-			return 1;
+			out_code = 1;
+			break;
 		} else if (token.type == token_type_t::label) {
 			BASIC_not_implemented("Labels are not implemented", token.line_num);
 		}
@@ -179,22 +184,22 @@ int parse_BASIC(token_t* tokens, int token_num) {
 		free(token.contents);
 	}
 
-	return 0;
+	return out_code;
 }
 
-void eval_BASIC(const char* code) {
-	lexer_out out = lex_BASIC(code);
+void BASIC::eval_BASIC(const char* code) {
+	int out = lex_BASIC(code);
 
-	if (out.failed == 1) {
-		return;
-	} else if (out.tokens == NULL) {
-		return;
-	} else if (out.token_num == 0) {
-		return;
+	if (out == 0) {
+		int complete = parse_BASIC();
+		BASIC_printf("BASIC program exited with code: %d\n", complete);
+	}
+	
+	while (token_iterator <= token_num) {
+		token_t token = *(tokens+token_iterator);
+		token_iterator++;
+		free(token.contents);
 	}
 
-	int complete = parse_BASIC(out.tokens, out.token_num);
-	BASIC_printf("BASIC program exited with code: %d\n", complete);
-	
-	free(out.tokens);
+	free(tokens);
 }
