@@ -139,7 +139,7 @@ void start_smp() {
 
 		do {
 			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d!\n", i, data->status);
-			PIT::sleep_d(5);
+			//PIT::sleep_d(5);
 		} while (data->status != ap_status::init_done);
 		
 
