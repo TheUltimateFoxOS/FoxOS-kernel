@@ -12,8 +12,6 @@ FontRenderer::FontRenderer(framebuffer_t* target_frame_buffer, psf1_font_t* font
 	cursor_position = {0, 0};
 }
 
-
-
 void FontRenderer::vsprintf(const char* str, va_list ap) {
 	const char* s;
 	unsigned long n;

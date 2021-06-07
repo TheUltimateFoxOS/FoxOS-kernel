@@ -29,6 +29,10 @@ int BASIC::basic_keyword_list(token_t token) {
 	}
 
 	BASIC_printf("%s", prog_code);
+	return 0;
+}
 
+int BASIC::basic_keyword_cls() {
+	BASIC_clear_screen();
 	return 0;
 }
