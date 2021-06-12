@@ -16,6 +16,7 @@ Shell::Shell() {
 
 void Shell::init_shell() {
 	command_buffer = (char*)global_allocator.request_page();
+	memset(command_buffer, 0, sizeof(command_buffer));
 	buffer_len = 0;
 	print_nl();
 }
