@@ -1,4 +1,5 @@
 #include <interrupts/panic.h>
+#include <scheduling/scheduler/scheduler.h>
 
 using namespace interrupts;
 
@@ -87,6 +88,7 @@ void Panic::do_it() {
 	renderer::global_font_renderer->printf("Feel free to fix this issue and submit a pull request\n");
 
 	while(true) {
+		halt_cpu = true;
 		asm volatile("cli; hlt");
 	}
 }

@@ -11,6 +11,7 @@
 uint64_t_queue task_queue[256];
 bool scheduling = false;
 bool spin_lock = false;
+bool halt_cpu = false;
 
 void init_sched() {
 	uint8_t id;
@@ -103,6 +104,10 @@ extern "C" void schedule(s_registers* regs) {
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
 	while(spin_lock);
+
+	if(halt_cpu) {
+		__asm__ __volatile__ ("cli; hlt");
+	}
 
 	if(task_queue[id].len == 0 || !scheduling) {
 		return;

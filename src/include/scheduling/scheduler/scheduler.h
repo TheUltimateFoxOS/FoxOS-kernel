@@ -14,4 +14,5 @@ struct task {
 void init_sched();
 task* new_task(void* entry);
 void task_exit();
+extern bool halt_cpu;
 extern "C" void schedule(s_registers* regs);
