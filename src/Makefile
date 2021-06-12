@@ -37,14 +37,14 @@ foxkrnl.elf: $(OBJS)
 	@echo LD $^
 	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@.tmp $^
 
-	sh syms.sh $(BUILDDIR)/$@.tmp
+	sh syms.sh $(BUILDDIR)/$@.tmp syms.cpp
 
-	$(CC) $(CFLAGS) -fno-pic -fpie -xc -c syms.gen -o $(OBJDIR)/syms.o
+	$(CC) $(CFLAGS) -fno-pic -fpie -c syms.cpp -o $(OBJDIR)/syms.o
 
 	@echo LD $^ $(OBJDIR)/syms.o
 	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^ $(OBJDIR)/syms.o
 
-	rm syms.gen
+	rm syms.cpp
 
 	@echo "\n\nCompiled using asm: $(ASM), cc: $(CC), ld: $(LD)\n\n"
 
