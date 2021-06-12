@@ -23,5 +23,5 @@ void test_scheduler() {
 		task2->kill_me = true;
 	});
 
-	init_sched();
+	//init_sched();
 }

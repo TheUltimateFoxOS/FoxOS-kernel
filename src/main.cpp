@@ -17,6 +17,8 @@
 
 #include <shell/shell.h>
 
+#include <scheduling/scheduler/scheduler.h>
+
 #include "examples/examples.h"
 
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
@@ -78,11 +80,13 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	shell::global_shell->init_shell();
 
-	test_patch();
+	//test_patch();
 	//disk_test();
 	//fat32_test();
 	//syscall_test();
-	test_scheduler();
+	//test_scheduler();
+
+	init_sched();	
 
 	while (true) {
 		asm ("hlt");
