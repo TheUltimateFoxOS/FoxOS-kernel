@@ -106,8 +106,14 @@ void load_elf(void* ptr) {
 	Elf64_Phdr* ph;
 	int i;
 
-	if (__builtin_bswap32(header->e_ident.i) != elf::MAGIC) {
-		return;
+	if(__builtin_bswap32(header->e_ident.i) != elf::MAGIC) {
+		return; // no elf
+	}
+	if(header->e_ident.c[elf::EI_CLASS] != elf::ELFCLASS64) {
+		return; // not 64 bit
+	}
+	if(header->e_type != elf::ET_DYN) {
+		return; // not pic
 	}
 
 	ph = (Elf64_Phdr*) (((char*) ptr) + header->e_phoff);
@@ -116,11 +122,11 @@ void load_elf(void* ptr) {
 		void* src = ((char*) ptr) + ph->p_offset;
 
 
-		/*if (ph->p_type != 1) {
+		if (ph->p_type != elf::PT_LOAD) {
 			continue;
-		}*/
+		}
 		
-		for (int x = 0; x < ph->p_memsz / 0x1000; x++) {
+		for (int x = 0; x < (ph->p_memsz / 0x1000) + 1; x++) {
 			g_page_table_manager.map_memory((void*) ((uint64_t) dest + x * 0x1000), (void*) ((uint64_t) dest + x * 0x1000));
 		}
 		
