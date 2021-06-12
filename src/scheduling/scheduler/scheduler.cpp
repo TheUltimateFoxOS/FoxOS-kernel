@@ -6,6 +6,7 @@
 #include <interrupts/idt.h>
 
 #include <apic/madt.h>
+#include <config.h>
 
 uint64_t_queue task_queue[256];
 bool scheduling = false;
@@ -52,8 +53,10 @@ task* new_task(void* entry) {
 	t->kill_me = false;
 	t->stack = (uint64_t) stack;
 
-	uint64_t min = 0xf0f0;
 	uint64_t idx = 0;
+
+#ifndef NO_SMP
+	uint64_t min = 0xf0f0;
 
 	for (int i = 0; i < numcore; i++) {
 		if(task_queue[i].len < min) {
@@ -61,7 +64,9 @@ task* new_task(void* entry) {
 			idx = i;
 		}
 	}
-	
+#else
+	idx = bspid;
+#endif
 
 	task_queue[idx].add((uint64_t) t);
 

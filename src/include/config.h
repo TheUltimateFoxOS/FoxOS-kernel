@@ -11,6 +11,8 @@
 #define RELEASE_T	"Alpha"
 #define VENDOR 		"TheUltimateFoxOS"
 
+//#define NO_SMP
+
 struct symbol {
 	uint64_t addr;
 	char* name;

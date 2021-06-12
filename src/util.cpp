@@ -34,6 +34,8 @@
 #include <apic/madt.h>
 #include <apic/apic.h>
 
+#include <config.h>
+
 KernelInfo kernel_info;
 void prepare_memory(bootinfo_t* bootinfo) {
 	uint64_t m_map_entries = bootinfo->m_map_size / bootinfo->m_map_desc_size;
@@ -292,7 +294,9 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 
 	PIT::init_pit(65535);
 
+#ifndef NO_SMP
 	start_smp();
+#endif
 
 	return kernel_info;
 }
