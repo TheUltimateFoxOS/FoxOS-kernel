@@ -73,9 +73,6 @@ namespace elf {
     // Object File Classes - ELF-64 Object File Format 1.5d2 p. 5
     constexpr uint8_t ELFCLASS32    = 1;
     constexpr uint8_t ELFCLASS64    = 2;
-
-    bool verify(void* elf);
-    elf_info_t load_elf_segments(process_t* proc, void* elf, uintptr_t base);
 }
 
 // ELF File Header - ELF-64 Object File Format 1.5d2 p. 3
