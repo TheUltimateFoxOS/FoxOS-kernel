@@ -86,7 +86,10 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//syscall_test();
 	//test_scheduler();
 
-	init_sched();	
+	extern const char test_elf[];
+	load_elf((void*) test_elf);
+
+	init_sched();
 
 	while (true) {
 		asm ("hlt");

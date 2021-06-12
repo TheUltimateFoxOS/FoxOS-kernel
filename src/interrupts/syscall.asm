@@ -78,10 +78,12 @@ syscall_handler:
 
 [extern syscall_test]
 [extern syscall_test2]
+[extern sys_write]
 
 syscall_table:
 	dq syscall_test
 	dq syscall_test2
+	dq sys_write
 syscall_table_end:
 
 max_syscall equ ((syscall_table_end - syscall_table) / 8) -1

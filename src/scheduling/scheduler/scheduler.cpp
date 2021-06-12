@@ -1,6 +1,8 @@
 #include <scheduling/scheduler/scheduler.h>
 #include <scheduling/scheduler/queue.h>
+#include <scheduling/scheduler/elf.h>
 #include <paging/page_frame_allocator.h>
+#include <paging/page_table_manager.h>
 #include <memory/heap.h>
 
 #include <interrupts/idt.h>
@@ -97,6 +99,36 @@ void task_exit() {
 	while(1) {
 		__asm__ __volatile__ ("hlt");
 	}
+}
+
+void load_elf(void* ptr) {
+	Elf64_Ehdr* header = (Elf64_Ehdr*) ptr;
+	Elf64_Phdr* ph;
+	int i;
+
+	if (__builtin_bswap32(header->e_ident.i) != elf::MAGIC) {
+		return;
+	}
+
+	ph = (Elf64_Phdr*) (((char*) ptr) + header->e_phoff);
+	for (i = 0; i < header->e_phnum; i++, ph++) {
+		void* dest = (void*) (uint64_t) ph->p_vaddr;
+		void* src = ((char*) ptr) + ph->p_offset;
+
+
+		/*if (ph->p_type != 1) {
+			continue;
+		}*/
+		
+		for (int x = 0; x < ph->p_memsz / 0x1000; x++) {
+			g_page_table_manager.map_memory((void*) ((uint64_t) dest + x * 0x1000), (void*) ((uint64_t) dest + x * 0x1000));
+		}
+		
+
+		memset(dest, 0, ph->p_memsz);
+		memcpy(dest, src, ph->p_filesz);
+	}
+	new_task((void*) header->e_entry);
 }
 
 extern "C" void schedule(s_registers* regs) {
