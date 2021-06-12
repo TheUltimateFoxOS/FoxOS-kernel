@@ -6,7 +6,7 @@ rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(su
 CPPSRC = $(call rwildcard,./,*.cpp)
 ASMSRC = $(call rwildcard,./,*.asm)
 OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(CPPSRC))
-OBJS += $(patsubst %.asm, $(OBJDIR)/%.o, $(ASMSRC))
+OBJS += $(patsubst %.asm, $(OBJDIR)/%_asm.o, $(ASMSRC))
 
 TOOLCHAIN_BASE = /usr/local/foxos-x86_64_elf_gcc
 
@@ -51,12 +51,12 @@ foxkrnl.elf: $(OBJS)
 
 
 $(OBJDIR)/%.o: %.cpp
-	@echo CPP $^
+	@echo "CPP $^ -> $@"
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c -o $@ $^
 
-$(OBJDIR)/%.o: %.asm
-	@echo ASM $^
+$(OBJDIR)/%_asm.o: %.asm
+	@echo "ASM $^ -> $@"
 	@mkdir -p $(@D)
 	@$(ASM) $(ASMFLAGS) -o $@ $^
 
