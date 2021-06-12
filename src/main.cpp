@@ -87,7 +87,7 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//test_scheduler();
 
 	extern const char test_elf[];
-	load_elf((void*) test_elf);
+	load_elf((void*) test_elf, 0x100000);
 
 	init_sched();
 

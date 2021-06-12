@@ -2,7 +2,7 @@ OBJDIR = lib
 BUILDDIR = bin
 
 build:
-	nasm -f elf64 test.asm -o $(OBJDIR)/test.o
+	gcc test.c -o $(OBJDIR)/test.o -mno-red-zone -ffreestanding -fpic -c
 	ld $(OBJDIR)/test.o -o $(BUILDDIR)/test.elf -pic
 	make -C src
 

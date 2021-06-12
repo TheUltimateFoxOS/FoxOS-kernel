@@ -54,6 +54,7 @@ task* new_task(void* entry) {
 	t->regs.rsp = (uint64_t) stack + 4096;
 	t->first_sched = true;
 	t->kill_me = false;
+	t->is_elf = false;
 	t->stack = (uint64_t) stack;
 
 	uint64_t idx = 0;
@@ -88,6 +89,10 @@ void task_exit() {
 
 	task* t = (task*) task_queue[id].list[0];
 
+	if(t->is_elf) {
+		free(t->offset);
+	}
+
 	global_allocator.free_page((void*) t->stack);
 	free(t);
 
@@ -101,24 +106,26 @@ void task_exit() {
 	}
 }
 
-void load_elf(void* ptr) {
+task* load_elf(void* ptr, uint64_t file_size) {
 	Elf64_Ehdr* header = (Elf64_Ehdr*) ptr;
 	Elf64_Phdr* ph;
 	int i;
 
+	void* offset = malloc(file_size);
+
 	if(__builtin_bswap32(header->e_ident.i) != elf::MAGIC) {
-		return; // no elf
+		return NULL; // no elf
 	}
 	if(header->e_ident.c[elf::EI_CLASS] != elf::ELFCLASS64) {
-		return; // not 64 bit
+		return NULL; // not 64 bit
 	}
 	if(header->e_type != elf::ET_DYN) {
-		return; // not pic
+		return NULL; // not pic
 	}
 
 	ph = (Elf64_Phdr*) (((char*) ptr) + header->e_phoff);
 	for (i = 0; i < header->e_phnum; i++, ph++) {
-		void* dest = (void*) (uint64_t) ph->p_vaddr;
+		void* dest = (void*) ((uint64_t) ph->p_vaddr + (uint64_t) offset);
 		void* src = ((char*) ptr) + ph->p_offset;
 
 
@@ -126,15 +133,20 @@ void load_elf(void* ptr) {
 			continue;
 		}
 		
-		for (int x = 0; x < (ph->p_memsz / 0x1000) + 1; x++) {
+		/*for (int x = 0; x < (ph->p_memsz / 0x1000) + 1; x++) {
 			g_page_table_manager.map_memory((void*) ((uint64_t) dest + x * 0x1000), (void*) ((uint64_t) dest + x * 0x1000));
-		}
+		}*/
 		
 
 		memset(dest, 0, ph->p_memsz);
 		memcpy(dest, src, ph->p_filesz);
 	}
-	new_task((void*) header->e_entry);
+	
+	task* t = new_task((void*) (header->e_entry + (uint64_t) offset));
+	t->is_elf = true;
+	t->offset = offset;
+
+	return t;
 }
 
 extern "C" void schedule(s_registers* regs) {
