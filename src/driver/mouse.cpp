@@ -117,3 +117,7 @@ void MouseDriver::handle() {
 
 	mouse_packet_ready = false;
 }
+
+char* MouseDriver::get_name() {
+	return (char*) "mouse";
+}

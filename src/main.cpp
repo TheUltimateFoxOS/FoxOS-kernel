@@ -42,10 +42,6 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
 
-	renderer::global_font_renderer->printf("\nFoxOS version %s %d Copyright (C) 2021 %s\n", RELEASE_T, VERSION, VENDOR);
-	renderer::global_font_renderer->printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
-	renderer::global_font_renderer->printf("This is free software, and you are welcome to redistribute it.\n\n");
-
 	//Keyboard driver
 	PrintfKeyboardEventHandler kbhandler;
 	driver::KeyboardDriver keyboard_driver(&kbhandler);
@@ -57,10 +53,10 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	driver::global_driver_manager->add_driver(&mouse_driver);
 
 	//ATA driver
-	driver::AdvancedTechnologyAttachment ata0m(true, 0x1F0);
-	driver::AdvancedTechnologyAttachment ata0s(false, 0x1F0);
-	driver::AdvancedTechnologyAttachment ata1m(true, 0x170);
-	driver::AdvancedTechnologyAttachment ata1s(false, 0x170);
+	driver::AdvancedTechnologyAttachment ata0m(true, 0x1F0, (char*) "ata0 master");
+	driver::AdvancedTechnologyAttachment ata0s(false, 0x1F0, (char*) "ata0 slave");
+	driver::AdvancedTechnologyAttachment ata1m(true, 0x170, (char*) "ata1 master");
+	driver::AdvancedTechnologyAttachment ata1s(false, 0x170, (char*) "ata1 slave");
 
 	driver::global_driver_manager->add_driver(&ata0m);
 	driver::global_driver_manager->add_driver(&ata0s);
@@ -68,7 +64,12 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	driver::global_driver_manager->add_driver(&ata1s);
 
 	//Activate drivers
+	renderer::global_font_renderer->printf("\n");
 	driver::global_driver_manager->activate_all(false);
+
+	renderer::global_font_renderer->printf("\nFoxOS version %s %d Copyright (C) 2021 %s\n", RELEASE_T, VERSION, VENDOR);
+	renderer::global_font_renderer->printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
+	renderer::global_font_renderer->printf("This is free software, and you are welcome to redistribute it.\n\n");
 
 	//font_renderer_test();
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);

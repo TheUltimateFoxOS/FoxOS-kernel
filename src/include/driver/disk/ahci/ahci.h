@@ -167,5 +167,6 @@ namespace driver {
 
 			AHCI_port* ports[32];
 			uint8_t port_count;
+			
 	};
 }

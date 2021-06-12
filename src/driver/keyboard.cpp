@@ -393,3 +393,7 @@ void KeyboardDriver::handle(){
 			break;
 	}
 }
+
+char* KeyboardDriver::get_name() {
+	return (char*) "keyboard";
+}

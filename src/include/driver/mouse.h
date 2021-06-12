@@ -49,5 +49,6 @@ namespace driver {
 			virtual void handle();
 			virtual bool is_presend();
 			virtual void activate();
+			virtual char* get_name();
 	};
 }

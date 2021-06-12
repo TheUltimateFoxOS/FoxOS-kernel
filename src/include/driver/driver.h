@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #define DRIVER_NUM 256
 
 namespace driver {
@@ -11,6 +13,7 @@ namespace driver {
 
 			virtual void activate();
 			virtual bool is_presend();
+			virtual char* get_name();
 	};
 
 	class DriverManager {
@@ -21,6 +24,7 @@ namespace driver {
 		public:
 			DriverManager();
 			void add_driver(Driver* driver);
+			void set_status(char* status, uint64_t color);
 			void activate_driver(bool force, Driver* driver);
 			void activate_all(bool force);
 	};

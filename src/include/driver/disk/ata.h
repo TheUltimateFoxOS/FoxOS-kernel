@@ -24,8 +24,10 @@ namespace driver {
 
 			uint16_t bytes_per_sector;
 
+			char* name;
+
 		public:
-			AdvancedTechnologyAttachment(bool master, uint16_t portBase);
+			AdvancedTechnologyAttachment(bool master, uint16_t portBase, char* name);
 			~AdvancedTechnologyAttachment();
 
 
@@ -35,6 +37,7 @@ namespace driver {
 
 			virtual void activate();
 			virtual bool is_presend();
+			virtual char* get_name();
 
 			virtual void read(uint64_t sector, uint32_t sector_count, void* buffer);
 			virtual void write(uint64_t sector, uint32_t sector_count, void* buffer);

@@ -1,6 +1,7 @@
 #include <driver/disk/disk.h>
 
 #include <renderer/font_renderer.h>
+#include <driver/serial.h>
 
 using namespace driver;
 using namespace driver::disk;
@@ -31,7 +32,7 @@ DiskManager::DiskManager() {
 
 void DiskManager::add_disk(Disk* disk) {
 	this->disks[this->num_disks] = disk;
-	renderer::global_font_renderer->printf("Adding new disk at idx %d!\n", this->num_disks);
+	driver::global_serial_driver->printf("Adding new disk at idx %d!\n", this->num_disks);
 	this->num_disks++;
 }
 
