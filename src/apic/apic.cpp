@@ -88,6 +88,8 @@ void start_smp() {
 
 	g_page_table_manager.map_memory((void*) lapic_ptr, (void*) lapic_ptr);
 
+	renderer::global_font_renderer->printf("Starting core: %f", 0xffffff00);
+
 	for (int i = 0; i < numcore; i++) {
 		if(lapic_ids[i] == bspid) {
 			continue;
@@ -144,8 +146,11 @@ void start_smp() {
 		
 
 		driver::global_serial_driver->printf("cpu %d init done!\n", i);
+		renderer::global_font_renderer->printf("%d ", i);
 		
 	}
+
+	renderer::global_font_renderer->printf("%r\n");
 
 	bspdone = true;
 }
