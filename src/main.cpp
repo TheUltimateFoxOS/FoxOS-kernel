@@ -7,6 +7,7 @@
 #include <renderer/mouse_renderer.h>
 
 #include <paging/page_table_manager.h>
+#include <paging/page_frame_allocator.h>
 
 #include <driver/driver.h>
 #include <driver/keyboard.h>
@@ -18,6 +19,8 @@
 #include <shell/shell.h>
 
 #include <scheduling/scheduler/scheduler.h>
+
+#include <fs/fat32.h>
 
 #include "examples/examples.h"
 
@@ -86,8 +89,21 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//syscall_test();
 	//test_scheduler();
 
-	extern const char test_elf[];
-	load_elf((void*) test_elf, 0x100000);
+	fat32::disk_id = 0; // set to first disk
+	uint8_t fs_buf[512];
+	fat32::fs_info_t fs_info = fat32::read_info(fs_buf); // read fs info
+	show_info(fs_info); // print fs info to serial console
+
+	fat32::sector_buffer_t sector_buffer;
+	fat32::file_info_t fp;
+	fat32::fopen("/BIN/TEST.ELF", "r", &fp, fs_info, &sector_buffer); // open file
+
+	uint8_t* elf_contents = (uint8_t*)malloc(fp.file_size);
+
+	fat32::fread(elf_contents, fp.file_size, &fp, fs_info, &sector_buffer); // read file
+	load_elf((void*) elf_contents, 0x100000);
+
+	free(elf_contents);
 
 	init_sched();
 

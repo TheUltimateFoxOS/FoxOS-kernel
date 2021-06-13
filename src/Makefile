@@ -46,8 +46,6 @@ foxkrnl.elf: $(OBJS)
 
 	@echo "\n\nCompiled using asm: $(ASM), cc: $(CC), ld: $(LD)\n\n"
 
-
-
 $(OBJDIR)/%.o: %.cpp
 	@echo "CPP $^ -> $@"
 	@mkdir -p $(@D)
