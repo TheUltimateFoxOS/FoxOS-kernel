@@ -11,6 +11,7 @@ struct task {
 	bool kill_me;
 	bool is_elf;
 	void* offset;
+	int page_count;
 };
 
 void init_sched();

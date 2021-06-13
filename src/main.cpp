@@ -42,7 +42,6 @@ class MouseRendererMouseEventHandler : public driver::MouseEventHandler{
 		}
 };
 
-
 extern "C" void _start(bootinfo_t* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
@@ -98,12 +97,15 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	fat32::file_info_t fp;
 	fat32::fopen("/BIN/TEST.ELF", "r", &fp, fs_info, &sector_buffer); // open file
 
-	uint8_t* elf_contents = (uint8_t*)malloc(fp.file_size);
+	uint8_t* elf_contents = (uint8_t*) global_allocator.request_pages(fp.file_size / 0x1000 + 1);
 
 	fat32::fread(elf_contents, fp.file_size, &fp, fs_info, &sector_buffer); // read file
-	load_elf((void*) elf_contents, 0x100000);
+	load_elf((void*) elf_contents, fp.file_size);
+	load_elf((void*) elf_contents, fp.file_size);
+	load_elf((void*) elf_contents, fp.file_size);
+	load_elf((void*) elf_contents, fp.file_size);
 
-	free(elf_contents);
+	global_allocator.free_pages(elf_contents, fp.file_size / 0x1000 + 1);
 
 	init_sched();
 

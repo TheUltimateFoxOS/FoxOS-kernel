@@ -90,7 +90,7 @@ void task_exit() {
 	task* t = (task*) task_queue[id].list[0];
 
 	if(t->is_elf) {
-		free(t->offset);
+		global_allocator.free_pages(t->offset, t->page_count);
 	}
 
 	global_allocator.free_page((void*) t->stack);
@@ -108,10 +108,7 @@ void task_exit() {
 
 task* load_elf(void* ptr, uint64_t file_size) {
 	Elf64_Ehdr* header = (Elf64_Ehdr*) ptr;
-	Elf64_Phdr* ph;
-	int i;
 
-	void* offset = malloc(file_size);
 
 	if(__builtin_bswap32(header->e_ident.i) != elf::MAGIC) {
 		return NULL; // no elf
@@ -123,8 +120,23 @@ task* load_elf(void* ptr, uint64_t file_size) {
 		return NULL; // not pic
 	}
 
+	Elf64_Phdr* ph = (Elf64_Phdr*) (((char*) ptr) + header->e_phoff);
+
+	void* last_dest;
+
+	for (int i = 0; i < header->e_phnum; i++, ph++) {
+		if (ph->p_type != elf::PT_LOAD) {
+			continue;
+		}
+		last_dest = (void*) ((uint64_t) ph->p_vaddr + ph->p_memsz);
+	}
+
+	void* offset = global_allocator.request_pages((uint64_t) last_dest / 0x1000 + 1);
+
 	ph = (Elf64_Phdr*) (((char*) ptr) + header->e_phoff);
-	for (i = 0; i < header->e_phnum; i++, ph++) {
+
+
+	for (int i = 0; i < header->e_phnum; i++, ph++) {
 		void* dest = (void*) ((uint64_t) ph->p_vaddr + (uint64_t) offset);
 		void* src = ((char*) ptr) + ph->p_offset;
 
@@ -145,6 +157,7 @@ task* load_elf(void* ptr, uint64_t file_size) {
 	task* t = new_task((void*) (header->e_entry + (uint64_t) offset));
 	t->is_elf = true;
 	t->offset = offset;
+	t->page_count = (uint64_t) last_dest / 0x1000 + 1;
 
 	return t;
 }
@@ -191,7 +204,7 @@ extern "C" void schedule(s_registers* regs) {
 
 	if(t->kill_me) {
 		if(t->is_elf) {
-			free(t->offset);
+			global_allocator.free_pages(t->offset, t->page_count);
 		}
 		global_allocator.free_page((void*) t->stack);
 		free(t);
