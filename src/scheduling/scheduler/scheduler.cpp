@@ -190,6 +190,9 @@ extern "C" void schedule(s_registers* regs) {
 	t = (task*) task_queue[id].list[0];
 
 	if(t->kill_me) {
+		if(t->is_elf) {
+			free(t->offset);
+		}
 		global_allocator.free_page((void*) t->stack);
 		free(t);
 
