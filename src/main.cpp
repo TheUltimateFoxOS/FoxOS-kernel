@@ -20,7 +20,7 @@
 
 #include <scheduling/scheduler/scheduler.h>
 
-#include <fs/fat32.h>
+#include <fs/ff.h>
 
 #include "examples/examples.h"
 
@@ -79,33 +79,34 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
 	
 	//fe_test();
-
-	shell::global_shell->init_shell();
-
 	//test_patch();
 	//disk_test();
 	//fat32_test();
 	//syscall_test();
 	//test_scheduler();
 
-	fat32::disk_id = 0; // set to first disk
-	uint8_t fs_buf[512];
-	fat32::fs_info_t fs_info = fat32::read_info(fs_buf); // read fs info
-	show_info(fs_info); // print fs info to serial console
+	FATFS fs;
+	FIL fp;
+	UINT btr, br;
+	FRESULT fr;
 
-	fat32::sector_buffer_t sector_buffer;
-	fat32::file_info_t fp;
-	fat32::fopen("/BIN/TEST.ELF", "r", &fp, fs_info, &sector_buffer); // open file
+	f_mount(&fs, "", 0);
 
-	uint8_t* elf_contents = (uint8_t*) global_allocator.request_pages(fp.file_size / 0x1000 + 1);
+	fr = f_open(&fp, "/bin/test.elf", FA_READ);
+	if (fr == FR_OK) {
+		btr = f_size(&fp);
+		void* elf_contents = (uint8_t*) global_allocator.request_pages(btr / 0x1000 + 1);
+		f_read(&fp, elf_contents, btr, &br);
 
-	fat32::fread(elf_contents, fp.file_size, &fp, fs_info, &sector_buffer); // read file
-	load_elf((void*) elf_contents, fp.file_size);
-	load_elf((void*) elf_contents, fp.file_size);
-	load_elf((void*) elf_contents, fp.file_size);
-	load_elf((void*) elf_contents, fp.file_size);
+		//load_elf((void*) elf_contents, br);
+		//load_elf((void*) elf_contents, br);
+		//load_elf((void*) elf_contents, br);
+		//load_elf((void*) elf_contents, br);
 
-	global_allocator.free_pages(elf_contents, fp.file_size / 0x1000 + 1);
+		fr = f_close(&fp);
+	}
+
+	shell::global_shell->init_shell();
 
 	init_sched();
 
