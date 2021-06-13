@@ -101,9 +101,9 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 
 	fat32::fread(elf_contents, fp.file_size, &fp, fs_info, &sector_buffer); // read file
 	load_elf((void*) elf_contents, fp.file_size);
-	load_elf((void*) elf_contents, fp.file_size);
-	load_elf((void*) elf_contents, fp.file_size);
-	load_elf((void*) elf_contents, fp.file_size);
+	//load_elf((void*) elf_contents, fp.file_size);
+	//load_elf((void*) elf_contents, fp.file_size);
+	//load_elf((void*) elf_contents, fp.file_size);
 
 	global_allocator.free_pages(elf_contents, fp.file_size / 0x1000 + 1);
 

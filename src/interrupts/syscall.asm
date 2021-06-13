@@ -79,11 +79,15 @@ syscall_handler:
 [extern syscall_test]
 [extern syscall_test2]
 [extern sys_write]
+[extern sys_resolve_symbol]
+[extern sys_memory]
 
 syscall_table:
 	dq syscall_test
 	dq syscall_test2
 	dq sys_write
+	dq sys_resolve_symbol
+	dq sys_memory
 syscall_table_end:
 
 max_syscall equ ((syscall_table_end - syscall_table) / 8) -1

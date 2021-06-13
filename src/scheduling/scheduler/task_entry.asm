@@ -8,6 +8,7 @@
 task_entry:
 	call rax
 
+.exit:
 	call _Z9task_exitv ; if the task ever returns just exit
 	
 	jmp $
