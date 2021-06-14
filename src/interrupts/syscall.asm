@@ -46,6 +46,7 @@ intr_stub 48
 
 [GLOBAL syscall_handler]
 syscall_handler:
+	cli
 	pusha
 	mov r15, cr0
 	push r15
@@ -61,8 +62,16 @@ syscall_handler:
 	cmp rax, max_syscall
 	ja .skip
 
+.spin_lock:
+	cmp [syscall_lock], byte 0
+	jne .spin_lock
+
+	mov [syscall_lock], byte 1
+
 	lea r15, [syscall_table + rax * 8]
 	call [r15]
+
+	mov [syscall_lock], byte 0
 
 .skip:
 
@@ -74,6 +83,8 @@ syscall_handler:
 
 	add rsp, 16
 
+	sti
+
 	iretq
 
 [extern syscall_test]
@@ -81,6 +92,7 @@ syscall_handler:
 [extern sys_write]
 [extern sys_resolve_symbol]
 [extern sys_memory]
+[extern sys_env]
 
 syscall_table:
 	dq syscall_test
@@ -88,6 +100,9 @@ syscall_table:
 	dq sys_write
 	dq sys_resolve_symbol
 	dq sys_memory
+	dq sys_env
 syscall_table_end:
+
+syscall_lock: db 0
 
 max_syscall equ ((syscall_table_end - syscall_table) / 8) -1

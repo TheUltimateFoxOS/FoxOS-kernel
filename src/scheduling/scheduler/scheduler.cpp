@@ -1,5 +1,4 @@
 #include <scheduling/scheduler/scheduler.h>
-#include <scheduling/scheduler/queue.h>
 #include <scheduling/scheduler/elf.h>
 #include <paging/page_frame_allocator.h>
 #include <paging/page_table_manager.h>
@@ -55,6 +54,7 @@ task* new_task(void* entry) {
 	t->first_sched = true;
 	t->kill_me = false;
 	t->is_elf = false;
+	t->lock = false;
 	t->stack = (uint64_t) stack;
 
 	uint64_t idx = 0;
@@ -106,7 +106,7 @@ void task_exit() {
 	}
 }
 
-task* load_elf(void* ptr, uint64_t file_size) {
+task* load_elf(void* ptr, uint64_t file_size, const char **argv, const char **envp) {
 	Elf64_Ehdr* header = (Elf64_Ehdr*) ptr;
 
 
@@ -158,6 +158,8 @@ task* load_elf(void* ptr, uint64_t file_size) {
 	t->is_elf = true;
 	t->offset = offset;
 	t->page_count = (uint64_t) last_dest / 0x1000 + 1;
+	t->argv = (char**) argv;
+	t->envp = (char**) envp;
 
 	return t;
 }
@@ -200,6 +202,8 @@ extern "C" void schedule(s_registers* regs) {
 
 	task_queue[id].next();
 
+next:
+
 	t = (task*) task_queue[id].list[0];
 
 	if(t->kill_me) {
@@ -210,7 +214,12 @@ extern "C" void schedule(s_registers* regs) {
 		free(t);
 
 		task_queue[id].remove_first();
-		t = (task*) task_queue[id].list[0];
+		goto next;
+	}
+
+	if(t->lock) {
+		task_queue[id].next();
+		goto next;
 	}
 
 	regs->rax = t->regs.rax;

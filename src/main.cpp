@@ -98,7 +98,10 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 		void* elf_contents = (uint8_t*) global_allocator.request_pages(btr / 0x1000 + 1);
 		f_read(&fp, elf_contents, btr, &br);
 
-		load_elf((void*) elf_contents, br);
+		const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
+		const char* envp[] = { "PATH=/bin", NULL };
+
+		load_elf((void*) elf_contents, br, argv, envp);
 
 		fr = f_close(&fp);
 	}

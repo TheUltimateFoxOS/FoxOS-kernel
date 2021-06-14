@@ -56,16 +56,33 @@ void PageFrameAllocator::init_bitmap(size_t bitmapsize, void* buffer_address){
 
 uint64_t page_bitmap_index = 0;
 void* PageFrameAllocator::request_page(){
-	for (; page_bitmap_index < page_bitmap.size * 8; page_bitmap_index++){
-        if (page_bitmap[page_bitmap_index] == true) continue;
-        lock_page((void*)(page_bitmap_index * 4096));
-        return (void*)(page_bitmap_index * 4096);
+	for (int i = 0; i < page_bitmap_index; i++) {
+		if(page_bitmap[i] == true) {
+			continue;
+		}
+		page_bitmap_index = i;
+		break;
+	}
+	
+
+	for (uint64_t x = page_bitmap_index; x < page_bitmap.size * 8; x++){
+        if (page_bitmap[x] == true) continue;
+        lock_page((void*)(x * 4096));
+        return (void*)(x * 4096);
     }
 
     return NULL; // Page Frame Swap to file
 }
 
 void* PageFrameAllocator::request_pages(int amount){
+	for (int i = 0; i < page_bitmap_index; i++) {
+		if(page_bitmap[i] == true) {
+			continue;
+		}
+		page_bitmap_index = i;
+		break;
+	}
+
 	for (uint64_t x = page_bitmap_index; x < page_bitmap.size * 8; x++){
         if (page_bitmap[x] == true) continue;
 		for (int i = 0; i < amount; i++) {
