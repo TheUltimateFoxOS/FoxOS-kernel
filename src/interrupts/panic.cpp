@@ -7,6 +7,10 @@ Panic::Panic(int intr) {
 	this->intr = intr;
 }
 
+Panic::Panic(char* panic) {
+	this->panic = panic;
+}
+
 char* Panic::get_panic_message() {
 	switch(this->intr){
 		case 0x0:
@@ -80,7 +84,11 @@ void Panic::do_it() {
 	renderer::global_font_renderer->clear();
 	renderer::global_font_renderer->cursor_position = {0, 0};
 	renderer::global_font_renderer->color = 0xffffffff;
-	renderer::global_font_renderer->printf("Kernel PANIC -> %s (0x%x)\n\n", this->get_panic_message(), this->intr);
+	if(!this->panic) {
+		renderer::global_font_renderer->printf("Kernel PANIC -> %s (0x%x)\n\n", this->get_panic_message(), this->intr);
+	} else {
+		renderer::global_font_renderer->printf("Kernel PANIC -> %s\n\n", this->panic);
+	}
 	renderer::global_font_renderer->printf("Kernel version: %d\n", VERSION);
 	renderer::global_font_renderer->printf("Release type: %s\n\n", RELEASE_T);
 

@@ -10,9 +10,11 @@ namespace interrupts {
 		private:
 			int intr;
 			char* get_panic_message();
+			char* panic;
 
 		public:
 			Panic(int intr);
+			Panic(char* panic);
 			void do_it();
 	};
 }
