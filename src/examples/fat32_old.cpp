@@ -1,4 +1,4 @@
-#include <fs/fat32_old.h>
+#include <fs/fat32/fat32_old.h>
 
 #include <driver/serial.h>
 

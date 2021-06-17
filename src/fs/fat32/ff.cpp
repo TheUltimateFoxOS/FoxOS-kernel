@@ -19,8 +19,8 @@
 
 
 #include <string.h>
-#include <fs/ff.h>			/* Declarations of FatFs API */
-#include <fs/diskio.h>		/* Declarations of device I/O functions */
+#include <fs/fat32/ff.h>			/* Declarations of FatFs API */
+#include <fs/fat32/diskio.h>		/* Declarations of device I/O functions */
 #include <memory/memory.h>
 #include <driver/cmos.h>
 

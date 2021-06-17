@@ -20,7 +20,7 @@
 
 #include <scheduling/scheduler/scheduler.h>
 
-#include <fs/ff.h>
+#include <fs/fat32/ff.h>
 
 #include "examples/examples.h"
 

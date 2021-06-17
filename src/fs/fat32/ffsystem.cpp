@@ -23,7 +23,7 @@
 /*------------------------------------------------------------------------*/
 
 
-#include <fs/ff.h>
+#include <fs/fat32/ff.h>
 
 #if FF_USE_LFN == 3	/* Dynamic memory allocation */
 
