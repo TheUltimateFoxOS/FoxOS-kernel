@@ -21,6 +21,8 @@
 #include <scheduling/scheduler/scheduler.h>
 
 #include <fs/fat32/ff.h>
+#include <fs/fat32/vfs.h>
+#include <fs/vfs/vfs.h>
 
 #include "examples/examples.h"
 
@@ -85,7 +87,7 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//syscall_test();
 	//test_scheduler();
 
-	FATFS fs;
+	/*FATFS fs;
 	FIL fp;
 	UINT btr, br;
 	FRESULT fr;
@@ -104,7 +106,20 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 		load_elf((void*) elf_contents, br, argv, envp);
 
 		fr = f_close(&fp);
-	}
+	}*/
+
+	vfs_mount* fat_mount = initialise_fat32(0);
+	mount(fat_mount, (char*) "root");
+
+	FILE* test = fopen("root:/bin/test.elf", "r");
+
+	void* elf_contents = (uint8_t*) global_allocator.request_pages(test->size / 0x1000 + 1);
+	fread(elf_contents, test->size, 1, test);
+
+	const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
+	const char* envp[] = { "PATH=/bin", NULL };
+
+	load_elf((void*) elf_contents, test->size, argv, envp);
 
 	shell::global_shell->init_shell();
 
