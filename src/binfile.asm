@@ -12,3 +12,4 @@ inc_bin fe_reverse, "scripting_languages/fe/script/reverse.fe"
 
 inc_bin default_font, "res/zap-light16.psf"
 inc_bin logo, "res/foxos.bmp"
+inc_bin screen_of_death, "res/screen_of_death.bmp"

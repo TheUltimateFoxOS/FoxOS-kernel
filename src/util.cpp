@@ -217,6 +217,7 @@ void prepare_acpi(bootinfo_t* bootinfo) {
 
 	renderer::global_font_renderer->printf("Booting FoxOS on %d proccesors!\n\n", numcore);
 
+
 	if (mcfg == NULL) {
 		renderer::global_font_renderer->printf("%fNo mcfg found!%r\n", 0xffff0000);
 		renderer::global_font_renderer->printf("%fAborting acpi preparation!%r\n", 0xffff0000);
@@ -226,47 +227,6 @@ void prepare_acpi(bootinfo_t* bootinfo) {
 }
 
 extern uint8_t logo[];
-
-void load_logo(bootinfo_t* bootinfo) {
-	uint8_t info[54];
-	int i = 54;
-	int y = 0;
-	uint8_t* read_buff = logo;
-	while(i > 0) {
-		uint8_t g = *read_buff;
-		info[y] = g;
-		read_buff++;
-		y++;
-		i--;
-	}
-	int data_offset = *(int*)&info[10]; 
-	int src_width = *(int*)&info[18];
-	int src_height = *(int*)&info[22];
-	int width = src_width * src_height / src_height;
-	int bit_count = (*(short*)&info[28]) / 8;
-
-	int lx = (bootinfo->framebuffer->width - src_width) / 2;
-	int ly = 0;
-
-	int location = (lx + ly * bootinfo->framebuffer->width) * 4;
-
-	uint8_t* logo_data = logo;
-	logo_data += data_offset;
-
-	for (int i = src_height; 0 < i; i--) {
-		for(int j = 0; j < width; j++) {
-			int where = (j + (i * bootinfo->framebuffer->width)) * 4 + location;     
-			for (int c = 2; 0 <= c; c--) {
-				uint8_t g = logo_data[((j * src_width) / width + (((src_height - i) * src_height) / src_height) * src_width) * bit_count + c];
-				uint8_t* screen = (uint8_t*) bootinfo->framebuffer->base_address;
-				screen[where + c] = g;
-			}
-		}
-	}
-
-	renderer::global_font_renderer->cursor_position = { 0, src_height + 16 };
-	
-}
 
 KernelInfo init_kernel(bootinfo_t* bootinfo) {
 	gdt_descriptor_t gdt_descriptor;
@@ -284,7 +244,7 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 	init_fast_mem(); // we want to use as fast as possible fast memory functions
 
 	setup_globals(bootinfo);
-	load_logo(bootinfo);
+	renderer::global_renderer2D->load_bitmap(logo, 0);
 
 	prepare_interrupts();
 

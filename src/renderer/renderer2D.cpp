@@ -98,3 +98,101 @@ void Renderer2D::scroll_down() {
 
 	global_renderer2D->draw_overlay_mouse_cursor(global_mouse_renderer->get_mouse_pointer(), global_mouse_renderer->mouse_position, 0xffffffff);
 }
+
+void Renderer2D::load_bitmap(uint8_t data[], int y) {
+	uint8_t info[54];
+	int _i = 54;
+	int _y = 0;
+	uint8_t* read_buff = data;
+	while(_i > 0) {
+		uint8_t g = *read_buff;
+		info[_y] = g;
+		read_buff++;
+		_y++;
+		_i--;
+	}
+	int data_offset = *(int*)&info[10]; 
+	int src_width = *(int*)&info[18];
+	int src_height = *(int*)&info[22];
+	int width = src_width * src_height / src_height;
+	int bit_count = (*(short*)&info[28]) / 8;
+
+	int lx = (target_frame_buffer->width - src_width) / 2;
+	int ly = y;
+
+	int location = (lx + ly * target_frame_buffer->width) * 4;
+
+	uint8_t* logo_data = data;
+	logo_data += data_offset;
+
+	for (int i = src_height; 0 < i; i--) {
+		for(int j = 0; j < width; j++) {
+			int where = (j + (i * target_frame_buffer->width)) * 4 + location;     
+			for (int c = 2; 0 <= c; c--) {
+				uint8_t g = logo_data[((j * src_width) / width + (((src_height - i) * src_height) / src_height) * src_width) * bit_count + c];
+				uint8_t* screen = (uint8_t*) target_frame_buffer->base_address;
+				screen[where + c] = g;
+			}
+		}
+	}
+
+	renderer::global_font_renderer->cursor_position = { 0, src_height + 16 };
+}
+
+void Renderer2D::load_bitmap(uint8_t data[], int x, int y) {
+	uint8_t info[54];
+	int _i = 54;
+	int _y = 0;
+	uint8_t* read_buff = data;
+	while(_i > 0) {
+		uint8_t g = *read_buff;
+		info[_y] = g;
+		read_buff++;
+		_y++;
+		_i--;
+	}
+	int data_offset = *(int*)&info[10]; 
+	int src_width = *(int*)&info[18];
+	int src_height = *(int*)&info[22];
+	int width = src_width * src_height / src_height;
+	int bit_count = (*(short*)&info[28]) / 8;
+
+	int lx = x;
+	int ly = y;
+
+	int location = (lx + ly * target_frame_buffer->width) * 4;
+
+	uint8_t* logo_data = data;
+	logo_data += data_offset;
+
+	for (int i = src_height; 0 < i; i--) {
+		for(int j = 0; j < width; j++) {
+			int where = (j + (i * target_frame_buffer->width)) * 4 + location;     
+			for (int c = 2; 0 <= c; c--) {
+				uint8_t g = logo_data[((j * src_width) / width + (((src_height - i) * src_height) / src_height) * src_width) * bit_count + c];
+				uint8_t* screen = (uint8_t*) target_frame_buffer->base_address;
+				screen[where + c] = g;
+			}
+		}
+	}
+
+	//renderer::global_font_renderer->cursor_position = { 0, src_height + 16 };
+}
+
+renderer::point_t Renderer2D::get_bitmap_info(uint8_t data[]) {
+	uint8_t info[54];
+	int _i = 54;
+	int _y = 0;
+	uint8_t* read_buff = data;
+	while(_i > 0) {
+		uint8_t g = *read_buff;
+		info[_y] = g;
+		read_buff++;
+		_y++;
+		_i--;
+	}
+	int src_width = *(int*)&info[18];
+	int src_height = *(int*)&info[22];
+
+	return { src_height, src_width };
+}

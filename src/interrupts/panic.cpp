@@ -1,10 +1,13 @@
 #include <interrupts/panic.h>
 #include <scheduling/scheduler/scheduler.h>
+#include <renderer/renderer2D.h>
+#include <renderer/point.h>
 
 using namespace interrupts;
 
 Panic::Panic(int intr) {
 	this->intr = intr;
+	this->panic = NULL;
 }
 
 Panic::Panic(char* panic) {
@@ -79,11 +82,19 @@ char* Panic::get_panic_message() {
 	}
 }
 
+extern uint8_t screen_of_death[];
+
+
 void Panic::do_it() {
+	renderer::point_t bmp_info = renderer::global_renderer2D->get_bitmap_info(screen_of_death);
+
+
 	renderer::global_font_renderer->color = 0xfff37835;
 	renderer::global_font_renderer->clear();
 	renderer::global_font_renderer->cursor_position = {0, 0};
 	renderer::global_font_renderer->color = 0xffffffff;
+	renderer::global_renderer2D->load_bitmap(screen_of_death, 0, renderer::global_renderer2D->target_frame_buffer->height - bmp_info.x);
+
 	if(!this->panic) {
 		renderer::global_font_renderer->printf("Kernel PANIC -> %s (0x%x)\n\n", this->get_panic_message(), this->intr);
 	} else {
@@ -94,6 +105,7 @@ void Panic::do_it() {
 
 	renderer::global_font_renderer->printf("Please report this issue at %fhttps://github.com/TheUltimateFoxOS/FoxOS%r\n", 0xff0000ff);
 	renderer::global_font_renderer->printf("Feel free to fix this issue and submit a pull request\n");
+
 
 	while(true) {
 		halt_cpu = true;
