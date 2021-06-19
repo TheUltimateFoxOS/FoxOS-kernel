@@ -85,13 +85,11 @@ int fat32_close(vfs_mount* node, file_t* stream) {
 size_t fat32_read(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* stream) {
 	unsigned int has_read;
 	FRESULT res = f_read((FIL*)stream->data, buffer, size, &has_read);
-	assert(res == FR_OK);
 	return has_read;
 }
 
 size_t fat32_write(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* stream) {
 	unsigned int has_written;
 	FRESULT res = f_write((FIL*)stream->data, buffer, size, &has_written);
-	assert(res == FR_OK);
 	return has_written;
 }

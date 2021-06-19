@@ -6,7 +6,7 @@
 
 list* vfs_nodes = NULL;
 
-void mount(vfs_mount* mount, char* name) {
+vfs_result mount(vfs_mount* mount, char* name) {
 	if(vfs_nodes == NULL) {
 		vfs_nodes = new list(255);
 	}
@@ -14,14 +14,15 @@ void mount(vfs_mount* mount, char* name) {
 	char* _name = (char*) malloc(sizeof(char) * strlen(name));
 	strcpy(_name, name);
 
-	assert(mount->mount != NULL);
+	if (mount->mount == NULL) {
+		return VFS_MOUNT_ERROR;
+	}
 
 	list_node_t* node = vfs_nodes->add_node(mount, _name, NULL, NULL);
-
 	mount->node = node;
 
 	mount->mount(mount);
-
+	return VFS_OK;
 }
 
 bool search_for_disk_name(list_node_t* node, void* d1, void* d2, void* d3, void* d4) {
@@ -32,14 +33,18 @@ bool search_for_disk_name(list_node_t* node, void* d1, void* d2, void* d3, void*
 	}
 }
 
-void unmount(char* name) {
+vfs_result unmount(char* name) {
 	list_node_t* node = vfs_nodes->find_node(search_for_disk_name, NULL, name, NULL, NULL);
-	assert(node != NULL);
-	assert(((vfs_mount*) node->data1)->unmount != NULL);
+	if (node == NULL) {
+		return VFS_NO_NDOE;
+	}
+	if (((vfs_mount*) node->data1)->unmount == NULL) {
+		return VFS_MISSING_FUNCTION;
+	}
 
 	((vfs_mount*) node->data1)->unmount((vfs_mount*) node->data1);
-
 	vfs_nodes->remove_node(node);
+	return VFS_OK;
 }
 
 FILE* fopen(const char* filename, const char* mode) {
@@ -58,12 +63,19 @@ FILE* fopen(const char* filename, const char* mode) {
 		}
 	}
 
+	#warning The node trying to be accessed can not be found
 	return NULL;
 
 found:
 	list_node_t* node = vfs_nodes->find_node(search_for_disk_name, NULL, _filename, NULL, NULL);
-	assert(node != NULL);
-	assert(((vfs_mount*) node->data1)->open != NULL);
+	if (node == NULL) {
+		#warning The node trying to be accessed is null
+		return NULL;
+	}
+	if (((vfs_mount*) node->data1)->open == NULL) {
+		#warning Set an errno: A VFS driver function is missing
+		return NULL;
+	}
 	FILE* out = ((vfs_mount*) node->data1)->open((vfs_mount*) node->data1, file_path, mode);	
 
 	out->mount = (vfs_mount*) node->data1;
@@ -72,7 +84,10 @@ found:
 }
 
 int fclose(FILE* stream) {
-	assert(stream->mount->close != NULL);
+	if (stream->mount->close == NULL) {
+		#warning Set an errno: A VFS driver function is missing
+		return 1;
+	}
 	stream->mount->close(stream->mount, stream);
 	free(stream);
 
@@ -80,13 +95,19 @@ int fclose(FILE* stream) {
 }
 
 size_t fwrite(void* ptr, size_t size, size_t nmemb, FILE* stream) {
-	assert(stream->mount->write != NULL);
+	if (stream->mount->write == NULL) {
+		#warning Set an errno: A VFS driver function is missing
+		return 0;
+	}
 	size_t ret = stream->mount->write(stream->mount, ptr, size, nmemb, stream);
 	return ret;
 }
 
 size_t fread(void* ptr, size_t size, size_t nmemb, FILE* stream) {
-	assert(stream->mount->read != NULL);
+	if (stream->mount->read == NULL) {
+		#warning Set an errno: A VFS driver function is missing
+		return 0;
+	}
 	size_t ret = stream->mount->read(stream->mount, ptr, size, nmemb, stream);
 	return ret;
 }

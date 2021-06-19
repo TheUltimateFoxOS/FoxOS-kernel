@@ -50,8 +50,16 @@ typedef struct file_t {
 
 } FILE;
 
-void mount(vfs_mount* mount, char* name);
-void unmount(char* name);
+enum vfs_result {
+	VFS_OK = 0, //Everyting is ok
+	VFS_ERROR, //Undefined error
+	VFS_MOUNT_ERROR, //Unable to mount a node
+	VFS_NO_NDOE, //The node trying to be accessed is null
+	VFS_MISSING_FUNCTION //A VFS driver function is missing
+};
+
+vfs_result mount(vfs_mount* mount, char* name);
+vfs_result unmount(char* name);
 FILE* fopen(const char* filename, const char* mode);
 int fclose(FILE* stream);
 size_t fwrite(void* ptr, size_t size, size_t nmemb, FILE* stream);

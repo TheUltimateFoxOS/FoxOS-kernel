@@ -87,27 +87,6 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//syscall_test();
 	//test_scheduler();
 
-	/*FATFS fs;
-	FIL fp;
-	UINT btr, br;
-	FRESULT fr;
-
-	f_mount(&fs, "", 0);
-
-	fr = f_open(&fp, "/bin/test.elf", FA_READ);
-	if (fr == FR_OK) {
-		btr = f_size(&fp);
-		void* elf_contents = (uint8_t*) global_allocator.request_pages(btr / 0x1000 + 1);
-		f_read(&fp, elf_contents, btr, &br);
-
-		const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
-		const char* envp[] = { "PATH=/bin", NULL };
-
-		load_elf((void*) elf_contents, br, argv, envp);
-
-		fr = f_close(&fp);
-	}*/
-
 	vfs_mount* fat_mount = initialise_fat32(0);
 	mount(fat_mount, (char*) "root");
 
