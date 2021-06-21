@@ -15,6 +15,7 @@ struct task {
 	int page_count;
 	char **argv;
 	char **envp;
+	int* errno;
 };
 
 void init_sched();

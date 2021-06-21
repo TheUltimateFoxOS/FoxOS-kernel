@@ -14,5 +14,8 @@ extern "C" void sys_env(s_registers regs) {
 		case 1:
 			regs.rcx = (uint64_t) t->envp;
 			break;
+		case 2:
+			t->errno = (int*) regs.rcx;
+			break;
 	}
 }
