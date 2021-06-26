@@ -1,8 +1,13 @@
 #include <fs/fat32/vfs.h>
 #include <fs/fat32/ff.h>
+
 #include <memory/memory.h>
 #include <memory/heap.h>
+
 #include <paging/page_frame_allocator.h>
+
+#include <scheduling/scheduler/errno.h>
+
 #include <string.h>
 #include <assert.h>
 
@@ -11,12 +16,19 @@ vfs_mount* initialise_fat32(int disk_id) {
 	memset(mount, 0, sizeof(mount));
 
 	mount->data2 = disk_id;
+
 	mount->mount = fat32_mount;
 	mount->unmount = fat32_unmount;
+
 	mount->open = fat32_open;
 	mount->close = fat32_close;
 	mount->write = fat32_write;
 	mount->read = fat32_read;
+
+	mount->opendir = fat32_opendir;
+	mount->closedir = fat32_closedir;
+	mount->readdir = fat32_readdir;
+	mount->rewinddir = fat32_rewinddir;
 
 	return mount;
 }
@@ -66,7 +78,10 @@ FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 	}
 
 	FRESULT fr = f_open(&fil, file, fatmode);
-	assert(fr == FR_OK);
+	if (fr != FR_OK) {
+		fp->is_error = 1;
+		set_task_errno(vfs_result::VFS_FILE_NOT_FOUND);
+	}
 
 	fp->size = f_size(&fil);
 	fp->data = (void*) malloc(sizeof(FIL));
@@ -92,4 +107,45 @@ size_t fat32_write(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* 
 	unsigned int has_written;
 	FRESULT res = f_write((FIL*)stream->data, buffer, size, &has_written);
 	return has_written;
+}
+
+DIR* fat32_opendir(vfs_mount* node, const char* name) {
+	FATDIR dir;
+	DIR* dp = new DIR;
+
+	FRESULT fr = f_opendir(&dir, name);
+	if (fr != FR_OK) {
+		dp->is_error = 1;
+		set_task_errno(vfs_result::VFS_FILE_NOT_FOUND);
+	}
+
+	dp->is_error = 0;
+	dp->data = (void*) malloc(sizeof(FATDIR));
+	memcpy(dp->data, &dir, sizeof(FATDIR));
+
+	return dp;
+}
+
+int fat32_closedir(vfs_mount*, DIR* stream) {
+	f_closedir((FATDIR*) stream->data);
+	free(stream->data);
+
+	return 0;
+}
+
+struct dirent* fat32_readdir(vfs_mount*, DIR* stream) {
+	FILINFO flinf;
+	FRESULT res = f_readdir((FATDIR*)stream->data, &flinf);
+
+	dirent* out = new dirent;
+	out->ino = ((FATDIR*)stream->data)->dptr;
+	for (int i = 0; i < 13; i++) {
+		out->name[i] = flinf.fname[i];
+	}
+
+	return out;
+}
+
+void fat32_rewinddir(vfs_mount*, DIR* stream) {
+	f_readdir((FATDIR*) stream->data, 0);
 }

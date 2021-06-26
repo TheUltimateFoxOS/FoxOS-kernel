@@ -11,8 +11,10 @@ int fat32_close(vfs_mount* node, file_t* stream);
 size_t fat32_read(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* stream);
 size_t fat32_write(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* stream);
 
-FILE fat32_readdir(vfs_mount* node, const char* dir, int nchild);
-FILE fat32_finddir(vfs_mount* node, const char* dir, const char* name);
-
 void fat32_mount(vfs_mount* node);
 void fat32_unmount(vfs_mount* node);
+
+DIR* fat32_opendir(vfs_mount* node, const char* name);
+int fat32_closedir(vfs_mount*, DIR* stream);
+struct dirent* fat32_readdir(vfs_mount*, DIR* stream);
+void fat32_rewinddir(vfs_mount*, DIR* stream);

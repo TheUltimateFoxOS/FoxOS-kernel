@@ -91,14 +91,27 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	mount(fat_mount, (char*) "root");
 
 	FILE* test = fopen("root:/bin/test.elf", "r");
-
 	void* elf_contents = (uint8_t*) global_allocator.request_pages(test->size / 0x1000 + 1);
 	fread(elf_contents, test->size, 1, test);
+	fclose(test);
 
 	const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
 	const char* envp[] = { "PATH=/bin", NULL };
-
 	load_elf((void*) elf_contents, test->size, argv, envp);
+
+
+	DIR* dir = opendir("root:/");
+	struct dirent* info;
+
+	info = readdir(dir);
+	renderer::global_font_renderer->printf("DATA HERE: %s = %d\n", info->name, info->ino);
+	info = readdir(dir);
+	renderer::global_font_renderer->printf("DATA HERE: %s = %d\n", info->name, info->ino);
+	info = readdir(dir);
+	renderer::global_font_renderer->printf("DATA HERE: %s = %d\n", info->name, info->ino);
+
+	closedir(dir);
+
 
 	shell::global_shell->init_shell();
 

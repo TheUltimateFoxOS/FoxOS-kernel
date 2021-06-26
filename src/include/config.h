@@ -11,6 +11,8 @@
 #define RELEASE_T	"Alpha"
 #define VENDOR 		"TheUltimateFoxOS"
 
+#define MAX_FILE_NAME_SIZE 128
+
 #define NO_SMP
 
 struct symbol {
