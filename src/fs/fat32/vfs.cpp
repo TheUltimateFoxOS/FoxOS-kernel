@@ -30,6 +30,10 @@ vfs_mount* initialise_fat32(int disk_id) {
 	mount->readdir = fat32_readdir;
 	mount->rewinddir = fat32_rewinddir;
 
+	mount->mkdir = fat32_mkdir;
+	mount->unlink = fat32_unlink;
+	mount->rename = fat32_rename;
+
 	return mount;
 }
 
@@ -81,6 +85,7 @@ FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 	if (fr != FR_OK) {
 		fp->is_error = 1;
 		set_task_errno(vfs_result::VFS_FILE_NOT_FOUND);
+		return fp;
 	}
 
 	fp->size = f_size(&fil);
@@ -117,9 +122,9 @@ DIR* fat32_opendir(vfs_mount* node, const char* name) {
 	if (fr != FR_OK) {
 		dp->is_error = 1;
 		set_task_errno(vfs_result::VFS_FILE_NOT_FOUND);
+		return dp;
 	}
 
-	dp->is_error = 0;
 	dp->data = (void*) malloc(sizeof(FATDIR));
 	memcpy(dp->data, &dir, sizeof(FATDIR));
 
@@ -135,10 +140,13 @@ int fat32_closedir(vfs_mount*, DIR* stream) {
 
 struct dirent* fat32_readdir(vfs_mount*, DIR* stream) {
 	FILINFO flinf;
-	FRESULT res = f_readdir((FATDIR*)stream->data, &flinf);
+	FRESULT fr = f_readdir((FATDIR*)stream->data, &flinf);
+	if (fr != FR_OK) {
+		return NULL;
+	}
 
 	dirent* out = new dirent;
-	out->ino = ((FATDIR*)stream->data)->dptr;
+	out->ino = -1;
 	for (int i = 0; i < 13; i++) {
 		out->name[i] = flinf.fname[i];
 	}
@@ -148,4 +156,31 @@ struct dirent* fat32_readdir(vfs_mount*, DIR* stream) {
 
 void fat32_rewinddir(vfs_mount*, DIR* stream) {
 	f_readdir((FATDIR*) stream->data, 0);
+}
+
+int fat32_mkdir(vfs_mount*, const char* name, uint32_t) {
+	FRESULT fr = f_mkdir(name);
+	if (fr != FR_OK) {
+		return -1;
+	}
+
+	return 0;
+}
+
+int fat32_unlink(vfs_mount*, const char* name) {
+	FRESULT fr = f_unlink(name);
+	if (fr != FR_OK) {
+		return -1;
+	}
+
+	return 0;
+}
+
+int fat32_rename(vfs_mount*, const char* old_name, const char* new_name) {
+	FRESULT fr = f_rename(old_name, new_name);
+	if (fr != FR_OK) {
+		return -1;
+	}
+
+	return 0;
 }

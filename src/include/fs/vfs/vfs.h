@@ -21,6 +21,10 @@ typedef int (*closedir_type_t)(vfs_mount*, dir_t*);
 typedef struct dirent* (*readdir_type_t)(vfs_mount*, dir_t*);
 typedef void (*rewinddir_type_t)(vfs_mount*, dir_t*);
 
+typedef int (*mkdir_type_t)(vfs_mount*, const char*, uint32_t);
+typedef int (*unlink_type_t)(vfs_mount*, const char*);
+typedef int (*rename_type_t)(vfs_mount*, const char*, const char*);
+
 typedef void (*mount_type_t)(vfs_mount*);
 typedef void (*unmount_type_t)(vfs_mount*);
 
@@ -40,6 +44,10 @@ struct vfs_mount {
 	closedir_type_t closedir;
 	readdir_type_t readdir;
 	rewinddir_type_t rewinddir;
+
+	mkdir_type_t mkdir;
+	unlink_type_t unlink;
+	rename_type_t rename;
 
 	mount_type_t mount;
 	unmount_type_t unmount;
@@ -77,6 +85,7 @@ struct dirent {
 enum vfs_result {
 	VFS_OK = 0, //Everyting is ok
 	VFS_ERROR, //Undefined error
+	VFS_NOT_IMPLEMENTED, //The action is not implemented
 	VFS_MOUNT_ERROR, //Unable to mount a node
 	VFS_NO_NDOE, //The node trying to be accessed is null
 	VFS_MISSING_FUNCTION, //A VFS driver function is missing
@@ -94,3 +103,7 @@ DIR* opendir(const char* name);
 int closedir(DIR* stream);
 struct dirent* readdir(DIR* stream);
 void rewinddir(DIR* stream);
+
+int mkdir(const char* name, uint32_t mode);
+int unlink(const char* name);
+int rename(const char* old_name, const char* new_name);
