@@ -12,6 +12,7 @@
 #define VENDOR 		"TheUltimateFoxOS"
 
 #define MAX_FILE_NAME_SIZE 128
+#define MAX_VFS_NODES 255
 
 #define NO_SMP
 

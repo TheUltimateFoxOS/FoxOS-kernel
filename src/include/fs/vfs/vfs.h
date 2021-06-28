@@ -93,6 +93,7 @@ enum vfs_result {
 };
 
 vfs_result mount(vfs_mount* mount, char* name);
+char* mount(vfs_mount* node_mount);
 vfs_result unmount(char* name);
 FILE* fopen(const char* filename, const char* mode);
 int fclose(FILE* stream);

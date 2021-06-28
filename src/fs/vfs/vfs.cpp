@@ -8,12 +8,21 @@
 
 #include <assert.h>
 #include <string.h>
+#include <cstr.h>
 
 list* vfs_nodes = NULL;
 
+bool search_for_disk_name(list_node_t* node, void* d1, void* d2, void* d3, void* d4) {
+	if(strcmp((char*) node->data2, (char*) d2) == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 vfs_result mount(vfs_mount* mount, char* name) {
 	if(vfs_nodes == NULL) {
-		vfs_nodes = new list(255);
+		vfs_nodes = new list(MAX_VFS_NODES);
 	}
 
 	char* _name = (char*) malloc(sizeof(char) * strlen(name));
@@ -30,12 +39,28 @@ vfs_result mount(vfs_mount* mount, char* name) {
 	return VFS_OK;
 }
 
-bool search_for_disk_name(list_node_t* node, void* d1, void* d2, void* d3, void* d4) {
-	if(strcmp((char*) node->data2, (char*) d2) == 0) {
-		return true;
-	} else {
-		return false;
+char* mount(vfs_mount* node_mount) {
+	char* node_name;
+
+	for (uint64_t fs_num = 0; fs_num <= MAX_VFS_NODES; fs_num++) {
+		node_name = (char*) to_string(fs_num);
+		list_node_t* node = vfs_nodes->find_node(search_for_disk_name, NULL, node_name, NULL, NULL);
+
+		if (node == NULL) {
+			break;
+		}
 	}
+
+	if (node_name == NULL) {
+		return NULL;
+	}
+
+	vfs_result res = mount(node_mount, node_name);
+	if (res != VFS_OK) {
+		return NULL;
+	}
+
+	return node_name;
 }
 
 vfs_result unmount(char* name) {
