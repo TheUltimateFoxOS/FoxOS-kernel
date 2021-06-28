@@ -9,7 +9,7 @@ void __assert_fail(const char* __assertion, const char* __file, unsigned int __l
 	sprintf(panic_buffer, "Assertion failed: \"%s\" in file %s at line %d\n", __assertion, __file, __line);
 
 	interrupts::Panic p = interrupts::Panic(panic_buffer);
-	p.do_it();
+	p.do_it(NULL);
 }
 
 void __assert_fail_nopanic(const char* __assertion, const char* __file, unsigned int __line) {

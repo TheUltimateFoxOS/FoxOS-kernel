@@ -14,15 +14,11 @@
 #include <renderer/mouse_renderer.h>
 #include <renderer/renderer2D.h>
 
-#include <paging/paging.h>
 #include <paging/page_frame_allocator.h>
-#include <paging/page_map_indexer.h>
-#include <paging/page_table_manager.h>
 
 #include <scheduling/pit/pit.h>
 #include <interrupts/interrupts.h>
 
-#include <pci/acpi.h>
 #include <pci/pci.h>
 
 #include <driver/driver.h>
@@ -175,7 +171,7 @@ void setup_globals(bootinfo_t* bootinfo) {
 	memcpy(font_header, default_font, sizeof(psf1_header_t));
 
 	if(font_header->magic[0] != PSF1_MAGIC0 || font_header->magic[1] != PSF1_MAGIC1) {
-		driver::global_serial_driver->printf("Looks like the font is corrupted continuing anyways!\n");
+		driver::global_serial_driver->printf("Looks like the font is corrupted continuing anyway!\n");
 	}
 
 	uint64_t glyph_buffer_size = font_header->charsize * 256;
@@ -199,7 +195,6 @@ void setup_globals(bootinfo_t* bootinfo) {
 	renderer::global_renderer2D = &r2d;
 
 	driver::global_driver_manager = &dm;
-
 	driver::disk::global_disk_manager = &disk_manager;
 
 	sh = shell::Shell();
@@ -208,15 +203,12 @@ void setup_globals(bootinfo_t* bootinfo) {
 
 void prepare_acpi(bootinfo_t* bootinfo) {
 	pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (bootinfo->rsdp->xsdt_address);
-
 	pci::acpi::mcfg_header_t* mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table(xsdt, (char*) "MCFG");
 
 	uint8_t* madt = (uint8_t*) pci::acpi::find_table(xsdt, (char*) "APIC");
-
 	parse_madt(madt);
 
 	renderer::global_font_renderer->printf("Booting FoxOS on %d proccesors!\n\n", numcore);
-
 
 	if (mcfg == NULL) {
 		renderer::global_font_renderer->printf("%fNo mcfg found!%r\n", 0xffff0000);
@@ -236,11 +228,9 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 	load_gdt(&gdt_descriptor);
 
 	prepare_memory(bootinfo);
-
 	memset(bootinfo->framebuffer->base_address, 0, bootinfo->framebuffer->buffer_size);
 
 	initialize_heap((void*) 0x0000100000000000, 0x10);
-
 	init_fast_mem(); // we want to use as fast as possible fast memory functions
 
 	setup_globals(bootinfo);

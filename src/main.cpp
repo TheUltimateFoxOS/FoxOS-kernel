@@ -6,7 +6,6 @@
 #include <renderer/font_renderer.h>
 #include <renderer/mouse_renderer.h>
 
-#include <paging/page_table_manager.h>
 #include <paging/page_frame_allocator.h>
 
 #include <driver/driver.h>
@@ -20,7 +19,6 @@
 
 #include <scheduling/scheduler/scheduler.h>
 
-#include <fs/fat32/ff.h>
 #include <fs/fat32/vfs.h>
 #include <fs/vfs/vfs.h>
 
@@ -90,9 +88,10 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	vfs_mount* fat_mount = initialise_fat32(0);
 	mount(fat_mount, (char*) "root");
 
-	FILE* test = fopen("root:/bin/test.elf", "r");
+	FILE* test = fopen("root:/bin/tests.elf", "r");
 	int page_amount = test->size / 0x1000 + 1;
-	void* elf_contents = (uint8_t*) global_allocator.request_pages(page_amount);
+	void* elf_contents = global_allocator.request_pages(page_amount);
+
 	fread(elf_contents, test->size, 1, test);
 	fclose(test);
 

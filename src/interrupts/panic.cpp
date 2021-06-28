@@ -82,30 +82,47 @@ char* Panic::get_panic_message() {
 	}
 }
 
+void Panic::dump_regs(s_registers* regs) {
+	renderer::global_font_renderer->printf("cr0: %d; cr2: %d; cr3: %d; cr4: %d\n", regs->cr0, regs->cr2, regs->cr3, regs->cr4);
+	renderer::global_font_renderer->printf("r8: %d; r9: %d; r10: %d; r11: %d\n", regs->r8, regs->r9, regs->r10, regs->r11);
+	renderer::global_font_renderer->printf("r12: %d; r13: %d; r14: %d; r15: %d\n", regs->r12, regs->r13, regs->r14, regs->r15);
+	renderer::global_font_renderer->printf("rdi: %d; rsi: %d; rbp: %d\n", regs->rdi, regs->rsi, regs->rbp);
+	renderer::global_font_renderer->printf("rax: %d; rbx: %d; rcx: %d; rdx: %d\n", regs->rax, regs->rbx, regs->rcx, regs->rdx);
+	renderer::global_font_renderer->printf("rip: %d; cs: %d; rflags: %d; rsp: %d\n\n", regs->rip, regs->cs, regs->rflags, regs->rsp);
+}
+
 extern uint8_t screen_of_death[];
 
-
-void Panic::do_it() {
+void Panic::do_it(s_registers* regs) {
 	renderer::point_t bmp_info = renderer::global_renderer2D->get_bitmap_info(screen_of_death);
 
 
-	renderer::global_font_renderer->color = 0xfff37835;
+	renderer::global_font_renderer->color = 0xffe36d2d;
 	renderer::global_font_renderer->clear();
-	renderer::global_font_renderer->cursor_position = {0, 0};
-	renderer::global_font_renderer->color = 0xffffffff;
-	renderer::global_renderer2D->load_bitmap(screen_of_death, 0, renderer::global_renderer2D->target_frame_buffer->height - bmp_info.x);
 
-	if(!this->panic) {
-		renderer::global_font_renderer->printf("Kernel PANIC -> %s (0x%x)\n\n", this->get_panic_message(), this->intr);
+	renderer::global_font_renderer->cursor_position = {0, 8};
+	renderer::global_font_renderer->color = 0xffffffff;
+
+	renderer::global_font_renderer->printf("(/ o_o)/ Oh no! Something terrible has happened and your system has been halted...\n");
+	renderer::global_font_renderer->printf("There isn't much you can do apart from restart the computer. More information below.\n\n");
+
+	if (!this->panic) {
+		renderer::global_font_renderer->printf("Kernel PANIC -> %s (0x%x)\n", this->get_panic_message(), this->intr);
 	} else {
-		renderer::global_font_renderer->printf("Kernel PANIC -> %s\n\n", this->panic);
+		renderer::global_font_renderer->printf("Kernel PANIC -> %s\n", this->panic);
 	}
 	renderer::global_font_renderer->printf("Kernel version: %d\n", VERSION);
 	renderer::global_font_renderer->printf("Release type: %s\n\n", RELEASE_T);
 
-	renderer::global_font_renderer->printf("Please report this issue at %fhttps://github.com/TheUltimateFoxOS/FoxOS%r\n", 0xff0000ff);
-	renderer::global_font_renderer->printf("Feel free to fix this issue and submit a pull request\n");
+	renderer::global_font_renderer->printf("Please report this issue at %fhttps://github.com/TheUltimateFoxOS/FoxOS%r by creating an issue.\n", 0xff0000ff);
+	renderer::global_font_renderer->printf("Feel free to fix this and submit a pull request!\n\n");
 
+	if (regs) {
+		renderer::global_font_renderer->printf("Register dump:\n");
+		dump_regs(regs);
+	}
+
+	renderer::global_renderer2D->load_bitmap(screen_of_death, 0, renderer::global_renderer2D->target_frame_buffer->height - bmp_info.x);
 
 	while(true) {
 		halt_cpu = true;
