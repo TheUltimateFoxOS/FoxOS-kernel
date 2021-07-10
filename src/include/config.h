@@ -11,7 +11,10 @@
 #define RELEASE_T	"Alpha"
 #define VENDOR 		"TheUltimateFoxOS"
 
-//#define NO_SMP
+#define MAX_FILE_NAME_SIZE 128
+#define MAX_VFS_NODES 255
+
+#define NO_SMP
 
 struct symbol {
 	uint64_t addr;
@@ -26,7 +29,16 @@ struct patch_t {
 	uint8_t old_code[13];
 };
 
+struct stack_frame_t {
+	struct stack_frame_t*	rbp;
+	uint64_t				rip;
+} __attribute__((packed));
+
+void unwind(int max, uint64_t rbp, void (*callback)(int frame_num, uint64_t rip));
+
 uint64_t resolve_symbol(char* name);
+char* resolve_symbol(uint64_t address);
+
 patch_t* patch(char* name, uint64_t new_func);
 void unpatch(patch_t* patch);
 #endif

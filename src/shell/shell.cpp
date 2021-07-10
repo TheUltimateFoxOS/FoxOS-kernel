@@ -47,13 +47,23 @@ void Shell::run_command() {
 	command_running = false;
 }
 
+void add_char(char c);
+bool is_reading();
+
 void Shell::keypress(char key) {
 	if (command_running) {
 		//Send keys to running program
+		
 		return;
 	}
 
 	if (key == 0) {
+		return;
+	}
+
+	if (is_reading()) {
+		renderer::global_font_renderer->printf("%c", key);
+		add_char(key);
 		return;
 	}
 

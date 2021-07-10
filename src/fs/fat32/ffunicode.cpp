@@ -42,7 +42,7 @@
 */
 
 
-#include <fs/ff.h>
+#include <fs/fat32/ff.h>
 
 #if FF_USE_LFN	/* This module will be blanked if non-LFN configuration */
 

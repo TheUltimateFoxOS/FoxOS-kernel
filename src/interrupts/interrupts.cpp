@@ -14,7 +14,7 @@ extern "C" void schedule(s_registers* regs);
 extern "C" void intr_common_handler_c(s_registers* regs) {
 	if(regs->interrupt_number <= 0x1f) {
 		Panic p = Panic(regs->interrupt_number);
-		p.do_it();
+		p.do_it(regs);
 		while(1);
 	}
 

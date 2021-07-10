@@ -6,12 +6,12 @@
 #include <renderer/font_renderer.h>
 #include <renderer/mouse_renderer.h>
 
-#include <paging/page_table_manager.h>
 #include <paging/page_frame_allocator.h>
 
 #include <driver/driver.h>
 #include <driver/keyboard.h>
 #include <driver/mouse.h>
+#include <driver/serial.h>
 #include <driver/driver.h>
 #include <driver/disk/ata.h>
 #include <driver/disk/disk.h>
@@ -20,7 +20,8 @@
 
 #include <scheduling/scheduler/scheduler.h>
 
-#include <fs/ff.h>
+#include <fs/fat32/vfs.h>
+#include <fs/vfs/vfs.h>
 
 #include "examples/examples.h"
 
@@ -42,7 +43,18 @@ class MouseRendererMouseEventHandler : public driver::MouseEventHandler{
 		}
 };
 
-extern "C" void _start(bootinfo_t* bootinfo) {
+int crashc = 0;
+
+void crash() {
+	if(crashc == 100) {
+		*((uint32_t*) 0xff00ff00ff00) = 0;
+	} else {
+		crashc++;
+		crash();
+	}
+}
+
+extern "C" void kernel_main(bootinfo_t* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
 
@@ -85,28 +97,25 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	//syscall_test();
 	//test_scheduler();
 
-	FATFS fs;
-	FIL fp;
-	UINT btr, br;
-	FRESULT fr;
+	vfs_mount* fat_mount = initialise_fat32(0);
+	mount(fat_mount, (char*) "root");
 
-	f_mount(&fs, "", 0);
+	FILE* test = fopen("root:/bin/test.elf", "r");
+	int page_amount = test->size / 0x1000 + 1;
+	void* elf_contents = global_allocator.request_pages(page_amount);
+	
+	fread(elf_contents, test->size, 1, test);
+	fclose(test);
 
-	fr = f_open(&fp, "/bin/test.elf", FA_READ);
-	if (fr == FR_OK) {
-		btr = f_size(&fp);
-		void* elf_contents = (uint8_t*) global_allocator.request_pages(btr / 0x1000 + 1);
-		f_read(&fp, elf_contents, btr, &br);
+	const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
+	const char* envp[] = { "PATH=/bin", NULL };
+	load_elf((void*) elf_contents, test->size, argv, envp);
 
-		const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
-		const char* envp[] = { "PATH=/bin", NULL };
-
-		load_elf((void*) elf_contents, br, argv, envp);
-
-		fr = f_close(&fp);
-	}
+	global_allocator.free_pages(elf_contents, page_amount);
 
 	shell::global_shell->init_shell();
+
+	//crash();
 
 	init_sched();
 

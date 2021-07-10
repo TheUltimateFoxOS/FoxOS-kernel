@@ -24,6 +24,9 @@ namespace renderer {
 
 			void clear_mouse_cursor(uint8_t* mouse_pointer, renderer::point_t pos);
 			void draw_overlay_mouse_cursor(uint8_t* mouse_pointer, renderer::point_t pos, uint32_t colour);
+			void load_bitmap(uint8_t data[], int y);
+			void load_bitmap(uint8_t data[], int x, int y);
+			renderer::point_t get_bitmap_info(uint8_t data[]);
 			void scroll_down();
 			bool mouse_drawn;
 	};

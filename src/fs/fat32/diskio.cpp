@@ -26,8 +26,8 @@
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
 
-#include <fs/ff.h>			/* Obtains integer types */
-#include <fs/diskio.h>		/* Declarations of disk functions */
+#include <fs/fat32/ff.h>			/* Obtains integer types */
+#include <fs/fat32/diskio.h>		/* Declarations of disk functions */
 #include <driver/driver.h>
 #include <driver/disk/disk.h>
 
