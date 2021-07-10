@@ -115,7 +115,7 @@ extern "C" void kernel_main(bootinfo_t* bootinfo) {
 
 	shell::global_shell->init_shell();
 
-	crash();
+	//crash();
 
 	init_sched();
 
