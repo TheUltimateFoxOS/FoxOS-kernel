@@ -93,6 +93,7 @@ syscall_handler:
 [extern sys_resolve_symbol]
 [extern sys_memory]
 [extern sys_env]
+[extern sys_read]
 
 syscall_table:
 	dq syscall_test
@@ -101,6 +102,7 @@ syscall_table:
 	dq sys_resolve_symbol
 	dq sys_memory
 	dq sys_env
+	dq sys_read
 syscall_table_end:
 
 syscall_lock: db 0
