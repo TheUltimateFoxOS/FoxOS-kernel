@@ -43,6 +43,8 @@ ap_trampoline_64:
 	add rax, 4096 ; stack grows downwards
 	mov rsp, rax
 
+	mov rbp, 0 ; mark end of stack for stack trace
+
 	mov [to_target(ap_trampoline_data.status)], byte 1
 
 	call [to_target(ap_trampoline_data.entry)]

@@ -9,6 +9,24 @@ uint64_t resolve_symbol(char* name) {
 	return (uint64_t) NULL;
 }
 
+char* resolve_symbol(uint64_t address) {
+	for(int i = 0; i < __kernel_symtab_size / sizeof(symbol); i++) {
+		if(address >= __kernel_symtab[i].addr && address < __kernel_symtab[i + 1].addr) {
+			return __kernel_symtab[i].name;
+		}
+	}
+
+	return (char*) "<unknown function>";
+}
+
+void unwind(int max, uint64_t rbp, void (*callback)(int frame_num, uint64_t rip)) {
+	stack_frame_t* stack = (stack_frame_t*) rbp;
+	for(int i = 0; stack->rbp != 0 && i < max; i++) {
+		callback(i, stack->rip);
+		stack = stack->rbp;
+	}
+}
+
 //	db 0x49, 0xbf, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0 ; mov r15, someval
 //	db 0x41, 0xff, 0xe7 ; jmp r15
 

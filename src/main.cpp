@@ -11,6 +11,7 @@
 #include <driver/driver.h>
 #include <driver/keyboard.h>
 #include <driver/mouse.h>
+#include <driver/serial.h>
 #include <driver/driver.h>
 #include <driver/disk/ata.h>
 #include <driver/disk/disk.h>
@@ -42,7 +43,18 @@ class MouseRendererMouseEventHandler : public driver::MouseEventHandler{
 		}
 };
 
-extern "C" void _start(bootinfo_t* bootinfo) {
+int crashc = 0;
+
+void crash() {
+	if(crashc == 100) {
+		*((uint32_t*) 0xff00ff00ff00) = 0;
+	} else {
+		crashc++;
+		crash();
+	}
+}
+
+extern "C" void kernel_main(bootinfo_t* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
 
@@ -102,6 +114,8 @@ extern "C" void _start(bootinfo_t* bootinfo) {
 	global_allocator.free_pages(elf_contents, page_amount);
 
 	shell::global_shell->init_shell();
+
+	crash();
 
 	init_sched();
 

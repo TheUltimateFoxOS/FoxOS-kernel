@@ -3,7 +3,14 @@
 #include <renderer/renderer2D.h>
 #include <renderer/point.h>
 
+#include <driver/serial.h>
+
+#include <config.h>
+
 using namespace interrupts;
+
+int sprintf(char *buf, const char *fmt, ...);
+
 
 Panic::Panic(int intr) {
 	this->intr = intr;
@@ -120,6 +127,33 @@ void Panic::do_it(s_registers* regs) {
 	if (regs) {
 		renderer::global_font_renderer->printf("Register dump:\n");
 		dump_regs(regs);
+
+		renderer::global_font_renderer->printf("\nStarting stack trace:\n");
+
+		if(resolve_symbol(resolve_symbol(regs->rip)) != 0) {
+			char str[512];
+			sprintf(str, "%s + %d", resolve_symbol(regs->rip), regs->rip - resolve_symbol(resolve_symbol(regs->rip)));
+			renderer::global_font_renderer->printf("%s\n", str);
+		} else {
+			renderer::global_font_renderer->printf("0x%x\n", regs->rip);
+		}
+
+		int max_lines = (renderer::global_renderer2D->target_frame_buffer->height - renderer::global_font_renderer->cursor_position.y) / 16;
+
+		max_lines -= 4;
+
+		driver::global_serial_driver->printf("Starting stack trace using %d as max lines!\n", max_lines);
+
+		unwind(max_lines, regs->rbp, [](int frame_num, uint64_t rip) {
+			if(resolve_symbol(resolve_symbol(rip)) != 0) {
+				char str[512];
+				sprintf(str, "%s + %d", resolve_symbol(rip), rip - resolve_symbol(resolve_symbol(rip)));
+				renderer::global_font_renderer->printf("%s\n", str);
+			} else {
+				renderer::global_font_renderer->printf("0x%x\n", rip);
+			}
+		});
+
 	}
 
 	renderer::global_renderer2D->load_bitmap(screen_of_death, 0, renderer::global_renderer2D->target_frame_buffer->height - bmp_info.x);
