@@ -135,7 +135,7 @@ void Panic::do_it(s_registers* regs) {
 			sprintf(str, "%s + %d", resolve_symbol(regs->rip), regs->rip - resolve_symbol(resolve_symbol(regs->rip)));
 			renderer::global_font_renderer->printf("%s\n", str);
 		} else {
-			renderer::global_font_renderer->printf("0x%x\n", regs->rip);
+			renderer::global_font_renderer->printf("<unknown function at 0x%x>\n", regs->rip);
 		}
 
 		int max_lines = (renderer::global_renderer2D->target_frame_buffer->height - renderer::global_font_renderer->cursor_position.y) / 16;
@@ -150,7 +150,7 @@ void Panic::do_it(s_registers* regs) {
 				sprintf(str, "%s + %d", resolve_symbol(rip), rip - resolve_symbol(resolve_symbol(rip)));
 				renderer::global_font_renderer->printf("%s\n", str);
 			} else {
-				renderer::global_font_renderer->printf("0x%x\n", rip);
+				renderer::global_font_renderer->printf("<unknown function at 0x%x>\n", rip);
 			}
 		});
 

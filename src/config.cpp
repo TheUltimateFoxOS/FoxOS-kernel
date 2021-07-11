@@ -11,7 +11,7 @@ uint64_t resolve_symbol(char* name) {
 
 char* resolve_symbol(uint64_t address) {
 	for(int i = 0; i < __kernel_symtab_size / sizeof(symbol); i++) {
-		if(address >= __kernel_symtab[i].addr && address < __kernel_symtab[i + 1].addr) {
+		if(address >= __kernel_symtab[i].addr && address < __kernel_symtab[i + 1].addr && __kernel_symtab[i + 1].addr != 0xffffffffffffffff) {
 			return __kernel_symtab[i].name;
 		}
 	}
