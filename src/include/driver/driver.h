@@ -27,6 +27,8 @@ namespace driver {
 			void set_status(char* status, uint64_t color);
 			void activate_driver(bool force, Driver* driver);
 			void activate_all(bool force);
+
+			Driver* find_driver_by_name(char* name);
 	};
 
 	extern DriverManager* global_driver_manager;

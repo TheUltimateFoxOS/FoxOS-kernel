@@ -12,3 +12,4 @@ void fat32_old_test();
 void fat32_test();
 void vfs_test();
 void layer_test(bootinfo_t* info);
+void test_sound();

@@ -21,7 +21,7 @@ bool PcSpeakerDriver::is_presend() {
 }
 
 char* PcSpeakerDriver::get_name() {
-	return (char*) "Pc Speaker";
+	return (char*) "pc speaker";
 }
 
 void PcSpeakerDriver::turn_on() {
