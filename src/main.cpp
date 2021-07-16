@@ -12,6 +12,7 @@
 #include <driver/keyboard.h>
 #include <driver/mouse.h>
 #include <driver/serial.h>
+#include <driver/pc_speaker.h>
 #include <driver/driver.h>
 #include <driver/disk/ata.h>
 #include <driver/disk/disk.h>
@@ -67,6 +68,10 @@ extern "C" void kernel_main(bootinfo_t* bootinfo) {
 	MouseRendererMouseEventHandler mhandler;
 	driver::MouseDriver mouse_driver(&mhandler);
 	driver::global_driver_manager->add_driver(&mouse_driver);
+
+	// pc speaker driver
+	driver::PcSpeakerDriver pc_speaker_driver;
+	driver::global_driver_manager->add_driver(&pc_speaker_driver);
 
 	//ATA driver
 	driver::AdvancedTechnologyAttachment ata0m(true, 0x1F0, (char*) "ata0 master");
