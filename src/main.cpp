@@ -97,6 +97,8 @@ extern "C" void kernel_main(bootinfo_t* bootinfo) {
 	//syscall_test();
 	//test_scheduler();
 
+	//layer_test(bootinfo);
+
 	vfs_mount* fat_mount = initialise_fat32(0);
 	mount(fat_mount, (char*) "root");
 
