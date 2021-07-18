@@ -18,8 +18,8 @@ namespace driver {
 		class DiskManager {
 			private:
 				Disk* disks[DISK_NUM];
-				int num_disks;
 			public:
+				int num_disks;
 				DiskManager();
 
 				void read(int disk_num, uint64_t sector, uint32_t sector_count, void* buffer);

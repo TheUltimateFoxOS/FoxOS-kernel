@@ -123,19 +123,40 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 
 	//free(buffer);
 
+	if (driver::disk::global_disk_manager->num_disks != 0) {
+		FILE* test = fopen("root:/bin/test.elf", "r");
+		int page_amount = test->size / 0x1000 + 1;
+		void* elf_contents = global_allocator.request_pages(page_amount);
+		
+		fread(elf_contents, test->size, 1, test);
+		fclose(test);
 
-	FILE* test = fopen("root:/bin/test.elf", "r");
-	int page_amount = test->size / 0x1000 + 1;
-	void* elf_contents = global_allocator.request_pages(page_amount);
-	
-	fread(elf_contents, test->size, 1, test);
-	fclose(test);
+		const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
+		const char* envp[] = { "PATH=/bin", NULL };
+		load_elf((void*) elf_contents, test->size, argv, envp);
 
-	const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
-	const char* envp[] = { "PATH=/bin", NULL };
-	load_elf((void*) elf_contents, test->size, argv, envp);
+		global_allocator.free_pages(elf_contents, page_amount);
+	} else {
+		renderer::global_font_renderer->printf("No disks found. Trying to load test.elf from the stivale modules!\n");
 
-	global_allocator.free_pages(elf_contents, page_amount);
+		FILE* test = fopen("stivale:test.elf", "r");
+		
+		if (test->is_error) {
+			renderer::global_font_renderer->printf("Could not open test.elf\n");
+		} else {
+			int page_amount = test->size / 0x1000 + 1;
+			void* elf_contents = global_allocator.request_pages(page_amount);
+			
+			fread(elf_contents, test->size, 1, test);
+			fclose(test);
+
+			const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
+			const char* envp[] = { "PATH=/bin", NULL };
+			load_elf((void*) elf_contents, test->size, argv, envp);
+
+			global_allocator.free_pages(elf_contents, page_amount);
+		}
+	}
 
 	shell::global_shell->init_shell();
 
