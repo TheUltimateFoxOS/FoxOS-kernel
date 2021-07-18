@@ -22,6 +22,7 @@
 #include <scheduling/scheduler/scheduler.h>
 
 #include <fs/fat32/vfs.h>
+#include <fs/stivale/vfs.h>
 #include <fs/vfs/vfs.h>
 
 #include <stivale.h>
@@ -109,6 +110,19 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 
 	vfs_mount* fat_mount = initialise_fat32(0);
 	mount(fat_mount, (char*) "root");
+
+	vfs_mount* stivale_mount = initialise_stivale_modules(bootinfo);
+	mount(stivale_mount, (char*) "stivale");
+
+	//FILE* stivale_test = fopen("stivale:limine.cfg", "r");
+	//char* buffer = (char*) malloc(stivale_test->size + 1);
+	//fread(buffer, stivale_test->size, 1, stivale_test);
+	//fclose(stivale_test);
+
+	//renderer::global_font_renderer->printf("\n%s\n", buffer);
+
+	//free(buffer);
+
 
 	FILE* test = fopen("root:/bin/test.elf", "r");
 	int page_amount = test->size / 0x1000 + 1;
