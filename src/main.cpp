@@ -24,6 +24,8 @@
 #include <fs/fat32/vfs.h>
 #include <fs/vfs/vfs.h>
 
+#include <stivale.h>
+
 #include "examples/examples.h"
 
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
@@ -55,7 +57,7 @@ void crash() {
 	}
 }
 
-extern "C" void kernel_main(bootinfo_t* bootinfo) {
+extern "C" void kernel_main(stivale_struct* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
 

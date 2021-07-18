@@ -5,7 +5,9 @@
 
 #include <interrupts/idt.h>
 
-void prepare_memory(bootinfo_t* boot_info);
-KernelInfo init_kernel(bootinfo_t* boot_info);
+#include <stivale.h>
+
+void prepare_memory(stivale_struct* boot_info);
+KernelInfo init_kernel(stivale_struct* boot_info);
 
 extern interrupts::idt_t idtr;

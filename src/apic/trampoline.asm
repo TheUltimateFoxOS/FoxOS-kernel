@@ -1,6 +1,7 @@
 [bits 16]
 [global ap_trampoline]
 [global ap_trampoline_data]
+[extern cpu_init]
 
 %define to_target(addr) ((addr - ap_trampoline) + 0x8000)
 
@@ -44,6 +45,8 @@ ap_trampoline_64:
 	mov rsp, rax
 
 	mov rbp, 0 ; mark end of stack for stack trace
+
+	call cpu_init
 
 	mov [to_target(ap_trampoline_data.status)], byte 1
 

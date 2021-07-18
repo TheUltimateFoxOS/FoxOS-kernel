@@ -6,28 +6,25 @@ uint64_t used_memory;
 bool initialized = false;
 PageFrameAllocator global_allocator;
 
-void PageFrameAllocator::read_EFI_memory_map(efi_memory_descriptor_t* m_map, size_t m_map_size, size_t m_map_desc_size){
+void PageFrameAllocator::read_EFI_memory_map(stivale_struct* bootinfo){
 	if (initialized) return;
 
 	initialized = true;
 
-	uint64_t m_mapEntries = m_map_size / m_map_desc_size;
-
 	void* largest_free_mem_seg = NULL;
 	size_t largest_free_mem_seg_size = 0;
 
-	for (int i = 0; i < m_mapEntries; i++){
-		efi_memory_descriptor_t* desc = (efi_memory_descriptor_t*)((uint64_t)m_map + (i * m_map_desc_size));
-		if (desc->type == 7){ // type = EfiConventionalMemory
-			if (desc->num_pages * 4096 > largest_free_mem_seg_size)
+	for (int i = 0; i < bootinfo->memory_map_entries; i++){
+		stivale_mmap_entry* entry = (stivale_mmap_entry*) (bootinfo->memory_map_addr + i * sizeof(stivale_mmap_entry));
+		if (entry->type == STIVALE_MMAP_USABLE) {
+			if (entry->length > largest_free_mem_seg_size)
 			{
-				largest_free_mem_seg = desc->phys_addr;
-				largest_free_mem_seg_size = desc->num_pages * 4096;
+				largest_free_mem_seg = (void*) entry->base;
+				largest_free_mem_seg_size = entry->length;
 			}
 		}
 	}
-
-	uint64_t memorysize = get_memory_size(m_map, m_mapEntries, m_map_desc_size);
+	uint64_t memorysize = get_memory_size(bootinfo);
 	free_memory = memorysize;
 	uint64_t bitmapsize = memorysize / 4096 / 8 + 1;
 
@@ -35,10 +32,10 @@ void PageFrameAllocator::read_EFI_memory_map(efi_memory_descriptor_t* m_map, siz
 
 	reserve_pages(0, memorysize / 4096 + 1);
 
-	for (int i = 0; i < m_mapEntries; i++){
-		efi_memory_descriptor_t* desc = (efi_memory_descriptor_t*)((uint64_t)m_map + (i * m_map_desc_size));
-		if (desc->type == 7){ // efiConventionalMemory
-			unreserve_pages(desc->phys_addr, desc->num_pages);
+	for (int i = 0; i < bootinfo->memory_map_entries; i++){
+		stivale_mmap_entry* entry = (stivale_mmap_entry*) (bootinfo->memory_map_addr + i * sizeof(stivale_mmap_entry));
+		if (entry->type == STIVALE_MMAP_USABLE) { 
+			unreserve_pages((void*) entry->base, (entry->length / 0x1000) + 1);
 		}
 	}
 

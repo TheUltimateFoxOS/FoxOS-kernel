@@ -5,6 +5,10 @@ SECTIONS
 {
 	. = 0x100000;
 	kernel_start = .;
+	.stivalehdr : ALIGN(0x1000)
+	{
+        KEEP(*(.stivalehdr))
+	}
 	.text : ALIGN(0x1000)
 	{
 		*(.text)

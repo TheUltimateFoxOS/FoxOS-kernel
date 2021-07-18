@@ -33,11 +33,11 @@
 #include <config.h>
 
 KernelInfo kernel_info;
-void prepare_memory(bootinfo_t* bootinfo) {
-	uint64_t m_map_entries = bootinfo->m_map_size / bootinfo->m_map_desc_size;
+void prepare_memory(stivale_struct* bootinfo) {
+	uint64_t m_map_entries = bootinfo->memory_map_entries;
 
 	global_allocator = PageFrameAllocator();
-	global_allocator.read_EFI_memory_map(bootinfo->m_map, bootinfo->m_map_size, bootinfo->m_map_desc_size);
+	global_allocator.read_EFI_memory_map(bootinfo);
 
 	uint64_t kernel_size = (uint64_t)&kernel_end - (uint64_t)&kernel_start;
 	uint64_t kernel_pages = (uint64_t)kernel_size / 4096 + 1;
@@ -49,12 +49,12 @@ void prepare_memory(bootinfo_t* bootinfo) {
 
 	g_page_table_manager = PageTableManager(PML4);
 
-	for (uint64_t t = 0; t < get_memory_size(bootinfo->m_map, m_map_entries, bootinfo->m_map_size); t+= 0x1000){
+	for (uint64_t t = 0; t < get_memory_size(bootinfo); t+= 0x1000){
 		g_page_table_manager.map_memory((void*)t, (void*)t);
 	}
 
-	uint64_t fbBase = (uint64_t)bootinfo->framebuffer->base_address;
-	uint64_t fbSize = (uint64_t)bootinfo->framebuffer->buffer_size + 0x1000;
+	uint64_t fbBase = (uint64_t)bootinfo->framebuffer_addr;
+	uint64_t fbSize = (bootinfo->framebuffer_width * bootinfo->framebuffer_height * bootinfo->framebuffer_bpp) + 0x1000;
 	global_allocator.lock_pages((void*)fbBase, fbSize / 0x1000 + 1);
 	for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
 		g_page_table_manager.map_memory((void*)t, (void*)t);
@@ -164,7 +164,9 @@ shell::Shell sh;
 
 extern uint8_t default_font[];
 
-void setup_globals(bootinfo_t* bootinfo) {
+framebuffer_t default_framebuffer;
+
+void setup_globals(stivale_struct* bootinfo) {
 	driver::global_serial_driver = new driver::Serial(0x3f8);
 
 	psf1_header_t* font_header = (psf1_header_t*) malloc(sizeof(psf1_header_t));
@@ -185,13 +187,19 @@ void setup_globals(bootinfo_t* bootinfo) {
 	finished_font->psf1_Header = font_header;
 	finished_font->glyph_buffer = glyph_buffer;
 
-	fr = renderer::FontRenderer(bootinfo->framebuffer, finished_font);
+	default_framebuffer.base_address = (void*) bootinfo->framebuffer_addr;
+	default_framebuffer.width = bootinfo->framebuffer_width;
+	default_framebuffer.height = bootinfo->framebuffer_height;
+	default_framebuffer.pixels_per_scanline = bootinfo->framebuffer_width;
+	default_framebuffer.buffer_size = bootinfo->framebuffer_width * bootinfo->framebuffer_height * bootinfo->framebuffer_bpp;
+
+	fr = renderer::FontRenderer(&default_framebuffer, finished_font);
 	renderer::global_font_renderer = &fr;
 
 	mr = renderer::MouseRenderer();
 	renderer::global_mouse_renderer = &mr;
 
-	r2d = renderer::Renderer2D(bootinfo->framebuffer);
+	r2d = renderer::Renderer2D(&default_framebuffer);
 	renderer::global_renderer2D = &r2d;
 
 	driver::global_driver_manager = &dm;
@@ -201,8 +209,9 @@ void setup_globals(bootinfo_t* bootinfo) {
 	shell::global_shell = &sh;
 }
 
-void prepare_acpi(bootinfo_t* bootinfo) {
-	pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (bootinfo->rsdp->xsdt_address);
+void prepare_acpi(stivale_struct* bootinfo) {
+	pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (((pci::acpi::rsdp2_t*) bootinfo->rsdp)->xsdt_address);
+
 	pci::acpi::mcfg_header_t* mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table(xsdt, (char*) "MCFG");
 
 	uint8_t* madt = (uint8_t*) pci::acpi::find_table(xsdt, (char*) "APIC");
@@ -220,7 +229,7 @@ void prepare_acpi(bootinfo_t* bootinfo) {
 
 extern uint8_t logo[];
 
-KernelInfo init_kernel(bootinfo_t* bootinfo) {
+KernelInfo init_kernel(stivale_struct* bootinfo) {
 	gdt_descriptor_t gdt_descriptor;
 	gdt_descriptor.size = sizeof(gdt_t) - 1;
 	gdt_descriptor.offset = (uint64_t) &default_gdt;
@@ -228,7 +237,6 @@ KernelInfo init_kernel(bootinfo_t* bootinfo) {
 	load_gdt(&gdt_descriptor);
 
 	prepare_memory(bootinfo);
-	memset(bootinfo->framebuffer->base_address, 0, bootinfo->framebuffer->buffer_size);
 
 	initialize_heap((void*) 0x0000100000000000, 0x10);
 	init_fast_mem(); // we want to use as fast as possible fast memory functions

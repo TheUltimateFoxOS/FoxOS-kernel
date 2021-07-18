@@ -1,6 +1,6 @@
 #pragma once
 
-#include "efi_mem.h"
+#include <stivale.h>
 #include <stdint.h>
 #include "stddef.h"
 #include "bitmap.h"
@@ -9,7 +9,7 @@
 
 class PageFrameAllocator {
 	public:
-	void read_EFI_memory_map(efi_memory_descriptor_t* mMap, size_t mMapSize, size_t mMapDescSize);
+	void read_EFI_memory_map(stivale_struct* bootinfo);
 	Bitmap page_bitmap;
 	void free_page(void* address);
 	void free_pages(void* address, uint64_t page_count);
