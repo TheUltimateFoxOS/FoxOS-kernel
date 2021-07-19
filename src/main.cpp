@@ -26,6 +26,7 @@
 #include <fs/vfs/vfs.h>
 
 #include <stivale.h>
+#include <cmdline.h>
 
 #include "examples/examples.h"
 
@@ -94,6 +95,21 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 	renderer::global_font_renderer->printf("\nFoxOS version %s %d Copyright (C) 2021 %s\n", RELEASE_T, VERSION, VENDOR);
 	renderer::global_font_renderer->printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
 	renderer::global_font_renderer->printf("This is free software, and you are welcome to redistribute it.\n\n");
+
+	CmdLineParser cmd_line_parser;
+
+	cmd_line_parser.add_handler((char*) "--fe-test", fe_test);
+	cmd_line_parser.add_handler((char*) "--patch-test", test_patch);
+	cmd_line_parser.add_handler((char*) "--disk-test", disk_test);
+	cmd_line_parser.add_handler((char*) "--fat32-test", fat32_test);
+	cmd_line_parser.add_handler((char*) "--fat32-old-test", fat32_old_test);
+	cmd_line_parser.add_handler((char*) "--syscall-test", syscall_test);
+	cmd_line_parser.add_handler((char*) "--scheduler-test", test_scheduler);
+	cmd_line_parser.add_handler((char*) "--sound-test", test_sound);
+	cmd_line_parser.add_handler((char*) "--layer-test", layer_test);
+	cmd_line_parser.add_handler((char*) "--vfs-test", vfs_test);
+
+	cmd_line_parser.parse((char*) bootinfo->cmdline);
 
 	//font_renderer_test();
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);

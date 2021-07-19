@@ -64,11 +64,13 @@ void frame() {
 }
 
 
-void layer_test(bootinfo_t* info) {
-	renderer::layer_t* l1 = renderer::allocate_layer_matching(info->framebuffer);
-	renderer::layer_t* l2 = renderer::allocate_layer_matching(info->framebuffer);
+extern framebuffer_t default_framebuffer;
 
-	renderer::layer_renderer* lr1 = new renderer::layer_renderer(info->framebuffer);
+void layer_test() {
+	renderer::layer_t* l1 = renderer::allocate_layer_matching(&default_framebuffer);
+	renderer::layer_t* l2 = renderer::allocate_layer_matching(&default_framebuffer);
+
+	renderer::layer_renderer* lr1 = new renderer::layer_renderer(&default_framebuffer);
 
 
 	renderer::Renderer2D* r2d = new renderer::Renderer2D(l1);
@@ -101,8 +103,8 @@ void layer_test(bootinfo_t* info) {
 	renderer::destroy_layer(l1);
 	renderer::destroy_layer(l2);
 
-	renderer::global_font_renderer->target_frame_buffer = info->framebuffer;
-	renderer::global_renderer2D->target_frame_buffer = info->framebuffer;
+	renderer::global_font_renderer->target_frame_buffer = &default_framebuffer;
+	renderer::global_renderer2D->target_frame_buffer = &default_framebuffer;
 	renderer::global_font_renderer->color = 0xffffffff;
 
 	free(lr1);
