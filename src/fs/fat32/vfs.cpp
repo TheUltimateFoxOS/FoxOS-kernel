@@ -39,9 +39,14 @@ vfs_mount* initialise_fat32(int disk_id) {
 
 
 void fat32_mount(vfs_mount* node) {
-	FATFS* fs = (FATFS*) global_allocator.request_page(); // dont ask why but fatfs doesent like heap addresses
+	assert(node->data2 < 10);
 
-	f_mount(fs, "", node->data2);
+	FATFS* fs = (FATFS*) global_allocator.request_page(); // dont ask why but fatfs doesent like heap addresses
+	fs->pdrv = node->data2;
+
+	char path[3] = "0:";
+	path[0] += node->data2;
+	f_mount(fs, path, 1);
 
 	node->data = fs;
 }
@@ -81,7 +86,11 @@ FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 		fp->is_writable = 1;
 	}
 
-	FRESULT fr = f_open(&fil, file, fatmode);
+	char* filepath = (char*) "0:";
+	filepath[0] += node->data2;
+	strcat(filepath, file);
+
+	FRESULT fr = f_open(&fil, filepath, fatmode);
 	if (fr != FR_OK) {
 		fp->is_error = 1;
 		set_task_errno(vfs_result::VFS_FILE_NOT_FOUND);
