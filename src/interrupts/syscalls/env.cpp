@@ -1,5 +1,6 @@
 #include <interrupts/interrupts.h>
 #include <scheduling/scheduler/scheduler.h>
+#include <scheduling/scheduler/signal.h>
 
 extern "C" void sys_env(s_registers regs) {
 	uint8_t id;
@@ -16,6 +17,9 @@ extern "C" void sys_env(s_registers regs) {
 			break;
 		case 2:
 			t->errno = (int*) regs.rcx;
+			break;
+		case 3:
+			register_signal_handler(regs.rcx, regs.rdx);
 			break;
 	}
 }

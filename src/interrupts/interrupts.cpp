@@ -7,6 +7,8 @@
 #include <apic/apic.h>
 #include <apic/madt.h>
 
+#include <scheduling/scheduler/signal.h>
+
 #include <config.h>
 
 using namespace interrupts;
@@ -15,9 +17,17 @@ extern "C" void schedule(s_registers* regs);
 
 extern "C" void intr_common_handler_c(s_registers* regs) {
 	if(regs->interrupt_number <= 0x1f) {
+	#ifdef SEND_SIGNALS
+		if (!handle_signal(regs->interrupt_number)) {
+			Panic p = Panic(regs->interrupt_number);
+			p.do_it(regs);
+			while(1);
+		}
+	#else
 		Panic p = Panic(regs->interrupt_number);
 		p.do_it(regs);
 		while(1);
+	#endif
 	}
 
 	if(regs->interrupt_number >= 0x20 && regs->interrupt_number <= 0x2f) {

@@ -15,6 +15,7 @@
 #define MAX_VFS_NODES 255
 
 #define NO_SMP_SHED
+#define SEND_SIGNALS
 
 struct symbol {
 	uint64_t addr;
