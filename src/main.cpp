@@ -176,6 +176,10 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 
 	shell::global_shell->init_shell();
 
+	run_on_ap([]() {
+		driver::global_serial_driver->printf("Hello ap world!\n");
+	});
+
 	//crash();
 
 	init_sched();

@@ -12,9 +12,11 @@ int run_on_ap(void_function function);
 struct trampoline_data {
 	uint8_t status;
 	uint64_t pagetable;
+	uint64_t idt;
 	uint64_t gdt;
 	uint64_t stack_ptr;
 	uint64_t entry;
+	uint64_t lapic_ptr;
 } __attribute__ ((packed));
 
 enum ap_status {
@@ -32,7 +34,7 @@ struct cpu {
 	void_function function;
 };
 
-void start_smp();
+void start_all_cpus();
 
 extern cpu cpus[256];
 extern uint8_t bspid;

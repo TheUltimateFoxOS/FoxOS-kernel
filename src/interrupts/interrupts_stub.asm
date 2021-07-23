@@ -1,5 +1,6 @@
 [extern intr_common_handler_c]
 [extern schedule]
+[extern halt_cpu]
 
 %macro intr_stub 1
 	GLOBAL intr_stub_%1
@@ -105,6 +106,11 @@ intr_common_handler:
 
 	mov rdi, rsp
 
+	mov rax, 0
+	mov ah, [halt_cpu]
+	cmp ah, 0
+	jne .halt
+
 	call intr_common_handler_c
 
 	pop rax
@@ -116,3 +122,8 @@ intr_common_handler:
 	add rsp, 16
 
 	iretq
+
+.halt:
+	cli
+	hlt
+	jmp .halt

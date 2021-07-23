@@ -12,7 +12,7 @@ namespace PIT {
 	void sleep_d(double seconds) {
 		double start_time = time_since_boot;
 		while (time_since_boot < start_time + seconds) {
-			asm("hlt");
+			asm("nop");
 		}
 	}
 

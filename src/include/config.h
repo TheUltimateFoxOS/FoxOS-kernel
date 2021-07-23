@@ -14,7 +14,7 @@
 #define MAX_FILE_NAME_SIZE 128
 #define MAX_VFS_NODES 255
 
-#define NO_SMP
+#define NO_SMP_SHED
 
 struct symbol {
 	uint64_t addr;

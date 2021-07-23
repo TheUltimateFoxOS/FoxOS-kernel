@@ -59,7 +59,7 @@ task* new_task(void* entry) {
 
 	uint64_t idx = 0;
 
-#ifndef NO_SMP
+#ifndef NO_SMP_SHED
 	uint64_t min = 0xf0f0;
 
 	for (int i = 0; i < numcore; i++) {
@@ -169,10 +169,6 @@ extern "C" void schedule(s_registers* regs) {
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
 	while(spin_lock);
-
-	if(halt_cpu) {
-		__asm__ __volatile__ ("cli; hlt");
-	}
 
 	if(task_queue[id].len == 0 || !scheduling) {
 		return;

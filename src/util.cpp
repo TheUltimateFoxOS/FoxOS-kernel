@@ -252,9 +252,7 @@ KernelInfo init_kernel(stivale_struct* bootinfo) {
 
 	PIT::init_pit(65535);
 
-#ifndef NO_SMP
-	start_smp();
-#endif
+	start_all_cpus();
 
 	return kernel_info;
 }
