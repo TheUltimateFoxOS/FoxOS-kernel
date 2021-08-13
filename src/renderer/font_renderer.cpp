@@ -165,3 +165,8 @@ void FontRenderer::clear() {
 		}
 	}
 }
+
+void FontRenderer::clear_line() {
+	memset((void*) ((uint64_t) target_frame_buffer->base_address + cursor_position.y * target_frame_buffer->width * 4), 0, target_frame_buffer->width * 16 * 4);
+	cursor_position.x = 0;
+}

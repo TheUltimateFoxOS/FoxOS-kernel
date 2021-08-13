@@ -20,6 +20,7 @@
 #include <shell/shell.h>
 
 #include <scheduling/scheduler/scheduler.h>
+#include <init/init_procces.h>
 
 #include <fs/fat32/vfs.h>
 #include <fs/stivale/vfs.h>
@@ -139,7 +140,7 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 
 	//free(buffer);
 
-	if (driver::disk::global_disk_manager->num_disks != 0) {
+	/*if (driver::disk::global_disk_manager->num_disks != 0) {
 		FILE* test = fopen("root:/bin/test.elf", "r");
 		int page_amount = test->size / 0x1000 + 1;
 		void* elf_contents = global_allocator.request_pages(page_amount);
@@ -172,13 +173,16 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 
 			global_allocator.free_pages(elf_contents, page_amount);
 		}
-	}
+	}*/
 
 	shell::global_shell->init_shell();
 
 	run_on_ap([]() {
 		driver::global_serial_driver->printf("Hello ap world!\n");
 	});
+
+
+	task* init_procces_task = new_task((void*) init_procces);
 
 	//crash();
 

@@ -7,9 +7,9 @@
 
 #include <config.h>
 
-using namespace interrupts;
+#include <stdio.h>
 
-int sprintf(char *buf, const char *fmt, ...);
+using namespace interrupts;
 
 
 Panic::Panic(int intr) {

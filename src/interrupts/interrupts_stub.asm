@@ -93,6 +93,7 @@ intr_stub 47
 
 
 intr_common_handler:
+	cli
 	pusha
 
 	mov rax, cr0
@@ -121,6 +122,7 @@ intr_common_handler:
 
 	add rsp, 16
 
+	sti
 	iretq
 
 .halt:

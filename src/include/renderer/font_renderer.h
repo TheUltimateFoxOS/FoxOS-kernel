@@ -23,6 +23,7 @@ namespace renderer {
 			void puts(const char* s);
 			void putn(unsigned long x, int base);
 			void clear();
+			void clear_line();
 	};
 
 	extern FontRenderer* global_font_renderer;

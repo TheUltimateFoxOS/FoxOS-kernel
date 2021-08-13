@@ -1,8 +1,7 @@
 #include <assert.h>
 #include <interrupts/panic.h>
 #include <driver/serial.h>
-
-int sprintf(char *buf, const char *fmt, ...);
+#include <stdio.h>
 
 void __assert_fail(const char* __assertion, const char* __file, unsigned int __line) {
 	char panic_buffer[1024];
