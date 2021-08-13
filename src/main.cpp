@@ -110,6 +110,7 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 	cmd_line_parser.add_handler((char*) "--sound-test", test_sound);
 	cmd_line_parser.add_handler((char*) "--layer-test", layer_test);
 	cmd_line_parser.add_handler((char*) "--vfs-test", vfs_test);
+	cmd_line_parser.add_handler((char*) "--autoexec", set_autoexec);
 
 	cmd_line_parser.parse((char*) bootinfo->cmdline);
 

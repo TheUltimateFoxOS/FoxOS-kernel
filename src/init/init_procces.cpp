@@ -8,6 +8,13 @@
 #include <scheduling/scheduler/scheduler.h>
 
 #include <renderer/font_renderer.h>
+#include <config.h>
+
+bool autoexec = false;
+
+void set_autoexec() {
+	autoexec = true;
+}
 
 void __init_procces_sighandler(int signum) {
 	char error[256];
@@ -19,6 +26,7 @@ void __init_procces_sighandler(int signum) {
 }
 
 extern "C" void init_procces() {
+	autoexec = true;
 	int errno = 0;
 	for (int i = 0; i < 32; i++) {
 		__asm__ __volatile__ ("int $0x30" : : "a" (5), "b" (3), "c" (i), "d" (__init_procces_sighandler));
@@ -33,6 +41,12 @@ readloop:
 
 	renderer::global_font_renderer->clear_line();
 	renderer::global_font_renderer->printf("Executable to start > ");
+
+	if (autoexec) {
+		renderer::global_font_renderer->printf("%s\n", AUTOEXEC_PATH);
+		strcpy(buffer, AUTOEXEC_PATH);
+		reading = false;
+	}
 
 	while (reading) {
 		bool done = false;
@@ -61,8 +75,6 @@ readloop:
 				break;
 		}
 	}
-
-	renderer::global_font_renderer->printf("Loading and executing: %s\n", orig_buffer);
 
 	errno = 0;
 	FILE* file = fopen(orig_buffer, "r");

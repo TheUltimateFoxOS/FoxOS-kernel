@@ -17,6 +17,8 @@
 //#define NO_SMP_SHED
 #define SEND_SIGNALS
 
+#define AUTOEXEC_PATH "root:/bin/test.elf"
+
 struct symbol {
 	uint64_t addr;
 	char* name;
