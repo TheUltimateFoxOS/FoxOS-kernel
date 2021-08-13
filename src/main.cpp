@@ -97,6 +97,7 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 	renderer::global_font_renderer->printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
 	renderer::global_font_renderer->printf("This is free software, and you are welcome to redistribute it.\n\n");
 
+	//Command line parser to run tests
 	CmdLineParser cmd_line_parser;
 
 	cmd_line_parser.add_handler((char*) "--fe-test", fe_test);
@@ -130,51 +131,7 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 
 	vfs_mount* stivale_mount = initialise_stivale_modules(bootinfo);
 	mount(stivale_mount, (char*) "stivale");
-
-	//FILE* stivale_test = fopen("stivale:limine.cfg", "r");
-	//char* buffer = (char*) malloc(stivale_test->size + 1);
-	//fread(buffer, stivale_test->size, 1, stivale_test);
-	//fclose(stivale_test);
-
-	//renderer::global_font_renderer->printf("\n%s\n", buffer);
-
-	//free(buffer);
-
-	/*if (driver::disk::global_disk_manager->num_disks != 0) {
-		FILE* test = fopen("root:/bin/test.elf", "r");
-		int page_amount = test->size / 0x1000 + 1;
-		void* elf_contents = global_allocator.request_pages(page_amount);
-		
-		fread(elf_contents, test->size, 1, test);
-		fclose(test);
-
-		const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
-		const char* envp[] = { "PATH=/bin", NULL };
-		load_elf((void*) elf_contents, test->size, argv, envp);
-
-		global_allocator.free_pages(elf_contents, page_amount);
-	} else {
-		renderer::global_font_renderer->printf("No disks found. Trying to load test.elf from the stivale modules!\n");
-
-		FILE* test = fopen("stivale:test.elf", "r");
-		
-		if (test->is_error) {
-			renderer::global_font_renderer->printf("Could not open test.elf\n");
-		} else {
-			int page_amount = test->size / 0x1000 + 1;
-			void* elf_contents = global_allocator.request_pages(page_amount);
-			
-			fread(elf_contents, test->size, 1, test);
-			fclose(test);
-
-			const char* argv[] = { "/bin/test.elf", "-t", "test", NULL };
-			const char* envp[] = { "PATH=/bin", NULL };
-			load_elf((void*) elf_contents, test->size, argv, envp);
-
-			global_allocator.free_pages(elf_contents, page_amount);
-		}
-	}*/
-
+	
 	shell::global_shell->init_shell();
 
 	run_on_ap([]() {
