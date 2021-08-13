@@ -21,9 +21,9 @@ void init_sched() {
 
 	for (int i = 0; i < numcore; i++) {
 		task* t = (task*) malloc(sizeof(task));
-		void* stack = global_allocator.request_page();
+		void* stack = global_allocator.request_pages(8);
 
-		t->regs.rip = (uint64_t) (void_function) []() { while(1) { __asm__ __volatile__ ("hlt"); } };
+		t->regs.rip = (uint64_t) (void_function) []() { while(1) { __asm__ __volatile__ ("mov $7, %rax; int $0x30"); } };
 		t->regs.rsp = (uint64_t) stack + 4096;
 		t->first_sched = true;
 		t->stack = (uint64_t) stack;
@@ -34,9 +34,12 @@ void init_sched() {
 
 	scheduling = true;
 
-	while(1) {
-		__asm__ __volatile__ ("hlt");
-	}
+	//while(1) {
+		//__asm__ __volatile__ ("hlt");
+	//}
+
+	// call scheduler
+	__asm__ __volatile__ ("mov $7, %rax; int $0x30");
 }
 
 extern "C" void task_entry();
@@ -46,7 +49,7 @@ task* new_task(void* entry) {
 	__asm__ __volatile__ ("cli");
 
 	task* t = (task*) malloc(sizeof(task));
-	void* stack = global_allocator.request_page();
+	void* stack = global_allocator.request_pages(8);
 
 	t->regs.rax = (uint64_t) entry;
 	t->regs.rip = (uint64_t) task_entry;
@@ -93,7 +96,7 @@ void task_exit() {
 		global_allocator.free_pages(t->offset, t->page_count);
 	}
 
-	global_allocator.free_page((void*) t->stack);
+	global_allocator.free_pages((void*) t->stack, 8);
 	free(t);
 
 	task_queue[id].remove_first();
@@ -101,9 +104,8 @@ void task_exit() {
 	__asm__ __volatile__ ("sti");
 	spin_lock = false;
 
-	while(1) {
-		__asm__ __volatile__ ("hlt");
-	}
+	// call scheduler
+	__asm__ __volatile__ ("mov $7, %rax; int $0x30");
 }
 
 task* load_elf(void* ptr, uint64_t file_size, const char **argv, const char **envp) {
@@ -194,6 +196,7 @@ extern "C" void schedule(s_registers* regs) {
 		t->regs.rbp = regs->rbp;
 		t->regs.rsi = regs->rsi;
 		t->regs.rdi = regs->rdi;
+		t->regs.rflags = regs->rflags;
 	}
 
 	task_queue[id].next();
@@ -235,6 +238,7 @@ next:
 	regs->rbp = t->regs.rbp;
 	regs->rsi = t->regs.rsi;
 	regs->rdi = t->regs.rdi;
+	regs->rflags = t->regs.rflags;
 
 	t->first_sched = false;
 }

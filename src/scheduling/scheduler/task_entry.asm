@@ -6,6 +6,7 @@
 ; we do this to prevent jumping to random code if the task returns
 
 task_entry:
+	sti
 	mov rbp, 0 ; mark bottom of stack trace
 	call rax
 

@@ -57,6 +57,7 @@ extern "C" void ap_main() {
 			(*(cpus[id].function))();
 			cpus[id].status = ap_status::wait_for_work;
 		} else {
+			__asm__ __volatile__ ("mov $7, %rax; int $0x30");
 		}
 	}
 }
@@ -70,6 +71,8 @@ extern "C" void start_apic_timer(int time_betwen_interrupts) {
 	lapic_write(lapic_ptr, 0x320, 0x10000);
 
 	uint32_t ticks = 0xffffffff - lapic_read(lapic_ptr, 0x390);
+
+	driver::global_serial_driver->printf("Starting apic timer with %d ticks!\n", ticks);
 
 	lapic_write(lapic_ptr, 0x320, 32 | 0x20000);
 	lapic_write(lapic_ptr, 0x3e0, 0x3);

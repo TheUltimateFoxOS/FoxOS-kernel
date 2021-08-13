@@ -1,6 +1,10 @@
 #include <interrupts/interrupts.h>
+
+#define ASSERT_NO_PANIC
 #include <assert.h>
 #include <config.h>
+
+#include <scheduling/scheduler/errno.h>
 
 struct read_buffer {
 	bool* is_done;
@@ -39,6 +43,11 @@ extern "C" void sys_read(s_registers regs) {
 
 			stdin_read_buffer.is_reading = true;
 			break;
+
+		assert_fail:
+			set_task_errno(0xded);
+			break;
+			
 		case 1:
 			break;
 		case 2:

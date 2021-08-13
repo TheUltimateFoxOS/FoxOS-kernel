@@ -66,7 +66,7 @@ syscall_handler:
 	cmp [syscall_lock], byte 0
 	jne .spin_lock
 
-	mov [syscall_lock], byte 1
+	lock mov [syscall_lock], byte 1
 
 	lea r15, [syscall_table + rax * 8]
 	call [r15]
@@ -94,6 +94,7 @@ syscall_handler:
 [extern sys_memory]
 [extern sys_env]
 [extern sys_read]
+[extern schedule]
 
 syscall_table:
 	dq syscall_test
@@ -103,6 +104,7 @@ syscall_table:
 	dq sys_memory
 	dq sys_env
 	dq sys_read
+	dq schedule
 syscall_table_end:
 
 syscall_lock: db 0

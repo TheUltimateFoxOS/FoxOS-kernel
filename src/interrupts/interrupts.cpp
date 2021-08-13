@@ -32,10 +32,6 @@ extern "C" void intr_common_handler_c(s_registers* regs) {
 
 	if(regs->interrupt_number >= 0x20 && regs->interrupt_number <= 0x2f) {
 		if(regs->interrupt_number == 0x20) {
-		#ifndef NO_SMP_SHED
-			schedule(regs);
-		#endif
-
 			uint8_t id;
 			__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
@@ -43,11 +39,6 @@ extern "C" void intr_common_handler_c(s_registers* regs) {
 				*((volatile uint32_t*)(lapic_ptr + 0xb0)) = 0;
 				return;
 			}
-		#ifdef NO_SMP_SHED
-			else {
-				schedule(regs);
-			}
-		#endif
 		}
 		
 		if(handlers[regs->interrupt_number] != NULL) {
