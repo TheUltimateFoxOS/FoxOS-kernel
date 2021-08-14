@@ -9,7 +9,9 @@ setup:
 	@mkdir $(OBJDIR)
 
 clean:
-	make -C src clean
-	rm $(BUILDDIR)/foxkrnl.elf
+	@rm -r $(BUILDDIR)
+	@rm -r $(OBJDIR)
+	@mkdir $(BUILDDIR)
+	@mkdir $(OBJDIR)
 
 .PHONY: build

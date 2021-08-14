@@ -55,8 +55,3 @@ $(OBJDIR)/%_asm.o: %.asm
 	@echo "ASM $^ -> $@"
 	@mkdir -p $(@D)
 	@$(ASM) $(ASMFLAGS) -o $@ $^
-
-clean:
-	rm $(OBJS)
-
-.PHONY: clean $(BUILDDIR)/foxkrnl.elf
