@@ -7,10 +7,15 @@
 #include <paging/page_frame_allocator.h>
 #include <scheduling/scheduler/scheduler.h>
 
+#include <driver/serial.h>
+
 #include <renderer/font_renderer.h>
 #include <config.h>
 
 bool autoexec = false;
+
+extern "C" void syscall_table();
+extern "C" void syscall_table_end();
 
 void set_autoexec() {
 	autoexec = true;
@@ -26,13 +31,18 @@ void __init_procces_sighandler(int signum) {
 }
 
 extern "C" void init_procces() {
-	autoexec = true;
 	int errno = 0;
 	for (int i = 0; i < 32; i++) {
 		__asm__ __volatile__ ("int $0x30" : : "a" (5), "b" (3), "c" (i), "d" (__init_procces_sighandler));
 	}
 	
 	__asm__ __volatile__ ("int $0x30" : : "a" (5), "b" (2), "c" (&errno));
+
+	driver::global_serial_driver->printf("Kernel knows following syscalls:\n");
+	for (int i = 0; i < ((uint64_t) syscall_table_end - (uint64_t) syscall_table) / sizeof(uint64_t); i++) {
+		uint64_t addr = *((uint64_t*) (syscall_table + i * sizeof(uint64_t)));
+		driver::global_serial_driver->printf("%d: %s\n", i, resolve_symbol(addr));
+	}
 
 readloop:
 	bool reading = true;

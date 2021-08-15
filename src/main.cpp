@@ -133,6 +133,7 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 	vfs_mount* stivale_mount = initialise_stivale_modules(bootinfo);
 	mount(stivale_mount, (char*) "stivale");
 	
+
 	shell::global_shell->init_shell();
 
 	run_on_ap([]() {
@@ -142,7 +143,9 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 
 	task* init_procces_task = new_task((void*) init_procces);
 
-	//crash();
+	//run_on_ap(crash);
+
+	wait_for_aps();
 
 	init_sched();
 

@@ -56,8 +56,6 @@ extern "C" void ap_main() {
 			cpus[id].status = ap_status::running;
 			(*(cpus[id].function))();
 			cpus[id].status = ap_status::wait_for_work;
-		} else {
-			__asm__ __volatile__ ("mov $7, %rax; int $0x30");
 		}
 	}
 }
@@ -99,6 +97,16 @@ int run_on_ap(void_function function) {
 		}
 	}
 	
+}
+
+void wait_for_aps() {
+	for (int i = 0; i < numcore; i++) {
+		if(cpus[i].presend) {
+			while (cpus[i].status == ap_status::please_work || cpus[i].status == ap_status::running) {
+				__asm__ __volatile__ ("pause" : : : "memory");
+			}
+		}
+	}
 }
 
 void start_all_cpus() {

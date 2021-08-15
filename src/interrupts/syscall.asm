@@ -96,6 +96,10 @@ syscall_handler:
 [extern sys_read]
 [extern schedule]
 
+[GLOBAL syscall_table]
+[GLOBAL syscall_table_end]
+
+
 syscall_table:
 	dq syscall_test
 	dq syscall_test2

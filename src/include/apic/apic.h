@@ -8,6 +8,8 @@
 typedef void (*void_function)();
 
 int run_on_ap(void_function function);
+void wait_for_aps();
+
 
 struct trampoline_data {
 	uint8_t status;
