@@ -1,5 +1,8 @@
 #include <driver/disk/ata.h>
 
+#include <fs/gpt/gpt.h>
+#include <driver/serial.h>
+
 using namespace driver;
 
 AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(bool master, uint16_t portBase, char* name): dataPort(portBase), error_port(portBase + 0x1), sector_count_port(portBase + 0x2), lba_low_port(portBase + 0x3), lba_mid_port(portBase + 0x4), lba_hi_port(portBase + 0x5), device_port(portBase + 0x6), command_port(portBase + 0x7), control_port(portBase + 0x206) {
@@ -8,7 +11,10 @@ AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(bool master, uint16_t
 	this->bytes_per_sector = 512;
 
 	if(this->is_presend()) {
-		disk::global_disk_manager->add_disk(this);
+		if (!gpt::read_gpt(this)) {
+			driver::global_serial_driver->printf("ATA: Failed to read GPT. Adding disk as raw disk!\n");
+			disk::global_disk_manager->add_disk(this);
+		}
 	}
 }
 
@@ -153,11 +159,15 @@ void AdvancedTechnologyAttachment::flush() {
 }
 
 void AdvancedTechnologyAttachment::read(uint64_t sector, uint32_t sector_count, void* buffer) {
-	this->read28(sector, (uint8_t*) buffer, sector_count * 512);
+	for (int i = 0; i < sector_count; i++) {
+		read28(sector + i, (uint8_t*) buffer + (i * bytes_per_sector), bytes_per_sector);
+	}	
 }
 
 void AdvancedTechnologyAttachment::write(uint64_t sector, uint32_t sector_count, void* buffer) {
-	this->write28(sector, (uint8_t*) buffer, sector_count * 512);
+	for (int i = 0; i < sector_count; i++) {
+		write28(sector + i, (uint8_t*) buffer + (i * bytes_per_sector), bytes_per_sector);
+	}
 }
 
 char* AdvancedTechnologyAttachment::get_name() {

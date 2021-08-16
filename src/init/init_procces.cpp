@@ -40,7 +40,7 @@ extern "C" void init_procces() {
 
 	driver::global_serial_driver->printf("Kernel knows following syscalls:\n");
 	for (int i = 0; i < ((uint64_t) syscall_table_end - (uint64_t) syscall_table) / sizeof(uint64_t); i++) {
-		uint64_t addr = *((uint64_t*) (syscall_table + i * sizeof(uint64_t)));
+		uint64_t addr = *((uint64_t*) ((uint64_t) syscall_table + i * sizeof(uint64_t)));
 		driver::global_serial_driver->printf("%d: %s\n", i, resolve_symbol(addr));
 	}
 

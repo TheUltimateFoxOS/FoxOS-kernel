@@ -4,6 +4,8 @@
 
 #include <paging/page_frame_allocator.h>
 
+#include <fs/gpt/gpt.h>
+
 #define HBA_PxCMD_CR 0x8000
 #define HBA_PxCMD_FRE 0x0010
 #define HBA_PxCMD_ST 0x0001
@@ -38,7 +40,11 @@ void AHCI_port::configure() {
 
 	start_command();
 
-	disk::global_disk_manager->add_disk(this);
+	if (!gpt::read_gpt(this)) {
+		driver::global_serial_driver->printf("AHCI: Failed to read GPT. Adding disk as raw disk!\n");
+		disk::global_disk_manager->add_disk(this);
+	}
+
 }
 
 void AHCI_port::stop_command() {

@@ -210,18 +210,31 @@ void setup_globals(stivale_struct* bootinfo) {
 }
 
 void prepare_acpi(stivale_struct* bootinfo) {
-	pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (((pci::acpi::rsdp2_t*) bootinfo->rsdp)->xsdt_address);
+	driver::global_serial_driver->printf("Rsdp: %x", bootinfo->rsdp);
+	pci::acpi::rsdp2_t* rsdp = (pci::acpi::rsdp2_t*) ((uint64_t) bootinfo->rsdp);
 
-	pci::acpi::mcfg_header_t* mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table(xsdt, (char*) "MCFG");
+	pci::acpi::mcfg_header_t* mcfg = NULL;
+	uint8_t* madt = NULL;
 
-	uint8_t* madt = (uint8_t*) pci::acpi::find_table(xsdt, (char*) "APIC");
+	if (rsdp->xsdt_address != 0) {
+		pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (((pci::acpi::rsdp2_t*) bootinfo->rsdp)->xsdt_address);
+
+		mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "MCFG");
+		madt = (uint8_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "APIC");
+	} else {
+		pci::acpi::sdt_header_t* rsdt = (pci::acpi::sdt_header_t*) (uint64_t) (((pci::acpi::rsdp2_t*) bootinfo->rsdp)->rsdt_address);
+
+		mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "MCFG");
+		madt = (uint8_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "APIC");
+	}
+
 	parse_madt(madt);
 
 	renderer::global_font_renderer->printf("Booting FoxOS on %d proccesors!\n\n", numcore);
 
 	if (mcfg == NULL) {
 		renderer::global_font_renderer->printf("%fNo mcfg found!%r\n", 0xffff0000);
-		renderer::global_font_renderer->printf("%fAborting acpi preparation!%r\n", 0xffff0000);
+		renderer::global_font_renderer->printf("%fAborting pci preparation!%r\n", 0xffff0000);
 	} else {
 		pci::enumerate_pci(mcfg);
 	}
