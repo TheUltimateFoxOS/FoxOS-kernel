@@ -22,6 +22,8 @@
 #include <scheduling/scheduler/scheduler.h>
 #include <init/init_procces.h>
 
+#include <apic/apic.h>
+
 #include <fs/fat32/vfs.h>
 #include <fs/stivale/vfs.h>
 #include <fs/vfs/vfs.h>
@@ -114,6 +116,10 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 	cmd_line_parser.add_handler((char*) "--no-smp", set_no_smp_shed);
 
 	cmd_line_parser.parse((char*) bootinfo->cmdline);
+
+	if (!NO_SMP_SHED) {
+		start_all_cpus();
+	}
 
 	//font_renderer_test();
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);

@@ -265,7 +265,5 @@ KernelInfo init_kernel(stivale_struct* bootinfo) {
 
 	PIT::init_pit(65535);
 
-	start_all_cpus();
-
 	return kernel_info;
 }
