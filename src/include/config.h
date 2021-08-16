@@ -14,7 +14,7 @@
 #define MAX_FILE_NAME_SIZE 128
 #define MAX_VFS_NODES 255
 
-//#define NO_SMP_SHED
+extern bool NO_SMP_SHED;
 #define SEND_SIGNALS
 
 #define AUTOEXEC_PATH "root:/bin/test.elf"
@@ -27,6 +27,7 @@ struct symbol {
 extern "C" __attribute__((weak)) const symbol __kernel_symtab[];
 extern "C" __attribute__((weak)) const uint64_t __kernel_symtab_size;
 
+void set_no_smp_shed();
 struct patch_t {
 	void* old_addr;
 	uint8_t old_code[13];

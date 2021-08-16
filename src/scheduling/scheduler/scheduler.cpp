@@ -62,18 +62,22 @@ task* new_task(void* entry) {
 
 	uint64_t idx = 0;
 
-#ifndef NO_SMP_SHED
-	uint64_t min = 0xf0f0;
+	if (!NO_SMP_SHED) {
+		uint64_t min = 0xf0f0;
 
-	for (int i = 0; i < numcore; i++) {
-		if(task_queue[i].len < min) {
-			min = task_queue[i].len;
-			idx = i;
+		for (int i = 0; i < numcore; i++) {
+			if (!cpus[i].presend) {
+				continue;
+			}
+
+			if(task_queue[i].len < min) {
+				min = task_queue[i].len;
+				idx = i;
+			}
 		}
+	} else {
+		idx = bspid;
 	}
-#else
-	idx = bspid;
-#endif
 
 	task_queue[idx].add((uint64_t) t);
 

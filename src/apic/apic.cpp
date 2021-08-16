@@ -14,6 +14,8 @@
 
 #include <renderer/font_renderer.h>
 
+#include <config.h>
+
 extern "C" void ap_trampoline();
 extern "C" void ap_trampoline_data();
 
@@ -78,7 +80,7 @@ extern "C" void start_apic_timer(int time_betwen_interrupts) {
 }
 
 int run_on_ap(void_function function) {
-	if(numcore == 1) {
+	if(numcore == 1 || NO_SMP_SHED) {
 		driver::global_serial_driver->printf("Only 1 core in system running on bsp!\n");
 		(*(function))();
 		return -1;
@@ -167,18 +169,26 @@ void start_all_cpus() {
 			lapic_wait(lapic_ptr);
 		}
 
+		int timeout = 1000;
+
 		do {
 			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d!\n", i, data->status);
 			//PIT::sleep_d(5);
+			if (--timeout == 0) {
+				driver::global_serial_driver->printf("Timeout on cpu %d!\n", i);
+				goto next;
+			}
 		} while (data->status != ap_status::init_done);
 		
 
 		driver::global_serial_driver->printf("cpu %d init done!\n", i);
 		renderer::global_font_renderer->printf("%d ", i);
-		
+	next:
+		continue;
 	}
 
 	renderer::global_font_renderer->printf("%r\n");
 
 	bspdone = true;
+	cpus[0].presend = true;
 }

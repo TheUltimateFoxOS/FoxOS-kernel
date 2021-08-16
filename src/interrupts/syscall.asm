@@ -66,7 +66,7 @@ syscall_handler:
 	cmp [syscall_lock], byte 0
 	jne .spin_lock
 
-	lock mov [syscall_lock], byte 1
+	mov [syscall_lock], byte 1
 
 	lea r15, [syscall_table + rax * 8]
 	call [r15]

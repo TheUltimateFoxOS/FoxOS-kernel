@@ -1,5 +1,11 @@
 #include <config.h>
 
+bool NO_SMP_SHED = false;
+
+void set_no_smp_shed() {
+	NO_SMP_SHED = true;
+}
+
 uint64_t resolve_symbol(char* name) {
 	for(int i = 0; i < __kernel_symtab_size / sizeof(symbol); i++) {
 		if(strcmp(__kernel_symtab[i].name, name) == 0) {
