@@ -28,7 +28,7 @@
 #include <fs/stivale/vfs.h>
 #include <fs/vfs/vfs.h>
 
-#include <stivale.h>
+#include <stivale2.h>
 #include <cmdline.h>
 
 #include "examples/examples.h"
@@ -62,7 +62,7 @@ void crash() {
 	}
 }
 
-extern "C" void kernel_main(stivale_struct* bootinfo) {
+extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
 
@@ -115,7 +115,8 @@ extern "C" void kernel_main(stivale_struct* bootinfo) {
 	cmd_line_parser.add_handler((char*) "--autoexec", set_autoexec);
 	cmd_line_parser.add_handler((char*) "--no-smp", set_no_smp_shed);
 
-	cmd_line_parser.parse((char*) bootinfo->cmdline);
+	stivale2_struct_tag_cmdline* cmdline = stivale2_tag_find<stivale2_struct_tag_cmdline>(bootinfo, STIVALE2_STRUCT_TAG_CMDLINE_ID);
+	cmd_line_parser.parse((char*) cmdline->cmdline);
 
 	if (!NO_SMP_SHED) {
 		start_all_cpus();

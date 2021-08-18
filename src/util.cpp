@@ -33,8 +33,10 @@
 #include <config.h>
 
 KernelInfo kernel_info;
-void prepare_memory(stivale_struct* bootinfo) {
-	uint64_t m_map_entries = bootinfo->memory_map_entries;
+void prepare_memory(stivale2_struct* bootinfo) {
+	stivale2_struct_tag_memmap* memmap = stivale2_tag_find<stivale2_struct_tag_memmap>(bootinfo, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+
+	uint64_t m_map_entries = memmap->entries;
 
 	global_allocator = PageFrameAllocator();
 	global_allocator.read_EFI_memory_map(bootinfo);
@@ -53,8 +55,9 @@ void prepare_memory(stivale_struct* bootinfo) {
 		g_page_table_manager.map_memory((void*)t, (void*)t);
 	}
 
-	uint64_t fbBase = (uint64_t)bootinfo->framebuffer_addr;
-	uint64_t fbSize = (bootinfo->framebuffer_width * bootinfo->framebuffer_height * bootinfo->framebuffer_bpp) + 0x1000;
+	stivale2_struct_tag_framebuffer* framebuffer = stivale2_tag_find<stivale2_struct_tag_framebuffer>(bootinfo, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
+	uint64_t fbBase = (uint64_t)framebuffer->framebuffer_addr;
+	uint64_t fbSize = (framebuffer->framebuffer_width * framebuffer->framebuffer_height * framebuffer->framebuffer_bpp) + 0x1000;
 	global_allocator.lock_pages((void*)fbBase, fbSize / 0x1000 + 1);
 	for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
 		g_page_table_manager.map_memory((void*)t, (void*)t);
@@ -166,7 +169,7 @@ extern uint8_t default_font[];
 
 framebuffer_t default_framebuffer;
 
-void setup_globals(stivale_struct* bootinfo) {
+void setup_globals(stivale2_struct* bootinfo) {
 	driver::global_serial_driver = new driver::Serial(0x3f8);
 
 	psf1_header_t* font_header = (psf1_header_t*) malloc(sizeof(psf1_header_t));
@@ -187,11 +190,13 @@ void setup_globals(stivale_struct* bootinfo) {
 	finished_font->psf1_Header = font_header;
 	finished_font->glyph_buffer = glyph_buffer;
 
-	default_framebuffer.base_address = (void*) bootinfo->framebuffer_addr;
-	default_framebuffer.width = bootinfo->framebuffer_width;
-	default_framebuffer.height = bootinfo->framebuffer_height;
-	default_framebuffer.pixels_per_scanline = bootinfo->framebuffer_width;
-	default_framebuffer.buffer_size = bootinfo->framebuffer_width * bootinfo->framebuffer_height * bootinfo->framebuffer_bpp;
+	stivale2_struct_tag_framebuffer* framebuffer = stivale2_tag_find<stivale2_struct_tag_framebuffer>(bootinfo, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
+
+	default_framebuffer.base_address = (void*) framebuffer->framebuffer_addr;
+	default_framebuffer.width = framebuffer->framebuffer_width;
+	default_framebuffer.height = framebuffer->framebuffer_height;
+	default_framebuffer.pixels_per_scanline = framebuffer->framebuffer_width;
+	default_framebuffer.buffer_size = framebuffer->framebuffer_width * framebuffer->framebuffer_height * framebuffer->framebuffer_bpp;
 
 	fr = renderer::FontRenderer(&default_framebuffer, finished_font);
 	renderer::global_font_renderer = &fr;
@@ -209,20 +214,21 @@ void setup_globals(stivale_struct* bootinfo) {
 	shell::global_shell = &sh;
 }
 
-void prepare_acpi(stivale_struct* bootinfo) {
-	driver::global_serial_driver->printf("Rsdp: %x", bootinfo->rsdp);
-	pci::acpi::rsdp2_t* rsdp = (pci::acpi::rsdp2_t*) ((uint64_t) bootinfo->rsdp);
+void prepare_acpi(stivale2_struct* bootinfo) {
+	stivale2_struct_tag_rsdp* rsdp_tag = stivale2_tag_find<stivale2_struct_tag_rsdp>(bootinfo, STIVALE2_STRUCT_TAG_RSDP_ID);
+	driver::global_serial_driver->printf("Rsdp: %x", rsdp_tag->rsdp);
+	pci::acpi::rsdp2_t* rsdp = (pci::acpi::rsdp2_t*) ((uint64_t) rsdp_tag->rsdp);
 
 	pci::acpi::mcfg_header_t* mcfg = NULL;
 	uint8_t* madt = NULL;
 
 	if (rsdp->xsdt_address != 0) {
-		pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (((pci::acpi::rsdp2_t*) bootinfo->rsdp)->xsdt_address);
+		pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (((pci::acpi::rsdp2_t*) rsdp_tag->rsdp)->xsdt_address);
 
 		mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "MCFG");
 		madt = (uint8_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "APIC");
 	} else {
-		pci::acpi::sdt_header_t* rsdt = (pci::acpi::sdt_header_t*) (uint64_t) (((pci::acpi::rsdp2_t*) bootinfo->rsdp)->rsdt_address);
+		pci::acpi::sdt_header_t* rsdt = (pci::acpi::sdt_header_t*) (uint64_t) (((pci::acpi::rsdp2_t*) rsdp_tag->rsdp)->rsdt_address);
 
 		mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "MCFG");
 		madt = (uint8_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "APIC");
@@ -242,7 +248,7 @@ void prepare_acpi(stivale_struct* bootinfo) {
 
 extern uint8_t logo[];
 
-KernelInfo init_kernel(stivale_struct* bootinfo) {
+KernelInfo init_kernel(stivale2_struct* bootinfo) {
 	gdt_descriptor_t gdt_descriptor;
 	gdt_descriptor.size = sizeof(gdt_t) - 1;
 	gdt_descriptor.offset = (uint64_t) &default_gdt;

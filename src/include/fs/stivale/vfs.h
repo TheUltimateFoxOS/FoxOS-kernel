@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stivale.h>
+#include <stivale2.h>
 #include <fs/vfs/vfs.h>
 
-vfs_mount* initialise_stivale_modules(stivale_struct* bootinfo);
+vfs_mount* initialise_stivale_modules(stivale2_struct* bootinfo);
 
 FILE* stivale_modules_open(vfs_mount* node, const char* file, const char* mode);
 int stivale_modules_close(vfs_mount* node, file_t* stream);

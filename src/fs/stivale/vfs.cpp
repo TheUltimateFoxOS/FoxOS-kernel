@@ -7,12 +7,14 @@
 #include <scheduling/scheduler/errno.h>
 
 
-vfs_mount* initialise_stivale_modules(stivale_struct* bootinfo) {
+vfs_mount* initialise_stivale_modules(stivale2_struct* bootinfo) {
 	vfs_mount* mount = new vfs_mount;
 	memset(mount, 0, sizeof(mount));
 
-	mount->data = (void*) bootinfo->modules;
-	mount->data2 = bootinfo->module_count;
+	stivale2_struct_tag_modules* modules = stivale2_tag_find<stivale2_struct_tag_modules>(bootinfo, STIVALE2_STRUCT_TAG_MODULES_ID);
+
+	mount->data = (void*) modules->modules;
+	mount->data2 = modules->module_count;
 
 	mount->open = stivale_modules_open;
 	mount->read = stivale_modules_read;
@@ -24,11 +26,10 @@ vfs_mount* initialise_stivale_modules(stivale_struct* bootinfo) {
 }
 
 void stivale_modules_mount(vfs_mount* node) {
-	stivale_module* mod = (stivale_module*) node->data;
+	stivale2_module* mod = (stivale2_module*) node->data;
 
 	for (int i = 0; i < node->data2; i++) {
-		driver::global_serial_driver->printf("Found stivale module %s at 0x%x ending at 0x%x!\n", mod->string, mod->begin, mod->end);
-		mod = (stivale_module*) mod->next;
+		driver::global_serial_driver->printf("Found stivale module %s at 0x%x ending at 0x%x!\n", mod[i].string, mod[i].begin, mod[i].end);
 	}
 
 }
@@ -61,16 +62,15 @@ FILE* stivale_modules_open(vfs_mount* node, const char* file, const char* mode) 
 		return fp;
 	}
 
-	stivale_module* mod = (stivale_module*) node->data;
+	stivale2_module* mod = (stivale2_module*) node->data;
 
 	for (int i = 0; i < node->data2; i++) {
-		if(strcmp(mod->string, (char*) file) == 0) {
-			fp->size = mod->end - mod->begin;
-			fp->data = (void*) mod->begin;
+		if(strcmp(mod[i].string, (char*) file) == 0) {
+			fp->size = mod[i].end - mod[i].begin;
+			fp->data = (void*) mod[i].begin;
 
 			goto found;
 		}
-		mod = (stivale_module*) mod->next;
 	}
 
 	set_task_errno(VFS_FILE_NOT_FOUND);

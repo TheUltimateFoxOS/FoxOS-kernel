@@ -6,7 +6,7 @@ uint64_t used_memory;
 bool initialized = false;
 PageFrameAllocator global_allocator;
 
-void PageFrameAllocator::read_EFI_memory_map(stivale_struct* bootinfo){
+void PageFrameAllocator::read_EFI_memory_map(stivale2_struct* bootinfo){
 	if (initialized) return;
 
 	initialized = true;
@@ -14,13 +14,14 @@ void PageFrameAllocator::read_EFI_memory_map(stivale_struct* bootinfo){
 	void* largest_free_mem_seg = NULL;
 	size_t largest_free_mem_seg_size = 0;
 
-	for (int i = 0; i < bootinfo->memory_map_entries; i++){
-		stivale_mmap_entry* entry = (stivale_mmap_entry*) (bootinfo->memory_map_addr + i * sizeof(stivale_mmap_entry));
-		if (entry->type == STIVALE_MMAP_USABLE) {
-			if (entry->length > largest_free_mem_seg_size)
+	stivale2_struct_tag_memmap* memmap = stivale2_tag_find<stivale2_struct_tag_memmap>(bootinfo, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+
+	for (int i = 0; i < memmap->entries; i++){
+		if (memmap->memmap[i].type == STIVALE2_MMAP_USABLE) {
+			if (memmap->memmap[i].length > largest_free_mem_seg_size)
 			{
-				largest_free_mem_seg = (void*) entry->base;
-				largest_free_mem_seg_size = entry->length;
+				largest_free_mem_seg = (void*) memmap->memmap[i].base;
+				largest_free_mem_seg_size = memmap->memmap[i].length;
 			}
 		}
 	}
@@ -32,10 +33,9 @@ void PageFrameAllocator::read_EFI_memory_map(stivale_struct* bootinfo){
 
 	reserve_pages(0, memorysize / 4096 + 1);
 
-	for (int i = 0; i < bootinfo->memory_map_entries; i++){
-		stivale_mmap_entry* entry = (stivale_mmap_entry*) (bootinfo->memory_map_addr + i * sizeof(stivale_mmap_entry));
-		if (entry->type == STIVALE_MMAP_USABLE) { 
-			unreserve_pages((void*) entry->base, (entry->length / 0x1000) + 1);
+	for (int i = 0; i < memmap->entries; i++){
+		if (memmap->memmap[i].type == STIVALE2_MMAP_USABLE) { 
+			unreserve_pages((void*) memmap->memmap[i].base, (memmap->memmap[i].length / 0x1000) + 1);
 		}
 	}
 
