@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <stivale2.h>
 
 #include <interrupts/interrupts.h>
 
