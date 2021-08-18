@@ -119,7 +119,7 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	cmd_line_parser.parse((char*) cmdline->cmdline);
 
 	if (!NO_SMP_SHED) {
-		start_all_cpus();
+		start_all_cpus(bootinfo);
 	}
 
 	//font_renderer_test();

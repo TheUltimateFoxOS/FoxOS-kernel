@@ -36,7 +36,7 @@ struct cpu {
 	void_function function;
 };
 
-void start_all_cpus();
+void start_all_cpus(stivale2_struct* bootinfo);
 
 extern cpu cpus[256];
 extern uint8_t bspid;

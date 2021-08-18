@@ -15,9 +15,12 @@
 #include <renderer/font_renderer.h>
 
 #include <config.h>
+#include <stivale2.h>
 
 extern "C" void ap_trampoline();
 extern "C" void ap_trampoline_data();
+extern "C" void stivale2_bootstrap();
+extern "C" void stivale2_data();
 
 trampoline_data* data;
 
@@ -111,20 +114,21 @@ void wait_for_aps() {
 	}
 }
 
-void start_all_cpus() {
+void start_all_cpus(stivale2_struct* bootinfo) {
 	volatile uint8_t aprunning = 0;
-
-	data = (trampoline_data*) (((uint64_t) &ap_trampoline_data - (uint64_t) &ap_trampoline) + 0x8000);
 
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(bspid) : : );
 
+#ifndef USE_STIVALE2_SMP
+	data = (trampoline_data*) (((uint64_t) &ap_trampoline_data - (uint64_t) &ap_trampoline) + 0x8000);
 	g_page_table_manager.map_memory((void*) 0x8000, (void*) 0x8000);
 	memcpy((void*) 0x8000, (void*) &ap_trampoline, 4096);
+#endif
 
 	g_page_table_manager.map_memory((void*) lapic_ptr, (void*) lapic_ptr);
 
 	renderer::global_font_renderer->printf("Starting core: %f", 0xffffff00);
-
+#ifndef USE_STIVALE2_SMP
 	for (int i = 0; i < numcore; i++) {
 		if(lapic_ids[i] == bspid) {
 			continue;
@@ -186,9 +190,49 @@ void start_all_cpus() {
 	next:
 		continue;
 	}
+#else
+	stivale2_struct_tag_smp* smp_tag = stivale2_tag_find<stivale2_struct_tag_smp>(bootinfo, STIVALE2_STRUCT_TAG_SMP_ID);
 
-	renderer::global_font_renderer->printf("%r\n");
+	for (int i = 0; i < numcore; i++) {
+	next:
+		if(lapic_ids[i] == bspid) {
+			continue;
+		}
 
+		data = (trampoline_data*) stivale2_data;
+
+		gdt_descriptor_t gdt_descriptor;
+		gdt_descriptor.size = sizeof(gdt_t) - 1;
+		gdt_descriptor.offset = (uint64_t) &default_gdt;
+
+		data->status = 0;
+		data->idt = (uint64_t) &idtr;
+		data->gdt = (uint64_t) &gdt_descriptor;
+		data->stack_ptr = (uint64_t) global_allocator.request_page();
+		data->entry = (uint64_t) &ap_main;
+		data->lapic_ptr = (uint64_t) lapic_ptr;
+
+		__asm__ __volatile__ ("mov %%cr3, %%rax" : "=a"(data->pagetable));
+
+
+		smp_tag->smp_info[i].target_stack = (uint64_t) data->stack_ptr;
+		smp_tag->smp_info[i].goto_address = (uint64_t) &stivale2_bootstrap;
+
+		int timeout = 1000;
+		do {
+			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d!\n", i, data->status);
+			//PIT::sleep_d(5);
+			if (--timeout == 0) {
+				driver::global_serial_driver->printf("Timeout on cpu %d!\n", i);
+				goto next;
+			}
+		} while (data->status != ap_status::init_done);
+
+		driver::global_serial_driver->printf("cpu %d init done!\n", i);
+		renderer::global_font_renderer->printf("%d ", i);
+	}
+#endif
 	bspdone = true;
 	cpus[0].presend = true;
+	renderer::global_font_renderer->printf("%r\n");
 }
