@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <scheduling/scheduler/elf.h>
 
 #include <memory/heap.h>
 
@@ -25,8 +26,7 @@ struct symbol {
 	char* name;
 };
 
-extern "C" __attribute__((weak)) const symbol __kernel_symtab[];
-extern "C" __attribute__((weak)) const uint64_t __kernel_symtab_size;
+extern ElfSymbolResolver* elf_symbol_resolver;
 
 void set_no_smp_shed();
 struct patch_t {

@@ -1,4 +1,5 @@
 #include <config.h>
+#include <stivale2.h>
 
 bool NO_SMP_SHED = false;
 
@@ -6,23 +7,14 @@ void set_no_smp_shed() {
 	NO_SMP_SHED = true;
 }
 
+ElfSymbolResolver* elf_symbol_resolver = nullptr;
+
 uint64_t resolve_symbol(char* name) {
-	for(int i = 0; i < __kernel_symtab_size / sizeof(symbol); i++) {
-		if(strcmp(__kernel_symtab[i].name, name) == 0) {
-			return __kernel_symtab[i].addr;
-		}
-	}
-	return (uint64_t) NULL;
+	return (uint64_t) elf_symbol_resolver->resolve(name);
 }
 
 char* resolve_symbol(uint64_t address) {
-	for(int i = 0; i < __kernel_symtab_size / sizeof(symbol); i++) {
-		if(address >= __kernel_symtab[i].addr && address < __kernel_symtab[i + 1].addr && __kernel_symtab[i + 1].addr != 0xffffffffffffffff) {
-			return __kernel_symtab[i].name;
-		}
-	}
-
-	return (char*) "<unknown function>";
+	return elf_symbol_resolver->resolve((void*) address);
 }
 
 void unwind(int max, uint64_t rbp, void (*callback)(int frame_num, uint64_t rip)) {

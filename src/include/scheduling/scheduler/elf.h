@@ -2,6 +2,7 @@
 #define ELF_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 // ELF-64 Object File Format 1.5d2 p. 2
 typedef uint64_t Elf64_Addr;
@@ -108,5 +109,51 @@ typedef struct {
     Elf64_Xword p_memsz;
     Elf64_Xword p_align;    
 } __attribute__((packed)) Elf64_Phdr;
+
+typedef struct {
+	Elf64_Word sh_name;
+	Elf64_Word sh_type;
+	Elf64_Xword sh_flags;
+	Elf64_Addr sh_addr;
+	Elf64_Off sh_offset;
+	Elf64_Xword sh_size;
+	Elf64_Word sh_link;
+	Elf64_Word sh_info;
+	Elf64_Xword sh_addralign;
+	Elf64_Xword sh_entsize;
+} __attribute__((packed)) Elf64_Shdr;
+
+
+typedef struct {
+	Elf64_Word st_name;
+	uint8_t st_info;
+	uint8_t st_other;
+	Elf64_Half st_shndx;
+	Elf64_Addr st_value;
+	Elf64_Xword st_size;
+} __attribute__((packed)) Elf64_Sym;
+
+typedef struct {
+	Elf64_Shdr* shdr;
+	size_t shdr_count;
+	Elf64_Sym* sym_entries;
+	size_t sym_count;
+	char* sym_str_table;
+	size_t sym_str_table_size;
+	char* sect_str_table;
+	size_t sect_str_table_size;
+} symbol_table_information;
+
+class ElfSymbolResolver {
+	public:
+		ElfSymbolResolver(void* raw_elf_file);
+		~ElfSymbolResolver();
+
+		void* resolve(char* symbol_name);
+		char* resolve(void* symbol_addr);
+	private:
+		void* raw_elf_file;
+		symbol_table_information sym_info;
+};
 
 #endif

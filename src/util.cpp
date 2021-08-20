@@ -17,6 +17,7 @@
 #include <paging/page_frame_allocator.h>
 
 #include <scheduling/pit/pit.h>
+#include <scheduling/scheduler/elf.h>
 #include <interrupts/interrupts.h>
 
 #include <pci/pci.h>
@@ -258,6 +259,10 @@ KernelInfo init_kernel(stivale2_struct* bootinfo) {
 	prepare_memory(bootinfo);
 
 	initialize_heap((void*) 0x0000100000000000, 0x10);
+
+	stivale2_struct_tag_kernel_file* kernel_file = stivale2_tag_find<stivale2_struct_tag_kernel_file>(bootinfo, STIVALE2_STRUCT_TAG_KERNEL_FILE_ID);
+	elf_symbol_resolver = new ElfSymbolResolver((void*) kernel_file->kernel_file);
+
 	init_fast_mem(); // we want to use as fast as possible fast memory functions
 
 	setup_globals(bootinfo);
