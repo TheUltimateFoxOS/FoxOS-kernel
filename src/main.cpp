@@ -81,15 +81,15 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	driver::global_driver_manager->add_driver(&pc_speaker_driver);
 
 	//ATA driver
-	driver::AdvancedTechnologyAttachment ata0m(true, 0x1F0, (char*) "ata0 master");
-	driver::AdvancedTechnologyAttachment ata0s(false, 0x1F0, (char*) "ata0 slave");
-	driver::AdvancedTechnologyAttachment ata1m(true, 0x170, (char*) "ata1 master");
-	driver::AdvancedTechnologyAttachment ata1s(false, 0x170, (char*) "ata1 slave");
+	//driver::AdvancedTechnologyAttachment ata0m(true, 0x1F0, (char*) "ata0 master");
+	//driver::AdvancedTechnologyAttachment ata0s(false, 0x1F0, (char*) "ata0 slave");
+	//driver::AdvancedTechnologyAttachment ata1m(true, 0x170, (char*) "ata1 master");
+	//driver::AdvancedTechnologyAttachment ata1s(false, 0x170, (char*) "ata1 slave");
 
-	driver::global_driver_manager->add_driver(&ata0m);
-	driver::global_driver_manager->add_driver(&ata0s);
-	driver::global_driver_manager->add_driver(&ata1m);
-	driver::global_driver_manager->add_driver(&ata1s);
+	//driver::global_driver_manager->add_driver(&ata0m);
+	//driver::global_driver_manager->add_driver(&ata0s);
+	//driver::global_driver_manager->add_driver(&ata1m);
+	//driver::global_driver_manager->add_driver(&ata1s);
 
 	//Activate drivers
 	renderer::global_font_renderer->printf("\n");

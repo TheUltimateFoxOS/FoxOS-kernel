@@ -53,4 +53,11 @@ namespace pci {
 	const char* get_device_name(uint16_t vendor_ID, uint16_t device_ID);
 	const char* get_subclass_name(uint8_t class_code, uint8_t subclass_code);
 	const char* get_prog_IF_name(uint8_t class_code, uint8_t subclass_code, uint8_t prog_IF);
+
+	uint32_t pci_read(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset);
+	void pci_write(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint32_t value);
+	int device_has_functions(uint16_t bus, uint16_t device);
+	pci_header_0_t get_device_header(uint16_t bus, uint16_t device, uint16_t function);
+	void enumerate_pci();
+
 }

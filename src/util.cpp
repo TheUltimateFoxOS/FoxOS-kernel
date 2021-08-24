@@ -240,8 +240,8 @@ void prepare_acpi(stivale2_struct* bootinfo) {
 	renderer::global_font_renderer->printf("Booting FoxOS on %d proccesors!\n\n", numcore);
 
 	if (mcfg == NULL) {
-		renderer::global_font_renderer->printf("%fNo mcfg found!%r\n", 0xffff0000);
-		renderer::global_font_renderer->printf("%fAborting pci preparation!%r\n", 0xffff0000);
+		renderer::global_font_renderer->printf("%fNo mcfg found! Using PCI Configuration Space Access Mechanism!%r\n", 0xff787878);
+		pci::enumerate_pci();
 	} else {
 		pci::enumerate_pci(mcfg);
 	}
