@@ -33,21 +33,6 @@ ElfSymbolResolver::ElfSymbolResolver(void* raw_elf_file) {
 			}
 		}
 	}
-
-	for (int i = 0; i < this->sym_info.sym_count; i++) {
-		Elf64_Sym* sym = &this->sym_info.sym_entries[i];
-		if (sym->st_value == 0) {
-			continue;
-		}
-
-		int str_index = sym->st_name;
-
-		char* name = &this->sym_info.sym_str_table[str_index];
-
-		driver::global_serial_driver->printf("%s\n", name);
-	}
-	
-	
 }
 
 void* ElfSymbolResolver::resolve(char* symbol_name) {
