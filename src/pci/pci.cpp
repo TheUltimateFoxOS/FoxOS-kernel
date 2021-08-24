@@ -1,6 +1,7 @@
 #include <pci/pci.h>
 
 #include <driver/disk/ahci/ahci.h>
+#include <driver/disk/ata.h>
 #include <driver/driver.h>
 
 #include <memory/heap.h>
@@ -34,12 +35,21 @@ void enumerate_function(uint64_t address, uint64_t function) {
 	switch (pci_device_header->class_) {
 		case 0x01: //mass storage controller
 			switch (pci_device_header->subclass) {
-				case 0x06: //serial ata
-					switch (pci_device_header->prog_if) {
-						case 0x01: //AHCI 1.0 device
-							new driver::AHCI(pci_device_header);
+				case 0x01: //IDE controller
+					driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment(true, 0x1F0, (char*) "ata0 master"));
+					driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment(false, 0x1F0, (char*) "ata0 slave"));
+					driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment(true, 0x170, (char*) "ata1 master"));
+					driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment (false, 0x170, (char*) "ata1 slave"));
+					break;
+			case 0x06: //serial ata
+				switch (pci_device_header->prog_if) {
+					case 0x01: //AHCI 1.0 device
+						new driver::AHCI(pci_device_header);
+						break;
 					}
-			}
+					break;
+				}
+				break;
 	}
 }
 
@@ -167,6 +177,12 @@ void pci::enumerate_pci() {
 				switch (pci_device_header->class_) {
 					case 0x01: //mass storage controller
 						switch (pci_device_header->subclass) {
+							case 0x01: //IDE controller
+								driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment(true, 0x1F0, (char*) "ata0 master"));
+								driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment(false, 0x1F0, (char*) "ata0 slave"));
+								driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment(true, 0x170, (char*) "ata1 master"));
+								driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment (false, 0x170, (char*) "ata1 slave"));
+								break;
 							case 0x06: //serial ata
 								switch (pci_device_header->prog_if) {
 									case 0x01: //AHCI 1.0 device
@@ -174,8 +190,11 @@ void pci::enumerate_pci() {
 										memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
 
 										new driver::AHCI((pci::pci_device_header_t*) header_copy);
+										break;
 								}
+								break;
 						}
+						break;
 				}
 			}
 		}
