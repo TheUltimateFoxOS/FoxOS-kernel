@@ -10,10 +10,6 @@ namespace shell {
 		public:
 			Shell();
 
-			void init_shell();
-			void print_nl();
-			void run_command();
-
 			void keypress(char c);
 	};
 

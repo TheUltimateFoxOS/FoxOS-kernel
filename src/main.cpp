@@ -76,20 +76,9 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	driver::MouseDriver mouse_driver(&mhandler);
 	driver::global_driver_manager->add_driver(&mouse_driver);
 
-	// pc speaker driver
+	//PC speaker driver
 	driver::PcSpeakerDriver pc_speaker_driver;
 	driver::global_driver_manager->add_driver(&pc_speaker_driver);
-
-	//ATA driver
-	//driver::AdvancedTechnologyAttachment ata0m(true, 0x1F0, (char*) "ata0 master");
-	//driver::AdvancedTechnologyAttachment ata0s(false, 0x1F0, (char*) "ata0 slave");
-	//driver::AdvancedTechnologyAttachment ata1m(true, 0x170, (char*) "ata1 master");
-	//driver::AdvancedTechnologyAttachment ata1s(false, 0x170, (char*) "ata1 slave");
-
-	//driver::global_driver_manager->add_driver(&ata0m);
-	//driver::global_driver_manager->add_driver(&ata0s);
-	//driver::global_driver_manager->add_driver(&ata1m);
-	//driver::global_driver_manager->add_driver(&ata1s);
 
 	//Activate drivers
 	renderer::global_font_renderer->printf("\n");
@@ -140,14 +129,10 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 
 	vfs_mount* stivale_mount = initialise_stivale_modules(bootinfo);
 	mount(stivale_mount, (char*) "stivale");
-	
-
-	shell::global_shell->init_shell();
 
 	run_on_ap([]() {
 		driver::global_serial_driver->printf("Hello ap world!\n");
 	});
-
 
 	task* init_procces_task = new_task((void*) init_procces);
 

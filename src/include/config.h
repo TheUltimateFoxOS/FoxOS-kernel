@@ -19,7 +19,7 @@ extern bool NO_SMP_SHED;
 #define SEND_SIGNALS
 #define USE_STIVALE2_SMP
 
-#define AUTOEXEC_PATH "root:/bin/test.elf"
+#define AUTOEXEC_PATH "root:/bin/terminal.elf"
 
 struct symbol {
 	uint64_t addr;
