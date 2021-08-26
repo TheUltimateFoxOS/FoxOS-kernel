@@ -200,8 +200,8 @@ char keymap_us(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 			case 0x26: return('l'); break;
 			case 0x27: return(';'); break;
 			case 0x28: return('\''); break;
-			case 0x29: return(96); break;
-			case 0x2B: return('#'); break;
+			case 0x29: return('#'); break;
+			case 0x2B: return('\\'); break;
 			case 0x2C: return('z'); break;
 			case 0x2D: return('x'); break;
 			case 0x2E: return('c'); break;
