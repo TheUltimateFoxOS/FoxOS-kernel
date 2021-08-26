@@ -33,14 +33,22 @@
 
 #include "examples/examples.h"
 
-class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler{
+class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler {
 	public:
-		void KeyDown(char c){
+		void KeyDown(char c) {
 			shell::global_shell->keypress(c);
+		}
+
+		void SpecialKeyDown(driver::special_key key) {
+			
+		}
+
+		void SpecialKeyUp(driver::special_key key) {
+			
 		}
 };
 
-class MouseRendererMouseEventHandler : public driver::MouseEventHandler{
+class MouseRendererMouseEventHandler : public driver::MouseEventHandler {
 	public:
 		void OnMouseDown(uint8_t button) {
 			renderer::global_mouse_renderer->on_mouse_down(button);

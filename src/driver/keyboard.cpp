@@ -4,12 +4,12 @@
 
 using namespace driver;
 
-char keymap_de(uint8_t key, bool l_shift){
-	if(l_shift){
+char keymap_de(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
+	if(l_shift || r_shift || caps_lock){
 		switch(key){
 			case 0x02: return('!'); break;
 			case 0x03: return('"'); break;
-			case 0x04: return(' ' ); break;
+			case 0x04: return(' '); break;
 			case 0x05: return('$'); break;
 			case 0x06: return('%'); break;
 			case 0x07: return('&'); break;
@@ -104,19 +104,19 @@ char keymap_de(uint8_t key, bool l_shift){
 	return 0;
 }
 
-char keymap_us(uint8_t key, bool l_shift){
-	if(l_shift){
+char keymap_us(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
+	if(l_shift || r_shift || caps_lock){
 		switch(key){
-			case 0x02: return('1'); break;
-			case 0x03: return('2'); break;
-			case 0x04: return('3'); break;
-			case 0x05: return('4'); break;
-			case 0x06: return('5'); break;
-			case 0x07: return('6'); break;
-			case 0x08: return('7'); break;
-			case 0x09: return('8'); break;
-			case 0x0A: return('9'); break;
-			case 0x0B: return('0'); break;
+			case 0x02: return('!'); break;
+			case 0x03: return('\"'); break;
+			case 0x04: break; //Pound symbol
+			case 0x05: return('$'); break;
+			case 0x06: return('%'); break;
+			case 0x07: return(94); break;
+			case 0x08: return('&'); break;
+			case 0x09: return('*'); break;
+			case 0x0A: return('('); break;
+			case 0x0B: return(')'); break;
 			case 0x0C: return('_'); break;
 			case 0x0D: return('+'); break;
 			case 0x0E: return('\b'); break;
@@ -144,6 +144,7 @@ char keymap_us(uint8_t key, bool l_shift){
 			case 0x27: return(':'); break;
 			case 0x28: return('@'); break;
 			case 0x29: return(126); break;
+			case 0x2B: return(124); break;
 			case 0x2C: return('Z'); break;
 			case 0x2D: return('X'); break;
 			case 0x2E: return('C'); break;
@@ -162,16 +163,16 @@ char keymap_us(uint8_t key, bool l_shift){
 	}
 	else{
 		switch(key){
-			case 0x02: return('!'); break;
-			case 0x03: return('"'); break;
-			case 0x04: break; //Pound symbol
-			case 0x05: return('$'); break;
-			case 0x06: return('%'); break;
-			case 0x07: return('^'); break;
-			case 0x08: return('&'); break;
-			case 0x09: return('*'); break;
-			case 0x0A: return('('); break;
-			case 0x0B: return(')'); break;
+			case 0x02: return('1'); break;
+			case 0x03: return('2'); break;
+			case 0x04: return('3'); break;
+			case 0x05: return('4'); break;
+			case 0x06: return('5'); break;
+			case 0x07: return('6'); break;
+			case 0x08: return('7'); break;
+			case 0x09: return('8'); break;
+			case 0x0A: return('9'); break;
+			case 0x0B: return('0'); break;
 			case 0x0C: return('-'); break;
 			case 0x0D: return('='); break;
 			case 0x0E: return('\b'); break;
@@ -187,6 +188,7 @@ char keymap_us(uint8_t key, bool l_shift){
 			case 0x19: return('p'); break;
 			case 0x1A: return('['); break;
 			case 0x1B: return(']'); break;
+			case 0x1C: return('\n'); break;
 			case 0x1E: return('a'); break;
 			case 0x1F: return('s'); break;
 			case 0x20: return('d'); break;
@@ -199,6 +201,7 @@ char keymap_us(uint8_t key, bool l_shift){
 			case 0x27: return(';'); break;
 			case 0x28: return('\''); break;
 			case 0x29: return(96); break;
+			case 0x2B: return('#'); break;
 			case 0x2C: return('z'); break;
 			case 0x2D: return('x'); break;
 			case 0x2E: return('c'); break;
@@ -209,7 +212,6 @@ char keymap_us(uint8_t key, bool l_shift){
 			case 0x33: return(','); break;
 			case 0x34: return('.'); break;
 			case 0x35: return('/'); break;
-			case 0x1C: return('\n'); break;
 			case 0x39: return(' '); break;
 			default:
 				break;
@@ -218,8 +220,8 @@ char keymap_us(uint8_t key, bool l_shift){
 	return 0;
 }
 
-char keymap_fr(uint8_t key, bool l_shift){
-	if(l_shift){
+char keymap_fr(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
+	if(l_shift || r_shift || caps_lock){
 		switch(key){
 			case 0x02: return('1'); break;
 			case 0x03: return('2'); break;
@@ -341,14 +343,23 @@ void KeyboardEventHandler::KeyDown(char c) {
 
 }
 
+void KeyboardEventHandler::SpecialKeyDown(special_key key) {
+
+}
+
+void KeyboardEventHandler::SpecialKeyUp(special_key key) {
+
+}
+
 KeyboardDriver::KeyboardDriver(KeyboardEventHandler* handler) : interrupts::InterruptHandler(0x21), dataport(0x60), commandport(0x64) {
 	this->handler = handler;
 	this->keymap = keymap_us_e;
 }
 
 void KeyboardDriver::activate() {
-	while(commandport.Read() & 0x1)
+	while(commandport.Read() & 0x1) {
 		dataport.Read();
+	}
 	commandport.Write(0xae);
 	commandport.Write(0x20);
 	uint8_t status = (dataport.Read() | 1) & ~0x10;
@@ -366,31 +377,122 @@ void KeyboardDriver::handle(){
 	if(handler == 0)
 		return;
 
-	switch (key)
-	{
-		case 0x2A:
-			this->l_shift = true;
-			break;
-		case 0xAA:
-			this->l_shift = false;
-			break;
+	if (this->extended_ascii) {
+		this->extended_ascii = false;
+
+		switch (key)
+		{
+			case 0x1D: //Right control down
+				handler->SpecialKeyDown(special_key::right_control);
+				break;
+			case 0x9D: //Right control up
+				handler->SpecialKeyUp(special_key::right_control);
+				break;
+
+			case 0x38: //Right alt down
+				handler->SpecialKeyDown(special_key::right_alt);
+				break;
+			case 0xB8: //Right alt up
+				handler->SpecialKeyUp(special_key::right_alt);
+				break;
+
+			case 0x5B: //Left GUI down (Windows/Apple)
+				handler->SpecialKeyDown(special_key::left_gui);
+				break;
+			case 0xDB: //Left GUI up
+				handler->SpecialKeyUp(special_key::left_gui);
+				break;
+
+			case 0x5C: //Right GUI down (Windows/Apple)
+				handler->SpecialKeyDown(special_key::right_gui);
+				break;
+			case 0xDC: //Right GUI up
+				handler->SpecialKeyUp(special_key::right_gui);
+				break;
 		
-		default:
-			switch(this->keymap) {
-				case keymap_de_e:
-					handler->KeyDown(keymap_de(key, this->l_shift));
-					break;
-				case keymap_fr_e:
-					handler->KeyDown(keymap_fr(key, this->l_shift));
-					break;
-				case keymap_us_e:
-					handler->KeyDown(keymap_us(key, this->l_shift));
-					break;
-				default:
-					renderer::global_font_renderer->printf("Invalid keymap selected\n");
-					break;
-				}
-			break;
+			default:
+				//renderer::global_font_renderer->printf(" - 0xE0 0x%x", key);
+				break;
+		}
+	} else {
+		switch (key)
+		{
+			case 0xE0: //Extended ASCII
+				this->extended_ascii = true;
+				break;
+
+			case 0x2A: //Left shift down
+				this->l_shift = true;
+				handler->SpecialKeyDown(special_key::left_shift);
+				break;
+			case 0xAA: //Left shift up
+				this->l_shift = false;
+				handler->SpecialKeyUp(special_key::left_shift);
+				break;
+			
+			case 0x36: //Right shift down
+				this->r_shift = true;
+				handler->SpecialKeyDown(special_key::right_shift);
+				break; //Right shift up
+			case 0xB6:
+				this->r_shift = false;
+				handler->SpecialKeyUp(special_key::right_shift);
+				break;
+
+			case 0x1D: //Left control down
+				handler->SpecialKeyDown(special_key::left_ctrl);
+				break;
+			case 0x9D: //Left control up
+				handler->SpecialKeyUp(special_key::left_ctrl);
+				break;
+
+			case 0x38: //Left alt down
+				handler->SpecialKeyDown(special_key::left_alt);
+				break;
+			case 0xB8: //Left alt up
+				handler->SpecialKeyUp(special_key::left_alt);
+				break;
+
+			case 0x3A: //CapsLock down
+				handler->SpecialKeyDown(special_key::caps_lock);
+				this->caps_lock = !this->caps_lock;
+				break;
+			case 0xBA: //CapsLock up
+				handler->SpecialKeyUp(special_key::caps_lock);
+				break;
+
+			case 0x45: //NumLock down
+				handler->SpecialKeyDown(special_key::num_lock);
+				break;
+			case 0xC5: //NumLock up
+				handler->SpecialKeyUp(special_key::num_lock);
+				break;
+
+			case 0x46: //ScrollLock down
+				handler->SpecialKeyDown(special_key::scroll_lock);
+				break;
+			case 0xC6: //ScrollLock up
+				handler->SpecialKeyUp(special_key::scroll_lock);
+				break;
+			
+			default:
+				//renderer::global_font_renderer->printf(" - 0x%x", key);
+				switch(this->keymap) {
+					case keymap_de_e:
+						handler->KeyDown(keymap_de(key, this->l_shift, this->r_shift, this->caps_lock));
+						break;
+					case keymap_fr_e:
+						handler->KeyDown(keymap_fr(key, this->l_shift, this->r_shift, this->caps_lock));
+						break;
+					case keymap_us_e:
+						handler->KeyDown(keymap_us(key, this->l_shift, this->r_shift, this->caps_lock));
+						break;
+					default:
+						renderer::global_font_renderer->printf("Invalid keymap selected\n");
+						break;
+					}
+				break;
+		}
 	}
 }
 

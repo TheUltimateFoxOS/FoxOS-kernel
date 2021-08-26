@@ -14,11 +14,29 @@ namespace driver {
 		keymap_us_e = 2
 	};
 
+	enum special_key {
+		left_shift,
+		left_ctrl,
+		left_alt,
+		left_gui,
+
+		right_shift,
+		right_control,
+		right_alt,
+		right_gui,
+		
+		caps_lock,
+		num_lock,
+		scroll_lock,
+	};
+
 	class KeyboardEventHandler {
 		public:
 			KeyboardEventHandler();
 			
 			virtual void KeyDown(char c);
+			virtual void SpecialKeyDown(special_key key);
+			virtual void SpecialKeyUp(special_key key);
 	};
 
 	class KeyboardDriver : public Driver, public interrupts::InterruptHandler {
@@ -33,7 +51,12 @@ namespace driver {
 			~KeyboardDriver();
 
 			uint8_t keymap;
+
 			bool l_shift = false;
+			bool r_shift = false;
+			bool caps_lock = false;
+
+			bool extended_ascii = false;
 
 			virtual void handle();
 			virtual bool is_presend();
