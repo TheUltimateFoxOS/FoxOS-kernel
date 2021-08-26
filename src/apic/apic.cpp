@@ -141,7 +141,7 @@ void start_all_cpus(stivale2_struct* bootinfo) {
 		data->status = 0;
 		data->idt = (uint64_t) &idtr;
 		data->gdt = (uint64_t) &gdt_descriptor;
-		data->stack_ptr = (uint64_t) global_allocator.request_page();
+		data->stack_ptr = (uint64_t) global_allocator.request_page() + 4096;
 		data->entry = (uint64_t) &ap_main;
 		data->lapic_ptr = (uint64_t) lapic_ptr;
 
@@ -208,7 +208,7 @@ void start_all_cpus(stivale2_struct* bootinfo) {
 		data->status = 0;
 		data->idt = (uint64_t) &idtr;
 		data->gdt = (uint64_t) &gdt_descriptor;
-		data->stack_ptr = (uint64_t) global_allocator.request_page();
+		data->stack_ptr = (uint64_t) global_allocator.request_page() + 4096;
 		data->entry = (uint64_t) &ap_main;
 		data->lapic_ptr = (uint64_t) lapic_ptr;
 

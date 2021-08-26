@@ -95,6 +95,7 @@ syscall_handler:
 [extern sys_env]
 [extern sys_read]
 [extern schedule]
+[extern sys_spawn]
 
 [GLOBAL syscall_table]
 [GLOBAL syscall_table_end]
@@ -109,6 +110,7 @@ syscall_table:
 	dq sys_env
 	dq sys_read
 	dq schedule
+	dq sys_spawn
 syscall_table_end:
 
 syscall_lock: db 0

@@ -18,6 +18,7 @@
 extern bool NO_SMP_SHED;
 #define SEND_SIGNALS
 #define USE_STIVALE2_SMP
+#define TASK_STACK_PAGES 64
 
 #define AUTOEXEC_PATH "root:/bin/terminal.elf"
 

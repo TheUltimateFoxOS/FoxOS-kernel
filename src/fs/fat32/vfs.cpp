@@ -88,6 +88,7 @@ FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 
 	char* filepath = (char*) "0:";
 	filepath[0] += node->data2;
+	filepath[2] = '\0';
 	strcat(filepath, file);
 
 	FRESULT fr = f_open(&fil, filepath, fatmode);

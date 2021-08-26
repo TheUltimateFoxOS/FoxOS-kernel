@@ -8,6 +8,7 @@
 
 #include <apic/madt.h>
 #include <config.h>
+#include <stdio.h>
 
 uint64_t_queue task_queue[256];
 bool scheduling = false;
@@ -21,10 +22,10 @@ void init_sched() {
 
 	for (int i = 0; i < numcore; i++) {
 		task* t = (task*) malloc(sizeof(task));
-		void* stack = global_allocator.request_pages(8);
+		void* stack = global_allocator.request_pages(TASK_STACK_PAGES);
 
-		t->regs.rip = (uint64_t) (void_function) []() { while(1) { __asm__ __volatile__ ("mov $7, %rax; int $0x30"); } };
-		t->regs.rsp = (uint64_t) stack + 4096;
+		t->regs.rip = (uint64_t) (void_function) []() { while(1) { __asm__ __volatile__ ("sti; nop"); } };
+		t->regs.rsp = (uint64_t) stack + TASK_STACK_PAGES * 4096;
 		t->first_sched = true;
 		t->stack = (uint64_t) stack;
 
@@ -49,11 +50,11 @@ task* new_task(void* entry) {
 	__asm__ __volatile__ ("cli");
 
 	task* t = (task*) malloc(sizeof(task));
-	void* stack = global_allocator.request_pages(8);
+	void* stack = global_allocator.request_pages(TASK_STACK_PAGES);
 
 	t->regs.rax = (uint64_t) entry;
 	t->regs.rip = (uint64_t) task_entry;
-	t->regs.rsp = (uint64_t) stack + 4096;
+	t->regs.rsp = (uint64_t) stack + TASK_STACK_PAGES * 4096;
 	t->first_sched = true;
 	t->kill_me = false;
 	t->is_elf = false;
@@ -95,21 +96,21 @@ void task_exit() {
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
 	task* t = (task*) task_queue[id].list[0];
+	t->kill_me = true;
 
-	if(t->is_elf) {
+	/*if(t->is_elf) {
 		global_allocator.free_pages(t->offset, t->page_count);
 	}
 
-	global_allocator.free_pages((void*) t->stack, 8);
-	free(t);
-
-	task_queue[id].remove_first();
+	global_allocator.free_pages((void*) t->stack, TASK_STACK_PAGES);
+	free(t);*/
 
 	__asm__ __volatile__ ("sti");
 	spin_lock = false;
 
-	// call scheduler
-	__asm__ __volatile__ ("mov $7, %rax; int $0x30");
+	while (1) {
+		__asm__ __volatile__ ("nop");
+	}
 }
 
 task* load_elf(void* ptr, uint64_t file_size, const char **argv, const char **envp) {
@@ -170,6 +171,9 @@ task* load_elf(void* ptr, uint64_t file_size, const char **argv, const char **en
 	return t;
 }
 
+#include <driver/serial.h>
+#include <interrupts/panic.h>
+
 extern "C" void schedule(s_registers* regs) {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
@@ -208,12 +212,11 @@ extern "C" void schedule(s_registers* regs) {
 next:
 
 	t = (task*) task_queue[id].list[0];
-
 	if(t->kill_me) {
 		if(t->is_elf) {
 			global_allocator.free_pages(t->offset, t->page_count);
 		}
-		global_allocator.free_page((void*) t->stack);
+		global_allocator.free_pages((void*) t->stack, TASK_STACK_PAGES);
 		free(t);
 
 		task_queue[id].remove_first();
@@ -224,6 +227,17 @@ next:
 		task_queue[id].next();
 		goto next;
 	}
+
+	if(t->regs.rsp < t->stack || t->regs.rsp > t->stack + TASK_STACK_PAGES * 0x1000) {
+		char error[1024];
+		sprintf(error, "Stack overflow at 0x%x. Stack is located at 0x%x and %d pages big!\n", t->regs.rsp, t->stack, TASK_STACK_PAGES);
+		
+		driver::global_serial_driver->printf(error);
+
+		interrupts::Panic p = interrupts::Panic(error);
+		p.do_it(NULL);
+	}
+	
 
 	regs->rax = t->regs.rax;
 	regs->rbx = t->regs.rbx;

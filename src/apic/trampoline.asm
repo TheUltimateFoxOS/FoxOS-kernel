@@ -41,7 +41,6 @@ ap_trampoline_64:
 	mov ss, ax
 	
 	mov rax, [to_target(ap_trampoline_data.stack_ptr)]
-	add rax, 4096 ; stack grows downwards
 	mov rsp, rax
 
 	mov rax, [to_target(ap_trampoline_data.idt)]
