@@ -28,6 +28,11 @@ namespace driver {
 		caps_lock,
 		num_lock,
 		scroll_lock,
+
+		up_arrow,
+		down_arrow,
+		left_arrow,
+		right_arrow,
 	};
 
 	class KeyboardEventHandler {

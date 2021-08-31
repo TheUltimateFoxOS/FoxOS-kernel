@@ -410,6 +410,34 @@ void KeyboardDriver::handle(){
 				handler->SpecialKeyUp(special_key::right_gui);
 				break;
 		
+			case 0x48: //Up arrow down
+				handler->SpecialKeyDown(special_key::up_arrow);
+				break;
+			case 0xC8: //Up arrow up
+				handler->SpecialKeyUp(special_key::up_arrow);
+				break;
+
+			case 0x50: //Down arrow down
+				handler->SpecialKeyDown(special_key::down_arrow);
+				break;
+			case 0xD0: //Down arrow up
+				handler->SpecialKeyUp(special_key::down_arrow);
+				break;
+
+			case 0x4B: //Left arrow down
+				handler->SpecialKeyDown(special_key::left_arrow);
+				break;
+			case 0xCB: //Left arrow up
+				handler->SpecialKeyUp(special_key::left_arrow);
+				break;
+
+			case 0x4D: //Right arrow down
+				handler->SpecialKeyDown(special_key::right_arrow);
+				break;
+			case 0xCD: //Right arrow up
+				handler->SpecialKeyUp(special_key::right_arrow);
+				break;
+
 			default:
 				//renderer::global_font_renderer->printf(" - 0xE0 0x%x", key);
 				break;
@@ -477,6 +505,8 @@ void KeyboardDriver::handle(){
 			
 			default:
 				//renderer::global_font_renderer->printf(" - 0x%x", key);
+				//break;
+
 				switch(this->keymap) {
 					case keymap_de_e:
 						handler->KeyDown(keymap_de(key, this->l_shift, this->r_shift, this->caps_lock));
