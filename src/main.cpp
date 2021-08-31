@@ -144,7 +144,7 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 
 	task* init_procces_task = new_task((void*) init_procces);
 
-	//run_on_ap(crash);
+	run_on_ap(crash);
 
 	wait_for_aps();
 

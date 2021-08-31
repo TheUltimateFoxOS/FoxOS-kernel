@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 
+#include <disassembler.h>
+
 using namespace interrupts;
 
 
@@ -128,12 +130,19 @@ void Panic::do_it(s_registers* regs) {
 		renderer::global_font_renderer->printf("Register dump:\n");
 		dump_regs(regs);
 
+		char disassembled[0xFF];
+		memset(disassembled, 0, 0xFF);
+		unsigned char* code_location = (unsigned char*) regs->rip;
+		int disassembled_size = disassemble(code_location, 10, 0, disassembled);
+		renderer::global_font_renderer->printf("Faulting instruction: %s\n", disassembled);
+
 		renderer::global_font_renderer->printf("\nStarting stack trace:\n");
 
 		if(resolve_symbol(resolve_symbol(regs->rip)) != 0) {
 			char str[512];
 			sprintf(str, "%s + %d", resolve_symbol(regs->rip), regs->rip - resolve_symbol(resolve_symbol(regs->rip)));
 			renderer::global_font_renderer->printf("%s\n", str);
+
 		} else {
 			renderer::global_font_renderer->printf("<unknown function at 0x%x>\n", regs->rip);
 		}
