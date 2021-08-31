@@ -2,6 +2,9 @@
 #include <scheduling/scheduler/scheduler.h>
 #include <scheduling/scheduler/signal.h>
 
+#include <driver/keyboard.h>
+#include <driver/driver.h>
+
 extern "C" void sys_env(s_registers regs) {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
@@ -20,6 +23,12 @@ extern "C" void sys_env(s_registers regs) {
 			break;
 		case 3:
 			register_signal_handler(regs.rcx, regs.rdx);
+			break;
+		case 4:
+			driver::KeyboardDriver* kbdrv = (driver::KeyboardDriver*) driver::global_driver_manager->find_driver_by_name((char*) "keyboard");
+			if(kbdrv != nullptr) {
+				kbdrv->keymap = (uint8_t) regs.rcx;
+			}
 			break;
 	}
 }
