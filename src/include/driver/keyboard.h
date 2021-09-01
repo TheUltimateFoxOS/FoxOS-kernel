@@ -63,6 +63,8 @@ namespace driver {
 
 			bool extended_ascii = false;
 
+			bool debug_mode = false;
+
 			virtual void handle();
 			virtual bool is_presend();
 			virtual void activate();

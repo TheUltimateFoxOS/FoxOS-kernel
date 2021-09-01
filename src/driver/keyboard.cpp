@@ -1,6 +1,7 @@
 #include <driver/keyboard.h>
 
 #include <renderer/font_renderer.h>
+#include <driver/serial.h>
 
 using namespace driver;
 
@@ -9,7 +10,7 @@ char keymap_de(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 		switch(key){
 			case 0x02: return('!'); break;
 			case 0x03: return('"'); break;
-			case 0x04: return(' '); break;
+			//case 0x04: return('§'); break;
 			case 0x05: return('$'); break;
 			case 0x06: return('%'); break;
 			case 0x07: return('&'); break;
@@ -17,7 +18,8 @@ char keymap_de(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 			case 0x09: return('('); break;
 			case 0x0A: return(')'); break;
 			case 0x0B: return('='); break;
-			case 0x0E: return('?'); break;
+			case 0x0C: return('?'); break;
+			case 0x0D: return('`'); break;
 			case 0x10: return('Q'); break;
 			case 0x11: return('W'); break;
 			case 0x12: return('E'); break;
@@ -44,10 +46,13 @@ char keymap_de(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 			case 0x30: return('B'); break;
 			case 0x31: return('N'); break;
 			case 0x32: return('M'); break;
-			case 0x33: return('/'); break;
-			case 0x34: return('.'); break;
-			case 0x35: return('-'); break;
+			case 0x33: return(';'); break;
+			case 0x34: return(':'); break;
+			case 0x35: return('_'); break;
+			case 0x1b: return('*'); break;
 			case 0x1C: return('\n'); break;
+			case 0x2b: return('\''); break;
+			//case 0x29: return('°'); break;
 			case 0x39: return(' '); break;
 			default:
 				break;
@@ -65,6 +70,8 @@ char keymap_de(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 			case 0x09: return('8'); break;
 			case 0x0A: return('9'); break;
 			case 0x0B: return('0'); break;
+			//case 0x0C: return('ß'); break;
+			//case 0x0D: return('´'); break;
 			case 0x0E: return('\b'); break;
 			case 0x10: return('q'); break;
 			case 0x11: return('w'); break;
@@ -92,10 +99,13 @@ char keymap_de(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 			case 0x30: return('b'); break;
 			case 0x31: return('n'); break;
 			case 0x32: return('m'); break;
-			case 0x33: return('/'); break;
+			case 0x33: return(','); break;
 			case 0x34: return('.'); break;
 			case 0x35: return('-'); break;
+			case 0x1b: return('+'); break;
 			case 0x1C: return('\n'); break;
+			case 0x2b: return('#'); break;
+			case 0x29: return('^'); break;
 			case 0x39: return(' '); break;
 			default:
 				break;
@@ -374,6 +384,9 @@ bool KeyboardDriver::is_presend() {
 
 void KeyboardDriver::handle(){
 	uint8_t key = dataport.Read();
+	if (this->debug_mode) {
+		driver::global_serial_driver->printf("KEY EVENT: %x\n", key);
+	}
 	if(handler == 0)
 		return;
 

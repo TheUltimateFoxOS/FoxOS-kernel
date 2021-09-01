@@ -25,9 +25,19 @@ extern "C" void sys_env(s_registers regs) {
 			register_signal_handler(regs.rcx, regs.rdx);
 			break;
 		case 4:
-			driver::KeyboardDriver* kbdrv = (driver::KeyboardDriver*) driver::global_driver_manager->find_driver_by_name((char*) "keyboard");
-			if(kbdrv != nullptr) {
-				kbdrv->keymap = (uint8_t) regs.rcx;
+			{
+				driver::KeyboardDriver* kbdrv = (driver::KeyboardDriver*) driver::global_driver_manager->find_driver_by_name((char*) "keyboard");
+				if(kbdrv != nullptr) {
+					kbdrv->keymap = (uint8_t) regs.rcx;
+				}
+			}
+			break;
+		case 5:
+			{
+				driver::KeyboardDriver* kbdrv = (driver::KeyboardDriver*) driver::global_driver_manager->find_driver_by_name((char*) "keyboard");
+				if(kbdrv != nullptr) {
+					kbdrv->debug_mode = (bool) regs.rcx;
+				}
 			}
 			break;
 	}
