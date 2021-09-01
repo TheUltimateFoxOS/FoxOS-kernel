@@ -2,6 +2,7 @@
 
 #include <driver/disk/ahci/ahci.h>
 #include <driver/disk/ata.h>
+#include <driver/nic/am79C973.h>
 #include <driver/driver.h>
 
 #include <memory/heap.h>
@@ -23,7 +24,7 @@ void enumerate_function(uint64_t address, uint64_t function) {
 	}
 	if(pci_device_header->device_id == 0xffff) {
 		return;
-	} 
+	}
 
 	driver::global_serial_driver->printf("Vendor name: %s, ", get_vendor_name(pci_device_header->vendor_id));
 	driver::global_serial_driver->printf("Device name: %s, ", get_device_name(pci_device_header->vendor_id, pci_device_header->device_id));
@@ -41,15 +42,26 @@ void enumerate_function(uint64_t address, uint64_t function) {
 					driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment(true, 0x170, (char*) "ata1 master"));
 					driver::global_driver_manager->add_driver(new driver::AdvancedTechnologyAttachment (false, 0x170, (char*) "ata1 slave"));
 					break;
-			case 0x06: //serial ata
-				switch (pci_device_header->prog_if) {
-					case 0x01: //AHCI 1.0 device
-						new driver::AHCI(pci_device_header);
-						break;
+				case 0x06: //serial ata
+					switch (pci_device_header->prog_if) {
+						case 0x01: //AHCI 1.0 device
+							new driver::AHCI(pci_device_header);
+							break;
 					}
 					break;
-				}
-				break;
+			}
+			break;
+	
+	}
+
+	switch (pci_device_header->vendor_id) {
+		case 0x1022: //AMD
+			switch (pci_device_header->device_id) {
+				case 0x2000: //AMD am79c973
+					driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) pci_device_header));
+					break;
+			}
+			break;
 	}
 }
 
@@ -196,6 +208,18 @@ void pci::enumerate_pci() {
 						}
 						break;
 				}
+
+					switch (pci_device_header->vendor_id) {
+						case 0x1022: //AMD
+							switch (pci_device_header->device_id) {
+								case 0x2000: //AMD am79c973
+									pci::pci_header_0_t* header_copy = new pci::pci_header_0_t;
+									memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
+									driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) header_copy));
+									break;
+							}
+							break;
+					}
 			}
 		}
 	}

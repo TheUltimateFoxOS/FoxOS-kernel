@@ -155,8 +155,8 @@ void prepare_interrupts() {
 	io_wait();
 	pci2_data.Write(a2);
 
-	pic1_data.Write(0b11111000);
-	pci2_data.Write(0b11101111);
+	pic1_data.Write(0);
+	pci2_data.Write(0);
 }
 
 renderer::FontRenderer fr = renderer::FontRenderer(NULL, NULL);
