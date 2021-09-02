@@ -9,14 +9,28 @@ typedef void (*nic_recv_handler)(uint8_t* data, uint32_t len);
 
 namespace driver {
 	namespace nic {
+		class Nic;
+		class NicDataManager {
+			public:
+				NicDataManager(int nic_id);
+				~NicDataManager();
+
+				void send(uint8_t* data, int32_t len);
+				virtual void recv(uint8_t* data, int32_t len);
+
+				Nic* nic;
+				int nic_id;
+		};
 		class Nic {
 			public:
 				Nic();
 				~Nic();
 				virtual void send(uint8_t* data, int32_t len);
-				void recv(nic_recv_handler handler);
-			
-				nic_recv_handler handler;
+
+				virtual void register_nic_data_manager(NicDataManager* nic_data_manager);
+
+				NicDataManager* nic_data_manager;
+
 		};
 
 		class NicManager {
@@ -26,9 +40,7 @@ namespace driver {
 				int num_Nics;
 				NicManager();
 
-				void send(int id, uint8_t* data, int32_t len);
-				void recv(int id, nic_recv_handler handler);
-
+				Nic* get_nic(int nic_id);
 				void add_Nic(Nic* Nic);
 		};
 

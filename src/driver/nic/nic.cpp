@@ -20,10 +20,28 @@ void Nic::send(uint8_t* data, int32_t size) {
 
 }
 
-void Nic::recv(nic_recv_handler handler) {
-	this->handler = handler;
+void Nic::register_nic_data_manager(NicDataManager* nic_data_manager) {
+	this->nic_data_manager = nic_data_manager;
+	nic_data_manager->nic = this;
 }
 
+NicDataManager::NicDataManager(int id) {
+	this->nic_id = id;
+	global_nic_manager->get_nic(id)->register_nic_data_manager(this);
+	driver::global_serial_driver->printf("NicDataManager created for nic id %d\n", id);
+}
+
+NicDataManager::~NicDataManager() {
+
+}
+
+void NicDataManager::send(uint8_t* data, int32_t size) {
+	this->nic->send(data, size);
+}
+
+void NicDataManager::recv(uint8_t* data, int32_t size) {
+	driver::global_serial_driver->printf("Received unhandled package!\n");
+}
 
 
 NicManager::NicManager() {
@@ -36,14 +54,6 @@ void NicManager::add_Nic(Nic* Nic) {
 	this->num_Nics++;
 }
 
-void NicManager::send(int id, uint8_t* data, int32_t size) {
-	if (id < this->num_Nics) {
-		this->Nics[id]->send(data, size);
-	}
-}
-
-void NicManager::recv(int id, nic_recv_handler handler) {
-	if (id < this->num_Nics) {
-		this->Nics[id]->recv(handler);
-	}
+Nic* NicManager::get_nic(int nic_id) {
+	return this->Nics[nic_id];
 }

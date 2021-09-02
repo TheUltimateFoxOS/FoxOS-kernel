@@ -6,6 +6,17 @@
 #include <string.h>
 #include <assert.h>
 
+class Test : public driver::nic::NicDataManager {
+	public:
+		Test() : driver::nic::NicDataManager(0) {
+			this->send((uint8_t*) "Hello world!", 12);
+		}
+
+		void recv(uint8_t* data, int32_t len) {
+			driver::global_serial_driver->printf("recv: %d\n", len);
+		}
+};
+
 using namespace driver;
 
 #define DEBUG
@@ -24,6 +35,7 @@ static Am79C973Driver::initialization_block_t init_block = {
 
 Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(header->interrupt_line + 0x20) {
 	this->header = header;
+	this->nic_data_manager = nullptr;
 
 	this->sendBufferDescrMemory = (uint8_t*) global_allocator.request_page();
 	memset(this->sendBufferDescrMemory, 0, 4096);
@@ -134,10 +146,8 @@ void Am79C973Driver::activate() {
 	register_data_port.Write(0x42);
 
 	nic::global_nic_manager->add_Nic(this);
-	nic::global_nic_manager->send(0, (uint8_t*) "Hello world!", 12);
-	nic::global_nic_manager->recv(0, [](uint8_t* data, uint32_t size) {
-		driver::global_serial_driver->printf("received %d bytes\n", size, data);
-	});
+
+	Test* t = new Test();
 }
 
 
@@ -224,8 +234,8 @@ void Am79C973Driver::receive() {
 			driver::global_serial_driver->printf("\n");
 		#endif
 
-			if (handler != nullptr) {
-				handler(data, size);
+			if (nic_data_manager) {
+				nic_data_manager->recv(data, size);
 			} else {
 				driver::global_serial_driver->printf("Am79C973Driver: no handler\n");
 			}
