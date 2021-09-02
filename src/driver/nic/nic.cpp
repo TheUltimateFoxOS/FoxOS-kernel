@@ -25,6 +25,10 @@ void Nic::register_nic_data_manager(NicDataManager* nic_data_manager) {
 	nic_data_manager->nic = this;
 }
 
+uint64_t Nic::get_mac() {
+	return 0;
+}
+
 NicDataManager::NicDataManager(int id) {
 	this->nic_id = id;
 	global_nic_manager->get_nic(id)->register_nic_data_manager(this);
@@ -39,8 +43,9 @@ void NicDataManager::send(uint8_t* data, int32_t size) {
 	this->nic->send(data, size);
 }
 
-void NicDataManager::recv(uint8_t* data, int32_t size) {
+bool NicDataManager::recv(uint8_t* data, int32_t size) {
 	driver::global_serial_driver->printf("Received unhandled package!\n");
+	return false;
 }
 
 

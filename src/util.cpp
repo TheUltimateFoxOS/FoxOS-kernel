@@ -31,6 +31,8 @@
 #include <apic/madt.h>
 #include <apic/apic.h>
 
+#include <driver/nic/nic.h>
+
 #include <config.h>
 
 KernelInfo kernel_info;
@@ -213,6 +215,8 @@ void setup_globals(stivale2_struct* bootinfo) {
 
 	sh = shell::Shell();
 	shell::global_shell = &sh;
+
+	driver::nic::global_nic_manager = new driver::nic::NicManager();
 }
 
 void prepare_acpi(stivale2_struct* bootinfo) {

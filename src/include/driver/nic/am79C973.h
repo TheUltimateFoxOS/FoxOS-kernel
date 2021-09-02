@@ -33,6 +33,7 @@ namespace driver{
 			~Am79C973Driver();
 
 			virtual void send(uint8_t* data, int32_t len);
+			virtual uint64_t get_mac();
 
 		private:
 			pci::pci_header_0_t* header;

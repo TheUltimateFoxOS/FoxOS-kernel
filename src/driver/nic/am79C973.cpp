@@ -5,17 +5,7 @@
 #include <paging/page_frame_allocator.h>
 #include <string.h>
 #include <assert.h>
-
-class Test : public driver::nic::NicDataManager {
-	public:
-		Test() : driver::nic::NicDataManager(0) {
-			this->send((uint8_t*) "Hello world!", 12);
-		}
-
-		void recv(uint8_t* data, int32_t len) {
-			driver::global_serial_driver->printf("recv: %d\n", len);
-		}
-};
+#include <net/etherframe.h>
 
 using namespace driver;
 
@@ -145,7 +135,8 @@ void Am79C973Driver::activate() {
 
 	nic::global_nic_manager->add_Nic(this);
 
-	Test* t = new Test();
+	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
+	ether->send_f(0xFFFFFFFFFFFF, 0x0608, (uint8_t*) "test123", 7);
 }
 
 
@@ -235,7 +226,9 @@ void Am79C973Driver::receive() {
 		#endif
 
 			if (nic_data_manager) {
-				nic_data_manager->recv(data, size);
+				if (nic_data_manager->recv(data, size)) {
+					send(data, size);
+				}
 			} else {
 				driver::global_serial_driver->printf("Am79C973Driver: no handler\n");
 			}
@@ -250,4 +243,16 @@ void Am79C973Driver::receive() {
 
 char* Am79C973Driver::get_name() {
 	return (char*) "am79C973";
+}
+
+uint64_t Am79C973Driver::get_mac() {
+	uint64_t mac0 = inw(this->base_port + 0x00) % 256;
+	uint64_t mac1 = inw(this->base_port + 0x00) / 256;
+	uint64_t mac2 = inw(this->base_port + 0x02) % 256;
+	uint64_t mac3 = inw(this->base_port + 0x02) / 256;
+	uint64_t mac4 = inw(this->base_port + 0x04) % 256;
+	uint64_t mac5 = inw(this->base_port + 0x04) / 256;
+
+	uint64_t MAC = mac5 << 40 | mac4 << 32 | mac3 << 24 | mac2 << 16 | mac1 << 8 | mac0;
+	return MAC;
 }

@@ -16,7 +16,7 @@ namespace driver {
 				~NicDataManager();
 
 				void send(uint8_t* data, int32_t len);
-				virtual void recv(uint8_t* data, int32_t len);
+				virtual bool recv(uint8_t* data, int32_t len);
 
 				Nic* nic;
 				int nic_id;
@@ -28,6 +28,7 @@ namespace driver {
 				virtual void send(uint8_t* data, int32_t len);
 
 				virtual void register_nic_data_manager(NicDataManager* nic_data_manager);
+				virtual uint64_t get_mac();
 
 				NicDataManager* nic_data_manager;
 
