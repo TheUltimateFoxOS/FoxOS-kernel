@@ -46,8 +46,6 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(h
 	this->recvBuffers = (uint8_t*) global_allocator.request_pages(5);
 	memset(this->recvBuffers, 0, 5 * 4096);
 
-	driver::global_serial_driver->printf("Am79C973Driver: sendBufferDescrMemory: %x\n", this->sendBufferDescrMemory);
-
 	assert(!((uint64_t) this->sendBufferDescrMemory > 0xffffffff));
 	assert(!((uint64_t) this->sendBuffers > 0xffffffff));
 	assert(!((uint64_t) this->recvBufferDescrMemory > 0xffffffff));
@@ -218,7 +216,9 @@ void Am79C973Driver::receive() {
 		if (!(recvBufferDescr[currentRecvBuffer].flags & 0x40000000) && (recvBufferDescr[currentRecvBuffer].flags & 0x03000000) == 0x03000000) {
 			uint32_t size = recvBufferDescr[currentRecvBuffer].flags & 0xFFF;
 
+		#ifdef DEBUG
 			driver::global_serial_driver->printf("Am79C973Driver: received packet of size %d\n", size);
+		#endif
 
 			if (size > 64) {
 				size -= 4;
