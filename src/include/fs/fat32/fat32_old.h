@@ -1,11 +1,11 @@
-#ifndef FAT32_H
-#define FAT32_H
+#ifndef FAT32_OLD_H
+#define FAT32_OLD_H
 
 #include <stdint.h>
 #include <stddef.h>
-#include <driver/disk/disk.h>
-#include <driver/serial.h>
 #include <string.h>
+
+#include <driver/disk/disk.h>
 
 #define LONG_FILENAME_MAX_LEN 32
 #define FS_MAX_PATH 255
@@ -63,7 +63,7 @@
 #define _IO_STDIO 040000
 #define _IO_DONT_CLOSE 0100000
 
-namespace fat32 {
+namespace fat32_old {
 
 	struct partition_table_t {
 		uint8_t MBR_boot_indicator;

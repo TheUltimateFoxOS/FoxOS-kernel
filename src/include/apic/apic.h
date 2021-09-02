@@ -1,26 +1,25 @@
 #pragma once
 
 #include <stdint.h>
-#include <apic/madt.h>
 #include <string.h>
-#include <scheduling/pit/pit.h>
-#include <paging/page_table_manager.h>
-#include <paging/page_frame_allocator.h>
-#include <renderer/font_renderer.h>
-#include <util.h>
-#include <gdt.h>
-#include <scheduling/scheduler/scheduler.h>
+#include <stivale2.h>
+
+#include <interrupts/interrupts.h>
 
 typedef void (*void_function)();
 
 int run_on_ap(void_function function);
+void wait_for_aps();
+
 
 struct trampoline_data {
 	uint8_t status;
 	uint64_t pagetable;
+	uint64_t idt;
 	uint64_t gdt;
 	uint64_t stack_ptr;
 	uint64_t entry;
+	uint64_t lapic_ptr;
 } __attribute__ ((packed));
 
 enum ap_status {
@@ -31,23 +30,14 @@ enum ap_status {
 	running
 };
 
-struct task_state {
-	s_registers regs;
-	bool active;
-	bool first_sched;
-	void* stack;
-};
-
 
 struct cpu {
 	bool presend;
 	uint8_t status;
 	void_function function;
-	task_state tasks[32];
-	int current_task;
-	bool scheduling;
 };
 
-void start_smp();
+void start_all_cpus(stivale2_struct* bootinfo);
 
-extern cpu* cpus;
+extern cpu cpus[256];
+extern uint8_t bspid;

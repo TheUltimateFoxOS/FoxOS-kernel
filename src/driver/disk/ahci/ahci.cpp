@@ -1,6 +1,9 @@
 #include <driver/disk/ahci/ahci.h>
+
 #include <memory/heap.h>
+
 #include <paging/page_frame_allocator.h>
+#include <driver/serial.h>
 
 #define HBA_PORT_DEV_PRESENT 0x3
 #define HBA_PORT_IPM_ACTIVE 0x1
@@ -52,10 +55,10 @@ void AHCI::probe_ports() {
 }
 
 AHCI::AHCI(pci::pci_device_header_t* pci_base_address) {
-	renderer::global_font_renderer->printf("AHCI driver instance initialized.\n");
+	driver::global_serial_driver->printf("AHCI driver instance initialized.\n");
 	this->pci_base_address = pci_base_address;
 
-	AHCI::ABAR = (HBA_memory*)((pci::pci_header_0_t*)pci_base_address)->BAR5;
+	AHCI::ABAR = (HBA_memory*)(uint64_t)((pci::pci_header_0_t*)pci_base_address)->BAR5;
 
 	g_page_table_manager.map_memory(AHCI::ABAR, AHCI::ABAR);
 	

@@ -1,103 +1,262 @@
 #include <scheduling/scheduler/scheduler.h>
+#include <scheduling/scheduler/elf.h>
+#include <paging/page_frame_allocator.h>
+#include <paging/page_table_manager.h>
+#include <memory/heap.h>
 
-void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector);
+#include <interrupts/idt.h>
 
+#include <apic/madt.h>
+#include <config.h>
+#include <stdio.h>
+
+uint64_t_queue task_queue[256];
+bool scheduling = false;
+bool spin_lock = false;
+bool halt_cpu = false;
 
 void init_sched() {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
-	cpus[id].scheduling = true;
-
 	__asm__ __volatile__ ("sti");
 
-	while(1) {
-		__asm__ __volatile__ ("hlt");
+	for (int i = 0; i < numcore; i++) {
+		task* t = (task*) malloc(sizeof(task));
+		void* stack = global_allocator.request_pages(TASK_STACK_PAGES);
+
+		t->regs.rip = (uint64_t) (void_function) []() { while(1) { __asm__ __volatile__ ("sti; nop"); } };
+		t->regs.rsp = (uint64_t) stack + TASK_STACK_PAGES * 4096;
+		t->first_sched = true;
+		t->stack = (uint64_t) stack;
+
+		task_queue[i].add((uint64_t) t);
 	}
+	
+
+	scheduling = true;
+
+	//while(1) {
+		//__asm__ __volatile__ ("hlt");
+	//}
+
+	// call scheduler
+	__asm__ __volatile__ ("mov $7, %rax; int $0x30");
 }
 
-void new_task(void* entry) {
-	void* stack = global_allocator.request_page();
+extern "C" void task_entry();
+
+task* new_task(void* entry) {
+	spin_lock = true;
+	__asm__ __volatile__ ("cli");
+
+	task* t = (task*) malloc(sizeof(task));
+	void* stack = global_allocator.request_pages(TASK_STACK_PAGES);
+
+	t->regs.rax = (uint64_t) entry;
+	t->regs.rip = (uint64_t) task_entry;
+	t->regs.rsp = (uint64_t) stack + TASK_STACK_PAGES * 4096;
+	t->first_sched = true;
+	t->kill_me = false;
+	t->is_elf = false;
+	t->lock = false;
+	t->stack = (uint64_t) stack;
+
+	uint64_t idx = 0;
+
+	if (!NO_SMP_SHED) {
+		uint64_t min = 0xf0f0;
+
+		for (int i = 0; i < numcore; i++) {
+			if (!cpus[i].presend) {
+				continue;
+			}
+
+			if(task_queue[i].len < min) {
+				min = task_queue[i].len;
+				idx = i;
+			}
+		}
+	} else {
+		idx = bspid;
+	}
+
+	task_queue[idx].add((uint64_t) t);
+
+	__asm__ __volatile__ ("sti");
+	spin_lock = false;
+
+	return t;
+}
+
+void task_exit() {
+	spin_lock = true;
+	__asm__ __volatile__ ("cli");
 
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
-	for (int i = 0; i < 32; i++) {
-		if(!cpus[id].tasks[i].active) {
-			cpus[id].tasks[i].regs.rip = (uint64_t) entry;
-			cpus[id].tasks[i].regs.rsp = (uint64_t) stack + 4096;
-			cpus[id].tasks[i].first_sched = true;
-			cpus[id].tasks[i].stack = stack;
-			cpus[id].tasks[i].active = true;
-			return;
-		}
+	task* t = (task*) task_queue[id].list[0];
+	t->kill_me = true;
+
+	/*if(t->is_elf) {
+		global_allocator.free_pages(t->offset, t->page_count);
 	}
 
+	global_allocator.free_pages((void*) t->stack, TASK_STACK_PAGES);
+	free(t);*/
+
+	__asm__ __volatile__ ("sti");
+	spin_lock = false;
+
+	while (1) {
+		__asm__ __volatile__ ("nop");
+	}
 }
+
+task* load_elf(void* ptr, uint64_t file_size, const char **argv, const char **envp) {
+	Elf64_Ehdr* header = (Elf64_Ehdr*) ptr;
+
+
+	if(__builtin_bswap32(header->e_ident.i) != elf::MAGIC) {
+		return NULL; // no elf
+	}
+	if(header->e_ident.c[elf::EI_CLASS] != elf::ELFCLASS64) {
+		return NULL; // not 64 bit
+	}
+	if(header->e_type != elf::ET_DYN) {
+		return NULL; // not pic
+	}
+
+	Elf64_Phdr* ph = (Elf64_Phdr*) (((char*) ptr) + header->e_phoff);
+
+	void* last_dest;
+
+	for (int i = 0; i < header->e_phnum; i++, ph++) {
+		if (ph->p_type != elf::PT_LOAD) {
+			continue;
+		}
+		last_dest = (void*) ((uint64_t) ph->p_vaddr + ph->p_memsz);
+	}
+
+	void* offset = global_allocator.request_pages((uint64_t) last_dest / 0x1000 + 1);
+
+	ph = (Elf64_Phdr*) (((char*) ptr) + header->e_phoff);
+
+
+	for (int i = 0; i < header->e_phnum; i++, ph++) {
+		void* dest = (void*) ((uint64_t) ph->p_vaddr + (uint64_t) offset);
+		void* src = ((char*) ptr) + ph->p_offset;
+
+
+		if (ph->p_type != elf::PT_LOAD) {
+			continue;
+		}
+		
+		/*for (int x = 0; x < (ph->p_memsz / 0x1000) + 1; x++) {
+			g_page_table_manager.map_memory((void*) ((uint64_t) dest + x * 0x1000), (void*) ((uint64_t) dest + x * 0x1000));
+		}*/
+		
+
+		memset(dest, 0, ph->p_memsz);
+		memcpy(dest, src, ph->p_filesz);
+	}
+	
+	task* t = new_task((void*) (header->e_entry + (uint64_t) offset));
+	t->is_elf = true;
+	t->offset = offset;
+	t->page_count = (uint64_t) last_dest / 0x1000 + 1;
+	t->argv = (char**) argv;
+	t->envp = (char**) envp;
+
+	return t;
+}
+
+#include <driver/serial.h>
+#include <interrupts/panic.h>
 
 extern "C" void schedule(s_registers* regs) {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
-	if(!cpus[id].scheduling) {
+	while(spin_lock);
+
+	if(task_queue[id].len == 0 || !scheduling) {
 		return;
 	}
 
-	if(!cpus[id].tasks[cpus[id].current_task].first_sched) {
-		cpus[id].tasks[cpus[id].current_task].regs.rax = regs->rax;
-		cpus[id].tasks[cpus[id].current_task].regs.rbx = regs->rbx;
-		cpus[id].tasks[cpus[id].current_task].regs.rcx = regs->rcx;
-		cpus[id].tasks[cpus[id].current_task].regs.rdx = regs->rdx;
-		cpus[id].tasks[cpus[id].current_task].regs.r8 = regs->r8;
-		cpus[id].tasks[cpus[id].current_task].regs.r9 = regs->r9;
-		cpus[id].tasks[cpus[id].current_task].regs.r10 = regs->r10;
-		cpus[id].tasks[cpus[id].current_task].regs.r11 = regs->r11;
-		cpus[id].tasks[cpus[id].current_task].regs.r12 = regs->r12;
-		cpus[id].tasks[cpus[id].current_task].regs.r13 = regs->r13;
-		cpus[id].tasks[cpus[id].current_task].regs.r14 = regs->r14;
-		cpus[id].tasks[cpus[id].current_task].regs.r15 = regs->r15;
-		cpus[id].tasks[cpus[id].current_task].regs.rip = regs->rip;
-		cpus[id].tasks[cpus[id].current_task].regs.rsp = regs->rsp;
-		cpus[id].tasks[cpus[id].current_task].regs.rbp = regs->rbp;
-		cpus[id].tasks[cpus[id].current_task].regs.rdi = regs->rsi;
-		cpus[id].tasks[cpus[id].current_task].regs.rdi = regs->rdi;
+	task* t = (task*) task_queue[id].list[0];
+
+	if(!t->first_sched) {
+		t->regs.rax = regs->rax;
+		t->regs.rbx = regs->rbx;
+		t->regs.rcx = regs->rcx;
+		t->regs.rdx = regs->rdx;
+		t->regs.r8 = regs->r8;
+		t->regs.r9 = regs->r9;
+		t->regs.r10 = regs->r10;
+		t->regs.r11 = regs->r11;
+		t->regs.r12 = regs->r12;
+		t->regs.r13 = regs->r13;
+		t->regs.r14 = regs->r14;
+		t->regs.r15 = regs->r15;
+		t->regs.rip = regs->rip;
+		t->regs.rsp = regs->rsp;
+		t->regs.rbp = regs->rbp;
+		t->regs.rsi = regs->rsi;
+		t->regs.rdi = regs->rdi;
+		t->regs.rflags = regs->rflags;
 	}
 
-	bool loop = false;
+	task_queue[id].next();
 
-	for (int i = cpus[id].current_task + 1; true; i++) {
-		if(loop) {
-			return;
+next:
+
+	t = (task*) task_queue[id].list[0];
+	if(t->kill_me) {
+		if(t->is_elf) {
+			global_allocator.free_pages(t->offset, t->page_count);
 		}
+		global_allocator.free_pages((void*) t->stack, TASK_STACK_PAGES);
+		free(t);
 
-		if(i > 32) {
-			loop = true;
-			i = 0;
-		}
-
-		if(cpus[id].tasks[i].active) {
-			cpus[id].current_task = i;
-
-			regs->rax = cpus[id].tasks[cpus[id].current_task].regs.rax;
-			regs->rbx = cpus[id].tasks[cpus[id].current_task].regs.rbx;
-			regs->rcx = cpus[id].tasks[cpus[id].current_task].regs.rcx;
-			regs->rdx = cpus[id].tasks[cpus[id].current_task].regs.rdx;
-			regs->r8 = cpus[id].tasks[cpus[id].current_task].regs.r8;
-			regs->r9 = cpus[id].tasks[cpus[id].current_task].regs.r9;
-			regs->r10 = cpus[id].tasks[cpus[id].current_task].regs.r10;
-			regs->r11 = cpus[id].tasks[cpus[id].current_task].regs.r11;
-			regs->r12 = cpus[id].tasks[cpus[id].current_task].regs.r12;
-			regs->r13 = cpus[id].tasks[cpus[id].current_task].regs.r13;
-			regs->r14 = cpus[id].tasks[cpus[id].current_task].regs.r14;
-			regs->r15 = cpus[id].tasks[cpus[id].current_task].regs.r15;
-			regs->rip = cpus[id].tasks[cpus[id].current_task].regs.rip;
-			regs->rsp = cpus[id].tasks[cpus[id].current_task].regs.rsp;
-			regs->rbp = cpus[id].tasks[cpus[id].current_task].regs.rbp;
-			regs->rsi = cpus[id].tasks[cpus[id].current_task].regs.rsi;
-			regs->rdi = cpus[id].tasks[cpus[id].current_task].regs.rdi;
-
-			cpus[id].tasks[cpus[id].current_task].first_sched = false;
-
-			return;
-		}
+		task_queue[id].remove_first();
+		goto next;
 	}
+
+	if(t->lock) {
+		task_queue[id].next();
+		goto next;
+	}
+
+	if(t->regs.rsp < t->stack || t->regs.rsp > t->stack + TASK_STACK_PAGES * 0x1000) {
+		char error[1024];
+		sprintf(error, "Stack overflow at 0x%x. Stack is located at 0x%x and %d pages big!\n", t->regs.rsp, t->stack, TASK_STACK_PAGES);
+		
+		driver::global_serial_driver->printf(error);
+
+		interrupts::Panic p = interrupts::Panic(error);
+		p.do_it(NULL);
+	}
+	
+
+	regs->rax = t->regs.rax;
+	regs->rbx = t->regs.rbx;
+	regs->rcx = t->regs.rcx;
+	regs->rdx = t->regs.rdx;
+	regs->r8 = t->regs.r8;
+	regs->r9 = t->regs.r9;
+	regs->r10 = t->regs.r10;
+	regs->r11 = t->regs.r11;
+	regs->r12 = t->regs.r12;
+	regs->r13 = t->regs.r13;
+	regs->r14 = t->regs.r14;
+	regs->r15 = t->regs.r15;
+	regs->rip = t->regs.rip;
+	regs->rsp = t->regs.rsp;
+	regs->rbp = t->regs.rbp;
+	regs->rsi = t->regs.rsi;
+	regs->rdi = t->regs.rdi;
+	regs->rflags = t->regs.rflags;
+
+	t->first_sched = false;
 }

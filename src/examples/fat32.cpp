@@ -1,22 +1,27 @@
-#include <fs/fat32.h>
+#include <fs/fat32/ff.h>
+
+#include <renderer/font_renderer.h>
+
 #include <paging/page_frame_allocator.h>
 
 void fat32_test() {
-	fat32::disk_id = 0; // set to first disk
-	uint8_t fs_buf[512];
-	fat32::fs_info_t fs_info = fat32::read_info(fs_buf); // read fs info
-	show_info(fs_info); // print fs info to serial console
+	FATFS fs;
+	FIL fp;
+	UINT btr, br;
+	FRESULT fr;
 
+	f_mount(&fs, "", 0); //Mount the filesystem
 
+	fr = f_open(&fp, "/startup.nsh", FA_READ); //Open  file
+	if (fr == FR_OK) { //Check for errors
+		btr = f_size(&fp); //Get the size of the file
+		void* file_contents = global_allocator.request_pages(btr / 0x1000 + 1); //Request pages to store the file contents in
+	
+		f_read(&fp, file_contents, btr, &br); //Read the file contents into the buffer
+		f_close(&fp); //Close the file
 
-	fat32::sector_buffer_t sector_buffer;
-	fat32::file_info_t fp;
-	fat32::fopen("/STARTUP.NSH", "r", &fp, fs_info, &sector_buffer); // open file
+		renderer::global_font_renderer->printf("%s", file_contents); //Print the file's contents from the buffer
 
-	uint8_t* b = (uint8_t*) global_allocator.request_page();
-
-	fat32::fread(b, 4096, &fp, fs_info, &sector_buffer); // read file
-	driver::global_serial_driver->printf("%s", b);
-
-	global_allocator.free_page(b);
+		global_allocator.free_pages(file_contents, btr / 0x1000 + 1); //Free the requested pages
+	}
 }

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <interrupts/interrupts.h>
 #include <stdint.h>
+
+#include <interrupts/interrupts.h>
 
 typedef void (*intr_handler_ptr)(uint8_t);
 

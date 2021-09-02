@@ -5,6 +5,10 @@ SECTIONS
 {
 	. = 0x100000;
 	kernel_start = .;
+	.stivale2hdr : ALIGN(0x1000)
+	{
+        KEEP(*(.stivale2hdr))
+	}
 	.text : ALIGN(0x1000)
 	{
 		*(.text)

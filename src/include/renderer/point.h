@@ -2,7 +2,7 @@
 
 namespace renderer {
 	struct point_t{
-    	long x;
-    	long y;
+		long x;
+		long y;
 	};
 }

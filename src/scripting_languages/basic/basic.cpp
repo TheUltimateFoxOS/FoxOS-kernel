@@ -10,6 +10,12 @@
 
 #include <memory/heap.h>
 
+struct keyword_token keywords[] {
+	{"PRINT", KEYWORD_PRINT},
+	{"LIST", KEYWORD_LIST},
+	{"CLS", KEYWORD_CLS}
+};
+
 void BASIC_printf(const char* fmt, ...) {
 	va_list ap;
 	const char* s;
@@ -64,7 +70,7 @@ token_t BASIC::to_token(char* buffer, token_type_t type, int line_num) {
 
 		struct keyword_token const *kt;
 		for (kt = keywords; kt->keyword != NULL; ++kt) {
-			if (strncmp(buffer, kt->keyword, strlen(kt->keyword)) == 0) {
+			if (strncmp(buffer, kt->keyword, strlen((char*) kt->keyword)) == 0) {
 				token.keyword = kt->token;
 			}
 		}

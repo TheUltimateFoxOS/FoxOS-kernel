@@ -6,28 +6,26 @@ uint64_t used_memory;
 bool initialized = false;
 PageFrameAllocator global_allocator;
 
-void PageFrameAllocator::read_EFI_memory_map(efi_memory_descriptor_t* m_map, size_t m_map_size, size_t m_map_desc_size){
+void PageFrameAllocator::read_EFI_memory_map(stivale2_struct* bootinfo){
 	if (initialized) return;
 
 	initialized = true;
 
-	uint64_t m_mapEntries = m_map_size / m_map_desc_size;
-
 	void* largest_free_mem_seg = NULL;
 	size_t largest_free_mem_seg_size = 0;
 
-	for (int i = 0; i < m_mapEntries; i++){
-		efi_memory_descriptor_t* desc = (efi_memory_descriptor_t*)((uint64_t)m_map + (i * m_map_desc_size));
-		if (desc->type == 7){ // type = EfiConventionalMemory
-			if (desc->num_pages * 4096 > largest_free_mem_seg_size)
+	stivale2_struct_tag_memmap* memmap = stivale2_tag_find<stivale2_struct_tag_memmap>(bootinfo, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+
+	for (int i = 0; i < memmap->entries; i++){
+		if (memmap->memmap[i].type == STIVALE2_MMAP_USABLE) {
+			if (memmap->memmap[i].length > largest_free_mem_seg_size)
 			{
-				largest_free_mem_seg = desc->phys_addr;
-				largest_free_mem_seg_size = desc->num_pages * 4096;
+				largest_free_mem_seg = (void*) memmap->memmap[i].base;
+				largest_free_mem_seg_size = memmap->memmap[i].length;
 			}
 		}
 	}
-
-	uint64_t memorysize = get_memory_size(m_map, m_mapEntries, m_map_desc_size);
+	uint64_t memorysize = get_memory_size(bootinfo);
 	free_memory = memorysize;
 	uint64_t bitmapsize = memorysize / 4096 / 8 + 1;
 
@@ -35,10 +33,9 @@ void PageFrameAllocator::read_EFI_memory_map(efi_memory_descriptor_t* m_map, siz
 
 	reserve_pages(0, memorysize / 4096 + 1);
 
-	for (int i = 0; i < m_mapEntries; i++){
-		efi_memory_descriptor_t* desc = (efi_memory_descriptor_t*)((uint64_t)m_map + (i * m_map_desc_size));
-		if (desc->type == 7){ // efiConventionalMemory
-			unreserve_pages(desc->phys_addr, desc->num_pages);
+	for (int i = 0; i < memmap->entries; i++){
+		if (memmap->memmap[i].type == STIVALE2_MMAP_USABLE) { 
+			unreserve_pages((void*) memmap->memmap[i].base, (memmap->memmap[i].length / 0x1000) + 1);
 		}
 	}
 
@@ -56,14 +53,50 @@ void PageFrameAllocator::init_bitmap(size_t bitmapsize, void* buffer_address){
 
 uint64_t page_bitmap_index = 0;
 void* PageFrameAllocator::request_page(){
-	for (; page_bitmap_index < page_bitmap.size * 8; page_bitmap_index++){
-        if (page_bitmap[page_bitmap_index] == true) continue;
-        lock_page((void*)(page_bitmap_index * 4096));
-        return (void*)(page_bitmap_index * 4096);
+	for (int i = 0; i < page_bitmap_index; i++) {
+		if(page_bitmap[i] == true) {
+			continue;
+		}
+		page_bitmap_index = i;
+		break;
+	}
+	
+
+	for (uint64_t x = page_bitmap_index; x < page_bitmap.size * 8; x++){
+        if (page_bitmap[x] == true) continue;
+        lock_page((void*)(x * 4096));
+        return (void*)(x * 4096);
     }
 
     return NULL; // Page Frame Swap to file
 }
+
+void* PageFrameAllocator::request_pages(int amount){
+	for (int i = 0; i < page_bitmap_index; i++) {
+		if(page_bitmap[i] == true) {
+			continue;
+		}
+		page_bitmap_index = i;
+		break;
+	}
+
+	for (uint64_t x = page_bitmap_index; x < page_bitmap.size * 8; x++){
+        if (page_bitmap[x] == true) continue;
+		for (int i = 0; i < amount; i++) {
+			if(page_bitmap[x + i] == true) goto next;
+		}
+		
+        lock_pages((void*)(x * 4096), amount);
+        return (void*)(x * 4096);
+
+	next:
+		x += amount;
+		continue;
+    }
+
+    return NULL; // Page Frame Swap to file
+}
+
 
 void PageFrameAllocator::free_page(void* address){
 	uint64_t index = (uint64_t)address / 4096;

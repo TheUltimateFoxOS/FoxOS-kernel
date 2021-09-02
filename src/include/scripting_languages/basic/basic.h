@@ -12,11 +12,7 @@ enum {
 	KEYWORD_CLS
 };
 
-struct keyword_token keywords[] {
-	{"PRINT", KEYWORD_PRINT},
-	{"LIST", KEYWORD_LIST},
-	{"CLS", KEYWORD_CLS}
-};
+extern struct keyword_token keywords[];
 
 
 enum token_type_t {

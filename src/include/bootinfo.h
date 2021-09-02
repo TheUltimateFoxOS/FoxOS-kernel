@@ -1,10 +1,12 @@
 #ifndef BOOTINFO_H
 #define BOOTINFO_H
 
-#include <renderer/font.h>
-#include <renderer/framebuffer.h>
 #include <stdint.h>
 #include <efi_mem.h>
+
+#include <renderer/font.h>
+#include <renderer/framebuffer.h>
+
 #include <pci/acpi.h>
 
 struct bootinfo_t {

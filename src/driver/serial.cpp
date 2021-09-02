@@ -137,5 +137,7 @@ void Serial::printf(const char* fmt, ...){
 
 	va_start(ap, fmt);
 	vsprintf(fmt, ap);
+
+out:
 	va_end(ap);
 }

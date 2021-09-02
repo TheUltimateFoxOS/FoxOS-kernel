@@ -1,9 +1,11 @@
 #pragma once
 
-#include <driver/driver.h>
-#include <port.h>
-#include <interrupts/interrupt_handler.h>
 #include <stdint.h>
+#include <port.h>
+
+#include <driver/driver.h>
+
+#include <interrupts/interrupt_handler.h>
 
 #define PS2XSign 0b00010000
 #define PS2YSign 0b00100000
@@ -11,9 +13,9 @@
 #define PS2YOverflow 0b10000000
 
 enum MouseButtons {
-    LeftButton = 1,
-    RightButton = 2,
-    MiddleButton = 3
+	LeftButton = 1,
+	RightButton = 2,
+	MiddleButton = 3
 };
 
 namespace driver {
@@ -47,5 +49,6 @@ namespace driver {
 			virtual void handle();
 			virtual bool is_presend();
 			virtual void activate();
+			virtual char* get_name();
 	};
 }

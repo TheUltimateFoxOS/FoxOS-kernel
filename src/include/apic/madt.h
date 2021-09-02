@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <driver/serial.h>
 
 extern uint8_t lapic_ids[256];
 extern uint8_t numcore;

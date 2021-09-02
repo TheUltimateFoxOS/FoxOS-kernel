@@ -30,9 +30,9 @@ Port16Bit::~Port16Bit(){
 }
 
 uint16_t Port16Bit::Read(){
-    uint16_t result;
-    __asm__ volatile("inw %1, %0" : "=a" (result) : "Nd" ((uint16_t) portnumber + offset));
-    return result;
+	uint16_t result;
+	__asm__ volatile("inw %1, %0" : "=a" (result) : "Nd" ((uint16_t) portnumber + offset));
+	return result;
 }
 
 void Port16Bit::Write(uint16_t data){
@@ -60,4 +60,14 @@ void Port32Bit::Write(uint32_t data){
 
 void io_wait() {
 	asm volatile ("outb %%al, $0x80" : : "a"(0));
+}
+
+unsigned char inb(unsigned short _port){
+	unsigned char result;
+	__asm__ ("inb %1, %0" : "=a" (result) : "Nd" (_port));
+	return result;
+}
+
+void outb(unsigned short _port, unsigned char _data){
+	__asm__ ("outb %0, %1" : : "a" (_data), "Nd" (_port));
 }

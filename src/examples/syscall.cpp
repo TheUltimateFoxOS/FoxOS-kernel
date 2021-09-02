@@ -1,4 +1,5 @@
 #include <interrupts/interrupts.h>
+
 #include <driver/serial.h>
 
 extern "C" void syscall_test(s_registers* regs) {
@@ -10,5 +11,5 @@ extern "C" void syscall_test2(s_registers* regs) {
 }
 
 void syscall_test() {
-	asm ("mov $0, %rax; int $0x30; mov $1, %rax; int $0x30; mov $2, %rax; int $0x30");
+	asm ("mov $0, %rax; int $0x30; mov $1, %rax; int $0x30");
 }

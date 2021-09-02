@@ -6,42 +6,45 @@ rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(su
 CPPSRC = $(call rwildcard,./,*.cpp)
 ASMSRC = $(call rwildcard,./,*.asm)
 OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(CPPSRC))
-OBJS += $(patsubst %.asm, $(OBJDIR)/%.o, $(ASMSRC))
+OBJS += $(patsubst %.asm, $(OBJDIR)/%_asm.o, $(ASMSRC))
 
-CC = gcc
-ASM = nasm
-LD = ld
+TOOLCHAIN_BASE = /usr/local/foxos-x86_64_elf_gcc
+
+ifeq (,$(wildcard $(TOOLCHAIN_BASE)/bin/foxos-gcc))
+	CC = gcc
+else
+	CC = $(TOOLCHAIN_BASE)/bin/foxos-gcc
+endif
+
+ifeq (,$(wildcard $(TOOLCHAIN_BASE)/bin/foxos-nasm))
+	ASM = nasm
+else
+	ASM = $(TOOLCHAIN_BASE)/bin/foxos-nasm
+endif
+
+ifeq (,$(wildcard $(TOOLCHAIN_BASE)/bin/foxos-gcc))
+	LD = ld
+else
+	LD = $(TOOLCHAIN_BASE)/bin/foxos-ld
+endif
+
 
 CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -Iinclude -fno-use-cxa-atexit -fno-rtti -fno-exceptions -fno-leading-underscore -fno-exceptions -g
 ASMFLAGS = -f elf64
-LDFLAGS = -static -Bsymbolic -nostdlib -Tlink.ld
+LDFLAGS = -static -Bsymbolic -nostdlib -Tlink.ld --no-dynamic-linker -zmax-page-size=0x1000 -ztext
 
 foxkrnl.elf: $(OBJS)
 	@echo LD $^
-	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@.tmp $^
+	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^
 
-	sh syms.sh $(BUILDDIR)/$@.tmp
-
-	$(CC) -fno-pic -fpie -xc -c syms.gen -o $(OBJDIR)/syms.o
-
-	@echo LD $^ $(OBJDIR)/syms.o
-	@$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^ $(OBJDIR)/syms.o
-
-	rm syms.gen
-
+	@echo "\n\nCompiled using asm: $(ASM), cc: $(CC), ld: $(LD)\n\n"
 
 $(OBJDIR)/%.o: %.cpp
-	@echo CPP $^
+	@echo "CPP $^ -> $@"
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c -o $@ $^
 
-$(OBJDIR)/%.o: %.asm
-	@echo ASM $^
+$(OBJDIR)/%_asm.o: %.asm
+	@echo "ASM $^ -> $@"
 	@mkdir -p $(@D)
 	@$(ASM) $(ASMFLAGS) -o $@ $^
-
-clean:
-	rm $(OBJS)
-	rm $(BUILDDIR)/foxkrnl.elf
-
-.PHONY: clean $(BUILDDIR)/foxkrnl.elf

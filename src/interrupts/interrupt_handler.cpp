@@ -1,4 +1,5 @@
 #include <interrupts/interrupt_handler.h>
+#include <stddef.h>
 
 using namespace interrupts;
 InterruptHandler* interrupts::handlers[256];

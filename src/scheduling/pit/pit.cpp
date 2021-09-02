@@ -1,5 +1,7 @@
 #include <scheduling/pit/pit.h>
+
 #include <port.h>
+
 #include <interrupts/interrupt_handler.h>
 
 namespace PIT {
@@ -10,7 +12,7 @@ namespace PIT {
 	void sleep_d(double seconds) {
 		double start_time = time_since_boot;
 		while (time_since_boot < start_time + seconds) {
-			asm("hlt");
+			asm("nop");
 		}
 	}
 

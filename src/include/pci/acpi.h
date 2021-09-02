@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stdint.h>
 
 namespace pci {
@@ -40,6 +41,7 @@ namespace pci {
 			uint32_t reserved;
 		} __attribute__((packed));
 
-		void* find_table(sdt_header_t* sdt_header, char* signature);
+		void* find_table_xsdt(sdt_header_t* sdt_header, char* signature);
+		void* find_table_rsdt(sdt_header_t* sdt_header, char* signature);
 	}
 }

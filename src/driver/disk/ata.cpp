@@ -1,14 +1,20 @@
 #include <driver/disk/ata.h>
 
+#include <fs/gpt/gpt.h>
+#include <driver/serial.h>
+
 using namespace driver;
 
-
-AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(bool master, uint16_t portBase): dataPort(portBase), error_port(portBase + 0x1), sector_count_port(portBase + 0x2), lba_low_port(portBase + 0x3), lba_mid_port(portBase + 0x4), lba_hi_port(portBase + 0x5), device_port(portBase + 0x6), command_port(portBase + 0x7), control_port(portBase + 0x206) {
+AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(bool master, uint16_t portBase, char* name): dataPort(portBase), error_port(portBase + 0x1), sector_count_port(portBase + 0x2), lba_low_port(portBase + 0x3), lba_mid_port(portBase + 0x4), lba_hi_port(portBase + 0x5), device_port(portBase + 0x6), command_port(portBase + 0x7), control_port(portBase + 0x206) {
 	this->master = master;
+	this->name = name;
 	this->bytes_per_sector = 512;
 
 	if(this->is_presend()) {
-		disk::global_disk_manager->add_disk(this);
+		if (!gpt::read_gpt(this)) {
+			driver::global_serial_driver->printf("ATA: Failed to read GPT. Adding disk as raw disk!\n");
+			disk::global_disk_manager->add_disk(this);
+		}
 	}
 }
 
@@ -42,15 +48,15 @@ bool AdvancedTechnologyAttachment::is_presend() {
 	while(((status & 0x80) == 0x80) && ((status & 0x01) != 0x01)) {
 		status = command_port.Read();
 	}
-		
+
 	if(status & 0x01) {
 		return false;
 	}
 
-	
+
 	for(int i = 0; i < 256; i++) {
 		uint16_t data = dataPort.Read();
-		char *text = "  \0";
+		char *text = (char*) "  \0";
 		text[0] = (data >> 8) & 0xFF;
 		text[1] = data & 0xFF;
 	}
@@ -68,27 +74,27 @@ void AdvancedTechnologyAttachment::read28(uint32_t sector, uint8_t* data, int co
 	if(count > bytes_per_sector) {
 		return;
 	}
-	
+
 	device_port.Write((master ? 0xE0 : 0xF0) | ((sector & 0x0F000000) >> 24));
 	error_port.Write(0);
 	sector_count_port.Write(1);
-	
+
 	lba_low_port.Write(sector & 0x000000FF);
 	lba_mid_port.Write((sector & 0x0000FF00) >> 8);
 	lba_hi_port.Write((sector & 0x00FF0000) >> 16);
 	command_port.Write(0x20);
-	
-	
-	
+
+
+
 	uint8_t status = command_port.Read();
 	while(((status & 0x80) == 0x80) && ((status & 0x01) != 0x01)) {
 		status = command_port.Read();
 	}
-	
+
 	if(status & 0x01) {
 		return;
 	}
-	
+
 	for(uint16_t i = 0; i < count; i += 2) {
 		uint16_t wdata = dataPort.Read();
 		
@@ -97,7 +103,7 @@ void AdvancedTechnologyAttachment::read28(uint32_t sector, uint8_t* data, int co
 			data[i + 1] = (wdata >> 8) & 0x00FF;
 		}
 	}
-	
+
 	for(uint16_t i = count + (count % 2); i < bytes_per_sector; i+= 2) {
 		dataPort.Read();
 	}
@@ -110,8 +116,8 @@ void AdvancedTechnologyAttachment::write28(uint32_t sectorNum, uint8_t* data, ui
 	if(count > bytes_per_sector) {
 		return;
 	}
-	
-	
+
+
 	device_port.Write((master ? 0xE0 : 0xF0) | ((sectorNum & 0x0F000000) >> 24));
 	error_port.Write(0);
 	sector_count_port.Write(1);
@@ -132,7 +138,6 @@ void AdvancedTechnologyAttachment::write28(uint32_t sectorNum, uint8_t* data, ui
 	for(int i = count + (count % 2); i < 512; i += 2) {
 		dataPort.Write(0x0000);
 	}
-
 }
 
 void AdvancedTechnologyAttachment::flush() {
@@ -143,20 +148,28 @@ void AdvancedTechnologyAttachment::flush() {
 	if(status == 0x00) {
 		return;
 	}
-	
+
 	while(((status & 0x80) == 0x80) && ((status & 0x01) != 0x01)) {
 		status = command_port.Read();
 	}
-		
+	
 	if(status & 0x01) {
 		return;
 	}
 }
 
 void AdvancedTechnologyAttachment::read(uint64_t sector, uint32_t sector_count, void* buffer) {
-	this->read28(sector, (uint8_t*) buffer, sector_count * 512);
+	for (int i = 0; i < sector_count; i++) {
+		read28(sector + i, (uint8_t*) buffer + (i * bytes_per_sector), bytes_per_sector);
+	}	
 }
 
 void AdvancedTechnologyAttachment::write(uint64_t sector, uint32_t sector_count, void* buffer) {
-	this->write28(sector, (uint8_t*) buffer, sector_count * 512);
+	for (int i = 0; i < sector_count; i++) {
+		write28(sector + i, (uint8_t*) buffer + (i * bytes_per_sector), bytes_per_sector);
+	}
+}
+
+char* AdvancedTechnologyAttachment::get_name() {
+	return this->name;
 }

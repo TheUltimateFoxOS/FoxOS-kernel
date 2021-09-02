@@ -1,12 +1,12 @@
 #pragma once
 
-#include <renderer/renderer2D.h>
+#include <stdarg.h>
+#include <stdint.h>
+
 #include <renderer/framebuffer.h>
 #include <renderer/point.h>
 #include <renderer/font.h>
 
-#include <stdarg.h>
-#include <stdint.h>
 #include <memory/memory.h>
 
 namespace renderer {
@@ -24,6 +24,7 @@ namespace renderer {
 			void puts(const char* s);
 			void putn(unsigned long x, int base);
 			void clear();
+			void clear_line();
 	};
 
 	extern FontRenderer* global_font_renderer;

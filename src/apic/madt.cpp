@@ -1,5 +1,7 @@
 #include <apic/madt.h>
 
+#include <driver/serial.h>
+
 uint8_t lapic_ids[256] = {0};
 uint8_t numcore = 0;
 uint64_t lapic_ptr = 0;

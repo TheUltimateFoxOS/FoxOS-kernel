@@ -1,25 +1,29 @@
-#include <fs/fat32.h>
+#include <fs/fat32/fat32_old.h>
 
-using namespace fat32;
+#include <memory/memory.h>
 
-int fat32::disk_id = 0;
-uint32_t fat32::fs_start_sector;
+#include <driver/serial.h>
 
-int fat32::read_sector(uint8_t* buffer, uint32_t sector) {
+using namespace fat32_old;
+
+int fat32_old::disk_id = 0;
+uint32_t fat32_old::fs_start_sector;
+
+int fat32_old::read_sector(uint8_t* buffer, uint32_t sector) {
 	driver::disk::global_disk_manager->read(disk_id, sector, 1, buffer);
 	return 0;
 }
 
-int fat32::write_sector(uint8_t* buffer, uint32_t sector) {
+int fat32_old::write_sector(uint8_t* buffer, uint32_t sector) {
 	driver::disk::global_disk_manager->write(disk_id, sector, 1, buffer);
 	return 0;
 }
 
-int fat32::fs_read_sector(uint8_t* buffer, uint32_t sector) {
+int fat32_old::fs_read_sector(uint8_t* buffer, uint32_t sector) {
 	return read_sector(buffer,sector + fs_start_sector);
 }
 
-MBR_info_t fat32::MBR_read(uint8_t* buffer) {
+MBR_info_t fat32_old::MBR_read(uint8_t* buffer) {
 	read_sector(buffer, 0);
 	MBR_t *MBR;
 	MBR = (MBR_t *)buffer;
@@ -31,7 +35,7 @@ MBR_info_t fat32::MBR_read(uint8_t* buffer) {
 	return ret;
 }
 
-fs_info_t fat32::BPB_read(uint8_t* buffer) {
+fs_info_t fat32_old::BPB_read(uint8_t* buffer) {
 	fs_read_sector(buffer, 0);
 	BPB_t *BPB;
 	BPB = (BPB_t *)buffer;
@@ -57,7 +61,7 @@ fs_info_t fat32::BPB_read(uint8_t* buffer) {
 	return fs_info;
 }
 
-fs_info_t fat32::read_info(uint8_t* buffer) {
+fs_info_t fat32_old::read_info(uint8_t* buffer) {
 	MBR_info_t mbr_info;
 	mbr_info.active = 0;
 	strcpy(mbr_info.fs_type, "FAT32");
@@ -71,11 +75,11 @@ fs_info_t fat32::read_info(uint8_t* buffer) {
 	return fs_info;
 }
 
-int fat32::fsync(sector_buffer_t* buffer) {
+int fat32_old::fsync(sector_buffer_t* buffer) {
 	return write_sector(buffer->data, fs_start_sector+buffer->sector_number);
 }
 
-int fat32::fetch(uint32_t sector, sector_buffer_t* buffer) {
+int fat32_old::fetch(uint32_t sector, sector_buffer_t* buffer) {
 	uint32_t error_level = 0;
 	if (buffer->sector_number == sector) {
 		error_level |= SECTOR_ALREADY_IN_MEMORY;
@@ -91,7 +95,7 @@ int fat32::fetch(uint32_t sector, sector_buffer_t* buffer) {
 	return error_level;
 }
 
-uint32_t fat32::get_fat_entry(uint32_t cluster, fs_info_t fs_info, sector_buffer_t* buffer) {
+uint32_t fat32_old::get_fat_entry(uint32_t cluster, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t offset = 4 * cluster;
 	uint32_t sector = fs_info.reserved_sectors + (offset/512);
 	fetch(sector, buffer);
@@ -100,7 +104,7 @@ uint32_t fat32::get_fat_entry(uint32_t cluster, fs_info_t fs_info, sector_buffer
 }
 
 static char formated_file_name[16];
-char* fat32::format_file_name(directory_entry_t *entry) {
+char* fat32_old::format_file_name(directory_entry_t *entry) {
 	int i, j;
 	uint8_t* entryname = entry->filename;
 	if (entry->attributes != 0x0f) {
@@ -140,7 +144,7 @@ char* fat32::format_file_name(directory_entry_t *entry) {
 	return (char*) formated_file_name;
 }
 
-file_info_t fat32::read_one_file_info(directory_entry_t* dir_entry, uint32_t cluster, fs_info_t fs_info) {
+file_info_t fat32_old::read_one_file_info(directory_entry_t* dir_entry, uint32_t cluster, fs_info_t fs_info) {
 	file_info_t ret;
 	if ((dir_entry->attributes & ATTR_LONG_NAME_MASK) == ATTR_LONG_NAME) {
 		long_file_name_t* LongFileName = (long_file_name_t*) dir_entry;
@@ -166,7 +170,7 @@ file_info_t fat32::read_one_file_info(directory_entry_t* dir_entry, uint32_t clu
 	return ret;
 }
 
-file_info_t* fat32::find_file(uint32_t cluster, const char *filename, file_info_t *fp, fs_info_t fs_info, sector_buffer_t *buffer, int recursive) {
+file_info_t* fat32_old::find_file(uint32_t cluster, const char *filename, file_info_t *fp, fs_info_t fs_info, sector_buffer_t *buffer, int recursive) {
 	if(recursive <= 0) {
 		return nullptr;
 	}
@@ -180,7 +184,7 @@ file_info_t* fat32::find_file(uint32_t cluster, const char *filename, file_info_
 
 	for (; offset < fs_info.sectors_per_cluster*SECTOR_SIZE; offset += 0x20) {
 		directory_entry_t* CurrentOneFileInfo = (directory_entry_t *)&buffer->data[offset];
-		auto file_info=read_one_file_info(CurrentOneFileInfo, cluster, fs_info);
+		auto file_info = read_one_file_info(CurrentOneFileInfo, cluster, fs_info);
 		if ((file_info.attributes & 0x0f) == 0x0f) {
 			//part of long filename
 			strcpy(LongFileNameBuffer + strlen(LongFileNameBuffer), file_info.long_filename);
@@ -204,7 +208,7 @@ file_info_t* fat32::find_file(uint32_t cluster, const char *filename, file_info_
 	return nullptr;
 }
 
-file_info_t* fat32::fopen(const char *filename, const char *mode, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
+file_info_t* fat32_old::fopen(const char *filename, const char *mode, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
 
 	if(fp == nullptr) {
 		return nullptr;
@@ -256,7 +260,7 @@ file_info_t* fat32::fopen(const char *filename, const char *mode, file_info_t* f
 	return fp;
 }
 
-uint32_t fat32::find_free_cluster(uint32_t base, fs_info_t fs_info, sector_buffer_t* buffer) {
+uint32_t fat32_old::find_free_cluster(uint32_t base, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t cluster = base;
 	uint32_t TotalCluster = fs_info.total_sectors / fs_info.sectors_per_cluster;
 
@@ -274,7 +278,7 @@ uint32_t fat32::find_free_cluster(uint32_t base, fs_info_t fs_info, sector_buffe
 	return ERROR_VOLUME_FULL;
 }
 
-int fat32::set_fat_entry(uint32_t cluster, uint32_t value, fs_info_t fs_info, sector_buffer_t* buffer) {
+int fat32_old::set_fat_entry(uint32_t cluster, uint32_t value, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t error_level = 0;
 	uint32_t offset = 4 * cluster;
 	uint32_t sector = fs_info.reserved_sectors + (offset / 512);
@@ -287,7 +291,7 @@ int fat32::set_fat_entry(uint32_t cluster, uint32_t value, fs_info_t fs_info, se
 	return error_level;
 }
 
-int fat32::fseek(file_info_t* fp, int32_t base, long offset, fs_info_t fs_info, sector_buffer_t* buffer) {
+int fat32_old::fseek(file_info_t* fp, int32_t base, long offset, fs_info_t fs_info, sector_buffer_t* buffer) {
 	long pos = base + offset;
 	uint32_t cluster_offset;
 	uint32_t temp;
@@ -331,13 +335,13 @@ int fat32::fseek(file_info_t* fp, int32_t base, long offset, fs_info_t fs_info, 
 	return 0;
 }
 
-uint32_t fat32::cluster_to_sector(uint32_t cluster, fs_info_t fs_info) {
+uint32_t fat32_old::cluster_to_sector(uint32_t cluster, fs_info_t fs_info) {
 	uint32_t base = fs_info.data_start_sector;
 	uint32_t offset = (cluster - 2)*fs_info.sectors_per_cluster;
 	return base + offset ;
 }
 
-int fat32::fread(uint8_t* dest, size_t size, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
+int fat32_old::fread(uint8_t* dest, size_t size, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t sector;
 	for (; size > 0; size--) {
 		sector = (fp->current_byte / 512) + cluster_to_sector(fp->current_cluster, fs_info);
@@ -356,7 +360,7 @@ int fat32::fread(uint8_t* dest, size_t size, file_info_t* fp, fs_info_t fs_info,
 	return 0;
 }
 
-int fat32::fwrite(uint8_t* src, uint32_t size, uint32_t count, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
+int fat32_old::fwrite(uint8_t* src, uint32_t size, uint32_t count, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t i, tracking, segsize;
 	fp->flags |= ENRTRY_FLAG_DIRTY;
 	while (count > 0) {
@@ -383,7 +387,7 @@ int fat32::fwrite(uint8_t* src, uint32_t size, uint32_t count, file_info_t* fp, 
 	return size - i;
 }
 
-int fat32::ffsync(file_info_t* fp, sector_buffer_t* buffer) {
+int fat32_old::ffsync(file_info_t* fp, sector_buffer_t* buffer) {
 	if (buffer->sector_flags & CURRENT_FLAG_DIRTY) {
 		fsync(buffer);
 	}
@@ -393,12 +397,12 @@ int fat32::ffsync(file_info_t* fp, sector_buffer_t* buffer) {
 	return 0;
 }
 
-int fat32::fclose(file_info_t* fp, sector_buffer_t* buffer) {
+int fat32_old::fclose(file_info_t* fp, sector_buffer_t* buffer) {
 	ffsync(fp,buffer);
 	return 0;
 }
 
-int fat32::touch(const char* filename, fs_info_t fs_info, sector_buffer_t* buffer) {
+int fat32_old::touch(const char* filename, fs_info_t fs_info, sector_buffer_t* buffer) {
 	directory_entry_t entry;
 	uint32_t cluster;
 	const char *name;
@@ -437,7 +441,7 @@ int fat32::touch(const char* filename, fs_info_t fs_info, sector_buffer_t* buffe
 	} while(entry.filename[0] != '\x00');
 
 	// Back up one entry, this is where we put the new filename entry
-	fseek(fp, -sizeof(directory_entry_t), fp->pos, fs_info, buffer);
+	fseek(fp, (int32_t) -sizeof(directory_entry_t), fp->pos, fs_info, buffer);
 	cluster = find_free_cluster(0, fs_info, buffer);
 	set_fat_entry(cluster, FAT_MASK_EOC, fs_info, buffer); // Marks the new cluster as the last one (but no longer free)
 
@@ -475,7 +479,7 @@ int fat32::touch(const char* filename, fs_info_t fs_info, sector_buffer_t* buffe
 	return 0;
 }
 
-void fat32::show_info(fs_info_t fs_info) {
+void fat32_old::show_info(fs_info_t fs_info) {
 	driver::global_serial_driver->printf("-----------------------------FS INFO-------------------------------\n");
 	driver::global_serial_driver->printf("This Volume has a total of %u sectors!\n", fs_info.total_sectors);
 	driver::global_serial_driver->printf("Cluster Size:%d\n", fs_info.sectors_per_cluster*SECTOR_SIZE);

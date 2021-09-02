@@ -7,7 +7,7 @@ int BASIC::basic_keyword_print(token_t token) {
 	token_iterator++;
 
 	if (string_token.line_num == token.line_num) {
-		if (string_token.type == token_type_t::string) {
+		if (string_token.type == token_type_t::STRING) {
 			BASIC_printf("%s\n", string_token.contents);
 		} else {
 			BASIC_error("Tried to print a value that is not a string", string_token.line_num);
