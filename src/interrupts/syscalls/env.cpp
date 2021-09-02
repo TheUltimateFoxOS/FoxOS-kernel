@@ -5,6 +5,8 @@
 #include <driver/keyboard.h>
 #include <driver/driver.h>
 
+#include <power.h>
+
 extern "C" void sys_env(s_registers regs) {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
@@ -39,6 +41,9 @@ extern "C" void sys_env(s_registers regs) {
 					kbdrv->debug_mode = (bool) regs.rcx;
 				}
 			}
+			break;
+		case 6:
+			do_reboot();
 			break;
 	}
 }
