@@ -50,6 +50,7 @@ namespace driver{
 
 			virtual void handle();
 			virtual void activate();
+			virtual char* get_name();
 
 			void receive();
 	};

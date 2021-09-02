@@ -53,8 +53,13 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(h
 			this->base_port = *bar_ptr & ~3;
 		}
 	}
+	
 
 	driver::global_serial_driver->printf("Am79C973Driver: base_port: %d\n", this->base_port);
+
+	Port16Bit reset_port(this->base_port + 0x14);
+	reset_port.Read();
+	reset_port.Write(0x0);
 
 	uint64_t mac0 = inw(this->base_port + 0x00) % 256;
 	uint64_t mac1 = inw(this->base_port + 0x00) / 256;
@@ -68,11 +73,7 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(h
 
 	Port16Bit register_data_port(this->base_port + 0x10);
 	Port16Bit register_address_port(this->base_port + 0x12);
-	Port16Bit reset_port(this->base_port + 0x14);
 	Port16Bit bus_control_register_data_port(this->base_port + 0x16);
-
-	reset_port.Read();
-	reset_port.Write(0x0);
 
 	// enable 32 bit mode
 	register_address_port.Write(20);
@@ -235,4 +236,8 @@ void Am79C973Driver::receive() {
 			driver::global_serial_driver->printf("Am79C973Driver: packet not ready\n");
 		}
 	}
+}
+
+char* Am79C973Driver::get_name() {
+	return (char*) "am79C973";
 }
