@@ -8,11 +8,13 @@ using namespace net;
 EtherFrameHandler::EtherFrameHandler(EtherFrameProvider* backend, uint16_t ether_type) {
 	this->ether_type_be = ((ether_type & 0x00FF) << 8) | ((ether_type & 0xFF00) >> 8);
 	this->backend = backend;
-	backend->handlers[ether_type_be] = this;
+	backend->handlers.add(this);
 }
 
 EtherFrameHandler::~EtherFrameHandler() {
-	this->backend->handlers[this->ether_type_be] = nullptr;
+	this->backend->handlers.remove(this->backend->handlers.find<EtherFrameHandler*>([](EtherFrameHandler* h, list<EtherFrameHandler*>::node* n) {
+		return h == n->data;
+	}, this));
 }
 
 bool EtherFrameHandler::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
@@ -24,10 +26,7 @@ void EtherFrameHandler::send(uint64_t dest_mac_be, uint8_t* payload, uint32_t si
 	this->backend->send_f(dest_mac_be, this->ether_type_be, payload, size);
 }
 
-EtherFrameProvider::EtherFrameProvider(int nic_id) : driver::nic::NicDataManager(nic_id) {
-	for (int i = 0; i < MAX_ETHER_FRAME_HANDLERS; i++) {
-		this->handlers[i] = nullptr;
-	}
+EtherFrameProvider::EtherFrameProvider(int nic_id) : driver::nic::NicDataManager(nic_id), handlers(100) {
 }
 
 EtherFrameProvider::~EtherFrameProvider() {
@@ -40,8 +39,12 @@ bool EtherFrameProvider::recv(uint8_t* data, int32_t size) {
 	bool send_back = false;
 
 	if (frame->dest_mac_be == 0xFFFFFFFFFFFF || frame->dest_mac_be == nic->get_mac()) {
-		if (this->handlers[frame->ether_type_be] != nullptr) {
-			send_back = this->handlers[frame->ether_type_be]->onEtherFrameReceived(data + sizeof(ether_frame_header_t), size - sizeof(ether_frame_header_t));
+		list<EtherFrameHandler*>::node* n = this->handlers.find<uint16_t>([](uint16_t t, list<EtherFrameHandler*>::node* n) {
+			return t == n->data->ether_type_be;
+		}, frame->ether_type_be);
+
+		if (n != nullptr) {
+			send_back = n->data->onEtherFrameReceived(data + sizeof(ether_frame_header_t), size - sizeof(ether_frame_header_t));
 		} else {
 			driver::global_serial_driver->printf("Unhandled etherframe!\n");
 		}

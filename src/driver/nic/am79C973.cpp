@@ -6,22 +6,12 @@
 #include <string.h>
 #include <assert.h>
 #include <net/etherframe.h>
+#include <net/arp.h>
 
 using namespace driver;
 
 #define DEBUG
 
-// init block
-static Am79C973Driver::initialization_block_t init_block = {
-	.mode = 0x0000, // promiscuous mode = false
-	.reserved1 = 0,
-	.numSendBuffers = 3,
-	.reserved2 = 0,
-	.numRecvBuffers = 3,
-	.physicalAddress = 0,
-	.reserved3 = 0,
-	.logicalAddress = 0
-};
 
 Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(header->interrupt_line + 0x20) {
 	this->header = header;
@@ -35,11 +25,13 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(h
 	memset(this->recvBufferDescrMemory, 0, 4096);
 	this->recvBuffers = (uint8_t*) global_allocator.request_pages(5);
 	memset(this->recvBuffers, 0, 5 * 4096);
+	this->init_block = (initialization_block_t*) global_allocator.request_page();
 
 	assert(!((uint64_t) this->sendBufferDescrMemory > 0xffffffff));
 	assert(!((uint64_t) this->sendBuffers > 0xffffffff));
 	assert(!((uint64_t) this->recvBufferDescrMemory > 0xffffffff));
 	assert(!((uint64_t) this->recvBuffers > 0xffffffff));
+	assert(!((uint64_t) this->init_block > 0xffffffff));
 
 	currentSendBuffer = 0;
 	currentRecvBuffer = 0;
@@ -71,6 +63,15 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(h
 	uint64_t MAC = mac5 << 40 | mac4 << 32 | mac3 << 24 | mac2 << 16 | mac1 << 8 | mac0;
 	driver::global_serial_driver->printf("Am79C973Driver: MAC: %x:%x:%x:%x:%x:%x\n", mac0, mac1, mac2, mac3, mac4, mac5);
 
+	this->init_block->mode = 0x0000; // promiscuous mode = false
+	this->init_block->reserved1 = 0;
+	this->init_block->numSendBuffers = 3;
+	this->init_block->reserved2 = 0;
+	this->init_block->numRecvBuffers = 3;
+	this->init_block->physicalAddress = MAC;
+	this->init_block->reserved3 = 0;
+	this->init_block->logicalAddress = 0;
+
 	Port16Bit register_data_port(this->base_port + 0x10);
 	Port16Bit register_address_port(this->base_port + 0x12);
 	Port16Bit bus_control_register_data_port(this->base_port + 0x16);
@@ -83,12 +84,10 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(h
 	register_address_port.Write(0x0);
 	register_data_port.Write(0x4);
 
-	init_block.physicalAddress = MAC;
-
 	sendBufferDescr = (buffer_descriptor_t*)(uint64_t)((((uint32_t)(uint64_t)&sendBufferDescrMemory[0]) + 15) & ~((uint32_t)0xF));
-	init_block.sendBufferDescrAddress = (uint32_t)(uint64_t)sendBufferDescr;
+	this->init_block->sendBufferDescrAddress = (uint32_t)(uint64_t)sendBufferDescr;
 	recvBufferDescr = (buffer_descriptor_t*)(uint64_t)((((uint32_t)(uint64_t)&recvBufferDescrMemory[0]) + 15) & ~((uint32_t)0xF));
-	init_block.recvBufferDescrAddress = (uint32_t)(uint64_t)recvBufferDescr;
+	this->init_block->recvBufferDescrAddress = (uint32_t)(uint64_t)recvBufferDescr;
 
 	for (int i = 0; i < 8; i++) {
 		sendBufferDescr[i].address = (((uint32_t)(uint64_t)&sendBuffers[i]) + 15 ) & ~(uint32_t)0xF;
@@ -102,12 +101,10 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(h
 		recvBufferDescr[i].avail = 0;
 	}
 
-	assert(!((uint64_t) &init_block > 0xffffffff));
-
 	register_address_port.Write(0x1);
-	register_data_port.Write((uint32_t)(uint64_t)&init_block & 0xffff);
+	register_data_port.Write((uint32_t)(uint64_t)this->init_block & 0xffff);
 	register_address_port.Write(0x2);
-	register_data_port.Write(((uint32_t)(uint64_t)&init_block >> 16) & 0xffff);
+	register_data_port.Write(((uint32_t)(uint64_t)this->init_block >> 16) & 0xffff);
 
 }
 
@@ -116,6 +113,7 @@ Am79C973Driver::~Am79C973Driver() {
 	global_allocator.free_pages(this->sendBuffers, 5);
 	global_allocator.free_page(this->recvBufferDescrMemory);
 	global_allocator.free_pages(this->recvBuffers, 5);
+	global_allocator.free_page(this->init_block);
 }
 
 void Am79C973Driver::activate() {
@@ -135,8 +133,30 @@ void Am79C973Driver::activate() {
 
 	nic::global_nic_manager->add_Nic(this);
 
+	nic::ip_u gip;
+	gip.ip_p[0] = 10;
+	gip.ip_p[1] = 0;
+	gip.ip_p[2] = 2;
+	gip.ip_p[3] = 2;
+
+	nic::ip_u ip;
+	ip.ip_p[0] = 10;
+	ip.ip_p[1] = 0;
+	ip.ip_p[2] = 2;
+	ip.ip_p[3] = 15;
+
+	this->set_ip(ip.ip);
+
 	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
-	ether->send_f(0xFFFFFFFFFFFF, 0x0608, (uint8_t*) "test123", 7);
+	net::AddressResolutionProtocol* arp = new net::AddressResolutionProtocol(ether);
+
+	nic::mac_u mac;
+
+	mac.mac = arp->resolve(gip.ip);
+	driver::global_serial_driver->printf("MAC from gateway: %x:%x:%x:%x:%x:%x\n", mac.mac_p[0], mac.mac_p[1], mac.mac_p[2], mac.mac_p[3], mac.mac_p[4], mac.mac_p[5]);
+
+	
+
 }
 
 
@@ -255,4 +275,12 @@ uint64_t Am79C973Driver::get_mac() {
 
 	uint64_t MAC = mac5 << 40 | mac4 << 32 | mac3 << 24 | mac2 << 16 | mac1 << 8 | mac0;
 	return MAC;
+}
+
+uint32_t Am79C973Driver::get_ip() {
+	return this->init_block->logicalAddress;
+}
+
+void Am79C973Driver::set_ip(uint32_t ip) {
+	this->init_block->logicalAddress = ip;
 }

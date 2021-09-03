@@ -9,6 +9,17 @@ typedef void (*nic_recv_handler)(uint8_t* data, uint32_t len);
 
 namespace driver {
 	namespace nic {
+
+		union ip_u {
+			uint8_t ip_p[4];
+			uint32_t ip;
+		};
+
+		union mac_u {
+			uint8_t mac_p[6];
+			uint64_t mac: 48;
+		};
+
 		class Nic;
 		class NicDataManager {
 			public:
@@ -29,6 +40,9 @@ namespace driver {
 
 				virtual void register_nic_data_manager(NicDataManager* nic_data_manager);
 				virtual uint64_t get_mac();
+
+				virtual uint32_t get_ip();
+				virtual void set_ip(uint32_t ip);
 
 				NicDataManager* nic_data_manager;
 

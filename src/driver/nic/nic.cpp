@@ -29,6 +29,14 @@ uint64_t Nic::get_mac() {
 	return 0;
 }
 
+uint32_t Nic::get_ip() {
+	return 0;
+}
+
+void Nic::set_ip(uint32_t ip) {
+	
+}
+
 NicDataManager::NicDataManager(int id) {
 	this->nic_id = id;
 	global_nic_manager->get_nic(id)->register_nic_data_manager(this);

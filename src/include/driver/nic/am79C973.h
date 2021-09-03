@@ -35,6 +35,9 @@ namespace driver{
 			virtual void send(uint8_t* data, int32_t len);
 			virtual uint64_t get_mac();
 
+			virtual uint32_t get_ip();
+			virtual void set_ip(uint32_t ip);
+
 		private:
 			pci::pci_header_0_t* header;
 			uint16_t base_port;
@@ -48,6 +51,8 @@ namespace driver{
 			uint8_t* recvBufferDescrMemory;
 			uint8_t* recvBuffers;
 			uint8_t currentRecvBuffer;
+
+			initialization_block_t* init_block;
 
 			virtual void handle();
 			virtual void activate();

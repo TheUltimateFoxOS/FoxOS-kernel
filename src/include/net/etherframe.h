@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <driver/nic/nic.h>
+#include <net/listv2.h>
 
 #define MAX_ETHER_FRAME_HANDLERS 65535
 
@@ -23,13 +24,13 @@ namespace net {
 			EtherFrameHandler(EtherFrameProvider* backend, uint16_t ether_type);
 			~EtherFrameHandler();
 
-			bool onEtherFrameReceived(uint8_t* payload, uint32_t size);
+			virtual bool onEtherFrameReceived(uint8_t* payload, uint32_t size);
 			void send(uint64_t dest_mac_be, uint8_t* payload, uint32_t size);
 	};
 
 	class EtherFrameProvider : public driver::nic::NicDataManager {
 		public:
-			EtherFrameHandler* handlers[MAX_ETHER_FRAME_HANDLERS + 1];
+			list<EtherFrameHandler*> handlers;
 
 			EtherFrameProvider(int nic_id);
 			~EtherFrameProvider();
