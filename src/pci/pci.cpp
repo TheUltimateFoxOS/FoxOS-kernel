@@ -2,7 +2,10 @@
 
 #include <driver/disk/ahci/ahci.h>
 #include <driver/disk/ata.h>
+
 #include <driver/nic/am79C973.h>
+#include <driver/nic/rtl8139.h>
+
 #include <driver/driver.h>
 
 #include <memory/heap.h>
@@ -59,6 +62,13 @@ void enumerate_function(uint64_t address, uint64_t function) {
 			switch (pci_device_header->device_id) {
 				case 0x2000: //AMD am79c973
 					driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) pci_device_header));
+					break;
+			}
+			break;
+		case 0x10EC: //Realtek
+			switch (pci_device_header->device_id) {
+				case 0x8139: //Realtek rtl8139
+					driver::global_driver_manager->add_driver(new driver::rtl8139Driver((pci::pci_header_0_t*) pci_device_header));
 					break;
 			}
 			break;
@@ -209,17 +219,26 @@ void pci::enumerate_pci() {
 						break;
 				}
 
-					switch (pci_device_header->vendor_id) {
-						case 0x1022: //AMD
-							switch (pci_device_header->device_id) {
-								case 0x2000: //AMD am79c973
-									pci::pci_header_0_t* header_copy = new pci::pci_header_0_t;
-									memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
-									driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) header_copy));
-									break;
-							}
-							break;
-					}
+				switch (pci_device_header->vendor_id) {
+					case 0x1022: //AMD
+						switch (pci_device_header->device_id) {
+							case 0x2000: //AMD am79c973
+								pci::pci_header_0_t* header_copy = new pci::pci_header_0_t;
+								memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
+								driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) header_copy));
+								break;
+						}
+						break;
+					case 0x10EC: //Realtek
+						switch (pci_device_header->device_id) {
+							case 0x8139: //Realtek rtl8139
+								pci::pci_header_0_t* header_copy = new pci::pci_header_0_t;
+								memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
+								driver::global_driver_manager->add_driver(new driver::rtl8139Driver((pci::pci_header_0_t*) header_copy));
+								break;
+						}
+						break;
+				}
 			}
 		}
 	}

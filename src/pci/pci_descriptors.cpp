@@ -33,6 +33,8 @@ namespace pci {
 				return "AMD";
 			case 0x10DE:
 				return "NVIDIA Corporation";
+			case 0x10EC:
+				return "Realtek Semiconductor Corp";
 		}
 		return to_hstring(vendor_ID);
 	}
@@ -49,6 +51,12 @@ namespace pci {
 						return "6 port SATA Controller [AHCI mode]";
 					case 0x2930:
 						return "SMBus Controller";
+				}
+			case 0x10EC: //Realtek
+				switch (device_ID)
+				{
+					case 0x8139:
+						return "RTL 8193";
 				}
 		}
 		return to_hstring(device_ID);

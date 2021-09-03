@@ -44,3 +44,5 @@ unsigned char inb(unsigned short _port);
 void outb(unsigned short _port, unsigned char _data);
 uint16_t inw(uint16_t _port);
 void outw(uint16_t _port, uint16_t _data);
+uint32_t inl(uint16_t port);
+void outl(uint16_t port, uint32_t data);
