@@ -49,6 +49,6 @@ namespace net {
 
 			virtual bool onEtherFrameReceived(uint8_t* payload, uint32_t size);
 			void send(uint32_t dest_ip_be, uint8_t protocol, uint8_t* payload, uint32_t size);
-			uint16_t checksum(uint8_t* data, uint32_t size);
+			uint16_t checksum(uint16_t* data, uint32_t size);
 	};
 }

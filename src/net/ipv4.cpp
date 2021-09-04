@@ -64,7 +64,8 @@ bool Ipv4Provider::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
 		ipv4->source_address = temp;
 
 		ipv4->time_to_live = 0x40;
-		ipv4->header_checksum = checksum((uint8_t*) ipv4, 4 * ipv4->header_length);
+		ipv4->header_checksum = 0;
+		ipv4->header_checksum = checksum((uint16_t*) ipv4, 4 * ipv4->header_length);
 		backend->send(payload, size);
 	}
 
@@ -88,7 +89,7 @@ void Ipv4Provider::send(uint32_t dest_ip_be, uint8_t protocol, uint8_t* payload,
 	ipv4->source_address = backend->nic->get_ip();
 
 	ipv4->header_checksum = 0;
-	ipv4->header_checksum = checksum(buffer, sizeof(ipv4_message_t));
+	ipv4->header_checksum = checksum((uint16_t*) ipv4, sizeof(ipv4_message_t));
 
 	memcpy(buffer + sizeof(ipv4_message_t), payload, size);
 
@@ -102,10 +103,10 @@ void Ipv4Provider::send(uint32_t dest_ip_be, uint8_t protocol, uint8_t* payload,
 	delete[] buffer;
 }
 
-uint16_t Ipv4Provider::checksum(uint8_t* data, uint32_t size) {
+uint16_t Ipv4Provider::checksum(uint16_t* data, uint32_t size) {
 	uint32_t temp = 0;
-	
-	for(int i = 0; i < size / 2; i++) {
+
+	for(int i = 0; i < size/2; i++) {
 		temp += ((data[i] & 0xFF00) >> 8) | ((data[i] & 0x00FF) << 8);
 	}
 
@@ -117,5 +118,5 @@ uint16_t Ipv4Provider::checksum(uint8_t* data, uint32_t size) {
 		temp = (temp & 0xFFFF) + (temp >> 16);
 	}
 
-	return ((temp & 0xFF00) >> 8) | ((temp & 0x00FF) << 8);
+	return ((~temp & 0xFF00) >> 8) | ((~temp & 0x00FF) << 8);
 }
