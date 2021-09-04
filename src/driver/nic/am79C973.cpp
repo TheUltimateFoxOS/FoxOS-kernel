@@ -9,11 +9,20 @@
 #include <net/arp.h>
 #include <net/ipv4.h>
 #include <net/icmp.h>
+#include <net/udp.h>
 
 using namespace driver;
 
 #define DEBUG
 
+class UdpDataPrinter: public net::UdpHandler {
+	public:
+		virtual void onUdpMessage(net::UdpSocket *socket, uint8_t* data, size_t size) {
+			driver::global_serial_driver->printf("UDP: %s\n", data);
+			socket->send((uint8_t*) "IT WORKED!!!!!!!!\n", 17);
+		}
+
+};
 
 Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(header->interrupt_line + 0x20) {
 	this->header = header;
@@ -145,7 +154,7 @@ void Am79C973Driver::activate() {
 	ip.ip_p[0] = 10;
 	ip.ip_p[1] = 0;
 	ip.ip_p[2] = 2;
-	ip.ip_p[3] = 100;
+	ip.ip_p[3] = 15;
 
 	nic::ip_u mask;
 	mask.ip_p[0] = 255;
@@ -159,16 +168,24 @@ void Am79C973Driver::activate() {
 	ip_to_ping.ip_p[2] = 8;
 	ip_to_ping.ip_p[3] = 8;
 
+
 	this->set_ip(ip.ip);
 
 	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
 	net::AddressResolutionProtocol* arp = new net::AddressResolutionProtocol(ether);
 	net::Ipv4Provider* ipv4 = new net::Ipv4Provider(ether, arp, gip.ip, mask.ip);
 	net::IcmpProvider* icmp = new net::IcmpProvider(ipv4);
+	net::UdpProvider* udp = new net::UdpProvider(ipv4);
+
+	UdpDataPrinter* printer = new UdpDataPrinter();
 
 	arp->broadcast_mac(gip.ip);
 
-	icmp->send_echo_request(ip_to_ping.ip);
+	net::UdpSocket* socket = udp->listen(9999);
+	//socket->send((uint8_t*)"Hello World", 11);
+	udp->bind(socket, printer);
+
+	//icmp->send_echo_request(ip_to_ping.ip);
 	//icmp->send_echo_request(ip_to_ping2.ip);
 
 	//ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
