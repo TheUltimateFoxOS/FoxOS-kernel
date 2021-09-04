@@ -68,7 +68,7 @@ bool UdpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_B
 			return true;
 		}
 
-		if (n->data.handler->remotePort == u.udp_header->dst_port && n->data.handler->remoteIp == u.dst_ip && n->data.handler->localIp == u.dst_ip) {
+		if (n->data.handler->remotePort == u.udp_header->dst_port && (n->data.handler->remoteIp == u.dst_ip || u.dst_ip == 0xFFFFFFFF)) {
 			return true;
 		}
 

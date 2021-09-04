@@ -41,7 +41,7 @@ bool Ipv4Provider::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
 	ipv4_message_t* ipv4 = (ipv4_message_t*) payload;
 	bool send_back = false;
 
-	if (ipv4->destination_address == backend->nic->get_ip()) {
+	if (ipv4->destination_address == backend->nic->get_ip() || ipv4->destination_address == 0xFFFFFFFF) {
 		int length = ipv4->total_length;
 		if (length > size) {
 			length = size;

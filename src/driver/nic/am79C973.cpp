@@ -10,6 +10,7 @@
 #include <net/ipv4.h>
 #include <net/icmp.h>
 #include <net/udp.h>
+#include <net/dhcp.h>
 
 using namespace driver;
 
@@ -169,6 +170,7 @@ void Am79C973Driver::activate() {
 	ip_to_ping.ip_p[3] = 8;
 
 
+
 	this->set_ip(ip.ip);
 
 	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
@@ -177,15 +179,24 @@ void Am79C973Driver::activate() {
 	net::IcmpProvider* icmp = new net::IcmpProvider(ipv4);
 	net::UdpProvider* udp = new net::UdpProvider(ipv4);
 
-	UdpDataPrinter* printer = new UdpDataPrinter();
+	//UdpDataPrinter* printer = new UdpDataPrinter();
 
-	arp->broadcast_mac(gip.ip);
+	net::UdpSocket* socket = udp->connect(0xffffffff, 67);
+	net::UdpSocket* socket2 = udp->connect(0xffffffff, 68);
 
-	net::UdpSocket* socket = udp->listen(9999);
+	net::DhcpProtocol* dhcp = new net::DhcpProtocol(socket);
+	udp->bind(socket2, dhcp);
+
+	dhcp->request();
+
+	set_ip(dhcp->ip);
+	
+	arp->broadcast_mac(ipv4->gateway_ip_be);
+
 	//socket->send((uint8_t*)"Hello World", 11);
-	udp->bind(socket, printer);
+	//udp->bind(socket, printer);
 
-	//icmp->send_echo_request(ip_to_ping.ip);
+	icmp->send_echo_request(ip_to_ping.ip);
 	//icmp->send_echo_request(ip_to_ping2.ip);
 
 	//ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
