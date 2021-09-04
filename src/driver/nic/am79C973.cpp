@@ -136,16 +136,16 @@ void Am79C973Driver::activate() {
 	nic::global_nic_manager->add_Nic(this);
 
 	nic::ip_u gip;
-	gip.ip_p[0] = 192;
-	gip.ip_p[1] = 168;
-	gip.ip_p[2] = 178;
-	gip.ip_p[3] = 1;
+	gip.ip_p[0] = 10;
+	gip.ip_p[1] = 0;
+	gip.ip_p[2] = 2;
+	gip.ip_p[3] = 2;
 
 	nic::ip_u ip;
-	ip.ip_p[0] = 192;
-	ip.ip_p[1] = 168;
-	ip.ip_p[2] = 178;
-	ip.ip_p[3] = 200;
+	ip.ip_p[0] = 10;
+	ip.ip_p[1] = 0;
+	ip.ip_p[2] = 2;
+	ip.ip_p[3] = 100;
 
 	nic::ip_u mask;
 	mask.ip_p[0] = 255;
@@ -154,10 +154,10 @@ void Am79C973Driver::activate() {
 	mask.ip_p[3] = 0;
 
 	nic::ip_u ip_to_ping;
-	ip_to_ping.ip_p[0] = 192;
-	ip_to_ping.ip_p[1] = 168;
-	ip_to_ping.ip_p[2] = 178;
-	ip_to_ping.ip_p[3] = 116;
+	ip_to_ping.ip_p[0] = 8;
+	ip_to_ping.ip_p[1] = 8;
+	ip_to_ping.ip_p[2] = 8;
+	ip_to_ping.ip_p[3] = 8;
 
 	this->set_ip(ip.ip);
 
