@@ -26,6 +26,7 @@ namespace net {
 			~AddressResolutionProtocol();
 
 			virtual bool onEtherFrameReceived(uint8_t* payload, uint32_t size);
+			void broadcast_mac(uint32_t ip_be);
 			void request_mac_address(uint32_t ip_be);
 			uint64_t get_mac_from_cache(uint32_t ip_be);
 			uint64_t resolve(uint32_t ip_be);

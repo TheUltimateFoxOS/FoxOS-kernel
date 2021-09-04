@@ -27,7 +27,8 @@ bool AddressResolutionProtocol::onEtherFrameReceived(uint8_t* payload, uint32_t 
 						arp->dest_mac = arp->src_mac;
 						arp->src_ip = this->backend->nic->get_ip();
 						arp->src_mac = this->backend->nic->get_mac();
-						return true;
+						this->send(arp->dest_mac, (uint8_t*) arp, sizeof(arp_message_t));
+						return false;
 					}
 					break;
 				case 0x0200: // response
@@ -44,6 +45,22 @@ bool AddressResolutionProtocol::onEtherFrameReceived(uint8_t* payload, uint32_t 
 	}
 
 	return false;
+}
+
+void AddressResolutionProtocol::broadcast_mac(uint32_t ip_be) {
+	arp_message_t arp = {
+		.hardware_type = 0x0100,
+		.protocol = 0x0008,
+		.hardware_address_size = 6,
+		.protocol_address_size = 4,
+		.command = 0x0200,
+		.src_mac = this->backend->nic->get_mac(),
+		.src_ip = this->backend->nic->get_ip(),
+		.dest_mac = resolve(ip_be),
+		.dest_ip = ip_be
+	};
+
+	this->send(arp.dest_mac, (uint8_t*) &arp, sizeof(arp_message_t));
 }
 
 void AddressResolutionProtocol::request_mac_address(uint32_t ip_be) {
@@ -80,11 +97,12 @@ uint64_t AddressResolutionProtocol::resolve(uint32_t ip_be) {
 		this->request_mac_address(ip_be);
 	}
 
-	int timeout = 10000000;
+	int timeout = 1000000000;
 
 	while (result == 0xFFFFFFFFFFFF) {
 		result = this->get_mac_from_cache(ip_be);
 		if (--timeout == 0) {
+			driver::global_serial_driver->printf("timeout for arp request!\n");
 			return 0;
 		}
 	}

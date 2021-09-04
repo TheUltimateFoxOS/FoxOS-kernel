@@ -8,6 +8,7 @@
 #include <net/etherframe.h>
 #include <net/arp.h>
 #include <net/ipv4.h>
+#include <net/icmp.h>
 
 using namespace driver;
 
@@ -135,16 +136,16 @@ void Am79C973Driver::activate() {
 	nic::global_nic_manager->add_Nic(this);
 
 	nic::ip_u gip;
-	gip.ip_p[0] = 10;
-	gip.ip_p[1] = 0;
-	gip.ip_p[2] = 2;
-	gip.ip_p[3] = 2;
+	gip.ip_p[0] = 192;
+	gip.ip_p[1] = 168;
+	gip.ip_p[2] = 178;
+	gip.ip_p[3] = 1;
 
 	nic::ip_u ip;
-	ip.ip_p[0] = 10;
-	ip.ip_p[1] = 0;
-	ip.ip_p[2] = 2;
-	ip.ip_p[3] = 15;
+	ip.ip_p[0] = 192;
+	ip.ip_p[1] = 168;
+	ip.ip_p[2] = 178;
+	ip.ip_p[3] = 200;
 
 	nic::ip_u mask;
 	mask.ip_p[0] = 255;
@@ -152,13 +153,25 @@ void Am79C973Driver::activate() {
 	mask.ip_p[2] = 255;
 	mask.ip_p[3] = 0;
 
+	nic::ip_u ip_to_ping;
+	ip_to_ping.ip_p[0] = 192;
+	ip_to_ping.ip_p[1] = 168;
+	ip_to_ping.ip_p[2] = 178;
+	ip_to_ping.ip_p[3] = 116;
+
 	this->set_ip(ip.ip);
 
 	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
 	net::AddressResolutionProtocol* arp = new net::AddressResolutionProtocol(ether);
 	net::Ipv4Provider* ipv4 = new net::Ipv4Provider(ether, arp, gip.ip, mask.ip);
+	net::IcmpProvider* icmp = new net::IcmpProvider(ipv4);
 
-	ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
+	arp->broadcast_mac(gip.ip);
+
+	icmp->send_echo_request(ip_to_ping.ip);
+	//icmp->send_echo_request(ip_to_ping2.ip);
+
+	//ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
 
 
 }
