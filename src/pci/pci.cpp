@@ -209,17 +209,17 @@ void pci::enumerate_pci() {
 						break;
 				}
 
-					switch (pci_device_header->vendor_id) {
-						case 0x1022: //AMD
-							switch (pci_device_header->device_id) {
-								case 0x2000: //AMD am79c973
-									pci::pci_header_0_t* header_copy = new pci::pci_header_0_t;
-									memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
-									driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) header_copy));
-									break;
-							}
-							break;
-					}
+				switch (pci_device_header->vendor_id) {
+					case 0x1022: //AMD
+						switch (pci_device_header->device_id) {
+							case 0x2000: //AMD am79c973
+								pci::pci_header_0_t* header_copy = new pci::pci_header_0_t;
+								memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
+								driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) header_copy));
+								break;
+						}
+						break;
+				}
 			}
 		}
 	}
