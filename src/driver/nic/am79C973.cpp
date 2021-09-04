@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <net/etherframe.h>
 #include <net/arp.h>
+#include <net/ipv4.h>
 
 using namespace driver;
 
@@ -145,17 +146,20 @@ void Am79C973Driver::activate() {
 	ip.ip_p[2] = 2;
 	ip.ip_p[3] = 15;
 
+	nic::ip_u mask;
+	mask.ip_p[0] = 255;
+	mask.ip_p[1] = 255;
+	mask.ip_p[2] = 255;
+	mask.ip_p[3] = 0;
+
 	this->set_ip(ip.ip);
 
 	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
 	net::AddressResolutionProtocol* arp = new net::AddressResolutionProtocol(ether);
+	net::Ipv4Provider* ipv4 = new net::Ipv4Provider(ether, arp, gip.ip, mask.ip);
 
-	nic::mac_u mac;
+	ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
 
-	mac.mac = arp->resolve(gip.ip);
-	driver::global_serial_driver->printf("MAC from gateway: %x:%x:%x:%x:%x:%x\n", mac.mac_p[0], mac.mac_p[1], mac.mac_p[2], mac.mac_p[3], mac.mac_p[4], mac.mac_p[5]);
-
-	
 
 }
 

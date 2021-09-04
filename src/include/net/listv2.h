@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include <memory/heap.h>
+#include <memory/memory.h>
 
 template <typename T>
 class list {
