@@ -11,6 +11,7 @@
 #include <net/icmp.h>
 #include <net/udp.h>
 #include <net/dhcp.h>
+#include <net/dns.h>
 
 using namespace driver;
 
@@ -182,10 +183,9 @@ void Am79C973Driver::activate() {
 	//UdpDataPrinter* printer = new UdpDataPrinter();
 
 	net::UdpSocket* socket = udp->connect(0xffffffff, 67);
-	net::UdpSocket* socket2 = udp->connect(0xffffffff, 68);
 
 	net::DhcpProtocol* dhcp = new net::DhcpProtocol(socket);
-	udp->bind(socket2, dhcp);
+	udp->bind(socket, dhcp);
 
 	dhcp->request();
 
@@ -198,10 +198,18 @@ void Am79C973Driver::activate() {
 	//socket->send((uint8_t*)"Hello World", 11);
 	//udp->bind(socket, printer);
 
-	icmp->send_echo_request(ip_to_ping.ip);
+	//icmp->send_echo_request(ip_to_ping.ip);
 	//icmp->send_echo_request(ip_to_ping2.ip);
 
 	//ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
+
+	nic::ip_u dns_ip = {8, 8, 8, 8};
+
+	net::UdpSocket* dns_socket = udp->connect(dns_ip.ip, 53);
+	net::DomainNameServiceProvider* dns = new net::DomainNameServiceProvider(dns_socket);
+	udp->bind(dns_socket, dns);
+
+	dns->dns_request("google.com");
 
 
 }
