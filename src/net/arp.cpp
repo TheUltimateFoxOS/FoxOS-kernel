@@ -91,6 +91,10 @@ uint64_t AddressResolutionProtocol::get_mac_from_cache(uint32_t ip_be) {
 }
 
 uint64_t AddressResolutionProtocol::resolve(uint32_t ip_be) {
+	if (ip_be == 0xffffffff) {
+		return 0xFFFFFFFFFFFF;
+	}
+	
 	uint64_t result = this->get_mac_from_cache(ip_be);
 
 	if (result == 0xFFFFFFFFFFFF) {

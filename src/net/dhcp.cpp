@@ -1,9 +1,11 @@
 #include <net/dhcp.h>
+#include <config.h>
 
 using namespace net;
 
 DhcpProtocol::DhcpProtocol(UdpSocket* socket) {
 	this->socket = socket;
+	socket->localPort = __builtin_bswap16(68);
 	this->ip = 0;
 }
 
@@ -13,11 +15,12 @@ DhcpProtocol::~DhcpProtocol() {
 
 void DhcpProtocol::request() {
 	dhcp_packet_t packet;
+	memset(&packet, 0, sizeof(dhcp_packet_t));
 
 	make_dhcp_packet(&packet, 1, 0x00000000);
 	socket->send((uint8_t*) &packet, sizeof(dhcp_packet_t));
 
-	int timeout = 100000000;
+	int timeout = 1000000000;
 
 	while (!complete) {
 		if (--timeout == 0) {
@@ -28,6 +31,7 @@ void DhcpProtocol::request() {
 
 void DhcpProtocol::request(uint32_t ip) {
 	dhcp_packet_t packet;
+	memset(&packet, 0, sizeof(dhcp_packet_t));
 
 	make_dhcp_packet(&packet, 3, ip);
 	socket->send((uint8_t*) &packet, sizeof(dhcp_packet_t));
@@ -44,10 +48,11 @@ void DhcpProtocol::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size) {
 			break;
 		case 5:
 			this->ip = packet->your_ip;
-			this->gateway = packet->gateway_ip;
+			this->gateway = packet->server_ip;
 			this->complete = true;
+			uint32_t* subnet = (uint32_t*) get_dhcp_options(packet, 1);
+			this->subnet = *subnet;
 			break;
-
 	}
 }
 
@@ -60,6 +65,7 @@ void* DhcpProtocol::get_dhcp_options(dhcp_packet_t* packet, uint8_t type) {
 			return options + 2;
 		}
 		options += (2 + len);
+		curr_type = *options;
 	}
 
 	return nullptr;
@@ -71,7 +77,7 @@ void DhcpProtocol::make_dhcp_packet(dhcp_packet_t* packet, uint8_t msg_type, uin
 	packet->hardware_addr_len = 6;
 	packet->hops = 0;
 	packet->xid = __builtin_bswap32(DHCP_TRANSACTION_IDENTIFIER);
-	packet->flags = __builtin_bswap16(0x8000);
+	packet->flags = __builtin_bswap16(0);
 	uint64_t mac = socket->provider->backend->backend->nic->get_mac();
 	memcpy(packet->client_hardware_addr, &mac, sizeof(mac));
 
@@ -108,8 +114,8 @@ void DhcpProtocol::make_dhcp_packet(dhcp_packet_t* packet, uint8_t msg_type, uin
 	// Host Name
 	*(options++) = 12;
 	*(options++) = 0x09;
-	memcpy(options, "simpleos", strlen("simpleos"));
-	options += strlen("simpleos");
+	memcpy(options, HOSTNAME, strlen(HOSTNAME));
+	options += strlen(HOSTNAME);
 	*(options++) = 0x00;
 
 	// Parameter request list

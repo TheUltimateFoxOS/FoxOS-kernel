@@ -11,6 +11,7 @@
 #define VERSION 	1
 #define RELEASE_T	"Alpha"
 #define VENDOR 		"TheUltimateFoxOS"
+#define HOSTNAME 	(char*) "FoxOS"
 
 #define MAX_FILE_NAME_SIZE 128
 #define MAX_VFS_NODES 255

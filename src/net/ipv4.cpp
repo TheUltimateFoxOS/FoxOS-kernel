@@ -41,7 +41,7 @@ bool Ipv4Provider::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
 	ipv4_message_t* ipv4 = (ipv4_message_t*) payload;
 	bool send_back = false;
 
-	if (ipv4->destination_address == backend->nic->get_ip() || ipv4->destination_address == 0xFFFFFFFF) {
+	if (ipv4->destination_address == backend->nic->get_ip() || ipv4->destination_address == 0xFFFFFFFF || backend->nic->get_ip() == 0) {
 		int length = ipv4->total_length;
 		if (length > size) {
 			length = size;
@@ -81,8 +81,12 @@ void Ipv4Provider::send(uint32_t dest_ip_be, uint8_t protocol, uint8_t* payload,
 	ipv4->type_of_service = 0;
 	ipv4->total_length = size + sizeof(ipv4_message_t);
 	ipv4->total_length = ((ipv4->total_length & 0xFF00) >> 8) | ((ipv4->total_length & 0x00FF) << 8);
-	ipv4->identification = 0x0100;
-	ipv4->flags_and_fragment_offset = 0x0040;
+	//ipv4->identification = 0x0100;
+	//ipv4->flags_and_fragment_offset = 0x0040;
+	
+	ipv4->identification = 0x0000;
+	ipv4->flags_and_fragment_offset = 0x0000;
+
 	ipv4->time_to_live = 0x40;
 	ipv4->protocol = protocol;
 	ipv4->destination_address = dest_ip_be;

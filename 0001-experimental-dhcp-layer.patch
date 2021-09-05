@@ -1,0 +1,286 @@
+From dc083bab20f29357a5df8ff167ad09fab9e80f74 Mon Sep 17 00:00:00 2001
+From: Glowman554 <glowman434@gmail.com>
+Date: Sat, 4 Sep 2021 20:59:33 +0200
+Subject: [PATCH] experimental dhcp layer
+
+---
+ src/driver/nic/am79C973.cpp |  21 ++++--
+ src/include/net/dhcp.h      |  51 +++++++++++++++
+ src/net/dhcp.cpp            | 127 ++++++++++++++++++++++++++++++++++++
+ src/net/ipv4.cpp            |   2 +-
+ src/net/udp.cpp             |   2 +-
+ 5 files changed, 196 insertions(+), 7 deletions(-)
+ create mode 100644 src/include/net/dhcp.h
+ create mode 100644 src/net/dhcp.cpp
+
+diff --git a/src/driver/nic/am79C973.cpp b/src/driver/nic/am79C973.cpp
+index 008fb60..c47421f 100644
+--- a/src/driver/nic/am79C973.cpp
++++ b/src/driver/nic/am79C973.cpp
+@@ -10,6 +10,7 @@
+ #include <net/ipv4.h>
+ #include <net/icmp.h>
+ #include <net/udp.h>
++#include <net/dhcp.h>
+ 
+ using namespace driver;
+ 
+@@ -169,6 +170,7 @@ void Am79C973Driver::activate() {
+ 	ip_to_ping.ip_p[3] = 8;
+ 
+ 
++
+ 	this->set_ip(ip.ip);
+ 
+ 	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
+@@ -177,15 +179,24 @@ void Am79C973Driver::activate() {
+ 	net::IcmpProvider* icmp = new net::IcmpProvider(ipv4);
+ 	net::UdpProvider* udp = new net::UdpProvider(ipv4);
+ 
+-	UdpDataPrinter* printer = new UdpDataPrinter();
++	//UdpDataPrinter* printer = new UdpDataPrinter();
++
++	net::UdpSocket* socket = udp->connect(0xffffffff, 67);
++	net::UdpSocket* socket2 = udp->connect(0xffffffff, 68);
++
++	net::DhcpProtocol* dhcp = new net::DhcpProtocol(socket);
++	udp->bind(socket2, dhcp);
+ 
+-	arp->broadcast_mac(gip.ip);
++	dhcp->request();
++
++	set_ip(dhcp->ip);
++	
++	arp->broadcast_mac(ipv4->gateway_ip_be);
+ 
+-	net::UdpSocket* socket = udp->listen(9999);
+ 	//socket->send((uint8_t*)"Hello World", 11);
+-	udp->bind(socket, printer);
++	//udp->bind(socket, printer);
+ 
+-	//icmp->send_echo_request(ip_to_ping.ip);
++	icmp->send_echo_request(ip_to_ping.ip);
+ 	//icmp->send_echo_request(ip_to_ping2.ip);
+ 
+ 	//ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
+diff --git a/src/include/net/dhcp.h b/src/include/net/dhcp.h
+new file mode 100644
+index 0000000..d93cee9
+--- /dev/null
++++ b/src/include/net/dhcp.h
+@@ -0,0 +1,51 @@
++#pragma once
++
++#include <net/udp.h>
++
++namespace net {
++
++	struct dhcp_packet_t {
++		uint8_t op;
++		uint8_t hardware_type;
++		uint8_t hardware_addr_len;
++		uint8_t hops;
++		uint32_t xid;
++		uint16_t seconds;
++		uint16_t flags;
++		uint32_t client_ip;
++		uint32_t your_ip;
++		uint32_t server_ip;
++		uint32_t gateway_ip;
++		uint8_t client_hardware_addr[16];
++		uint8_t server_name[64];
++		uint8_t file[128];
++		uint8_t options[64];
++	} __attribute__ ((packed));
++
++	#define DHCP_REQUEST 1
++	#define DHCP_REPLY 2
++
++	#define DHCP_TRANSACTION_IDENTIFIER 0x55555555
++
++	class DhcpProtocol : public net::UdpHandler{
++		public:
++			DhcpProtocol(UdpSocket* socket);
++			~DhcpProtocol();
++
++			void request();
++			void request(uint32_t ip);
++
++			uint32_t ip;
++			uint32_t gateway;
++
++			bool complete = false;
++
++			virtual void onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size);
++		
++		private:
++			UdpSocket* socket;
++
++			void make_dhcp_packet(dhcp_packet_t* packet, uint8_t msg_type, uint32_t request_ip);
++			void* get_dhcp_options(dhcp_packet_t* packet, uint8_t type);
++	};
++}
+\ No newline at end of file
+diff --git a/src/net/dhcp.cpp b/src/net/dhcp.cpp
+new file mode 100644
+index 0000000..66d6abb
+--- /dev/null
++++ b/src/net/dhcp.cpp
+@@ -0,0 +1,127 @@
++#include <net/dhcp.h>
++
++using namespace net;
++
++DhcpProtocol::DhcpProtocol(UdpSocket* socket) {
++	this->socket = socket;
++	this->ip = 0;
++}
++
++DhcpProtocol::~DhcpProtocol() {
++
++}
++
++void DhcpProtocol::request() {
++	dhcp_packet_t packet;
++
++	make_dhcp_packet(&packet, 1, 0x00000000);
++	socket->send((uint8_t*) &packet, sizeof(dhcp_packet_t));
++
++	int timeout = 100000000;
++
++	while (!complete) {
++		if (--timeout == 0) {
++			break;
++		}
++	}
++}
++
++void DhcpProtocol::request(uint32_t ip) {
++	dhcp_packet_t packet;
++
++	make_dhcp_packet(&packet, 3, ip);
++	socket->send((uint8_t*) &packet, sizeof(dhcp_packet_t));
++}
++
++void DhcpProtocol::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size) {
++	dhcp_packet_t* packet = (dhcp_packet_t*) data;
++
++	uint8_t* type = (uint8_t*) get_dhcp_options(packet, 53);
++
++	switch (*type) {
++		case 2:
++			this->request(packet->your_ip);
++			break;
++		case 5:
++			this->ip = packet->your_ip;
++			this->gateway = packet->gateway_ip;
++			this->complete = true;
++			break;
++
++	}
++}
++
++void* DhcpProtocol::get_dhcp_options(dhcp_packet_t* packet, uint8_t type) {
++	uint8_t* options = packet->options + 4;
++	uint8_t curr_type = *options;
++	while(curr_type != 0xff) {
++		uint8_t len = *(options + 1);
++		if(curr_type == type) {
++			return options + 2;
++		}
++		options += (2 + len);
++	}
++
++	return nullptr;
++}
++
++void DhcpProtocol::make_dhcp_packet(dhcp_packet_t* packet, uint8_t msg_type, uint32_t request_ip) {
++	packet->op = DHCP_REQUEST;
++	packet->hardware_type = 1;
++	packet->hardware_addr_len = 6;
++	packet->hops = 0;
++	packet->xid = __builtin_bswap32(DHCP_TRANSACTION_IDENTIFIER);
++	packet->flags = __builtin_bswap16(0x8000);
++	uint64_t mac = socket->provider->backend->backend->nic->get_mac();
++	memcpy(packet->client_hardware_addr, &mac, sizeof(mac));
++
++	// Send dhcp packet using UDP
++	uint8_t dst_ip[4];
++	memset(dst_ip, 0xff, 4);
++
++	// Options specific to DHCP Discover (required)
++
++	// Magic Cookie
++	uint8_t * options = packet->options;
++	*((uint32_t*)(options)) = __builtin_bswap32(0x63825363);
++	options += 4;
++
++	// First option, message type = DHCP_DISCOVER/DHCP_REQUEST
++	*(options++) = 53;
++	*(options++) = 1;
++	*(options++) = msg_type;
++
++	// Client identifier
++	*(options++) = 61;
++	*(options++) = 0x07;
++	*(options++) = 0x01;
++	memcpy(options, &mac, sizeof(mac));
++	options += 6;
++
++	// Requested IP address
++	*(options++) = 50;
++	*(options++) = 0x04;
++	*((uint32_t*)(options)) = __builtin_bswap32(0x0a00020e);
++	memcpy((uint32_t*)(options), &request_ip, 4);
++	options += 4;
++
++	// Host Name
++	*(options++) = 12;
++	*(options++) = 0x09;
++	memcpy(options, "simpleos", strlen("simpleos"));
++	options += strlen("simpleos");
++	*(options++) = 0x00;
++
++	// Parameter request list
++	*(options++) = 55;
++	*(options++) = 8;
++	*(options++) = 0x1;
++	*(options++) = 0x3;
++	*(options++) = 0x6;
++	*(options++) = 0xf;
++	*(options++) = 0x2c;
++	*(options++) = 0x2e;
++	*(options++) = 0x2f;
++	*(options++) = 0x39;
++	*(options++) = 0xff;
++}
+\ No newline at end of file
+diff --git a/src/net/ipv4.cpp b/src/net/ipv4.cpp
+index d892356..363cd70 100644
+--- a/src/net/ipv4.cpp
++++ b/src/net/ipv4.cpp
+@@ -41,7 +41,7 @@ bool Ipv4Provider::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
+ 	ipv4_message_t* ipv4 = (ipv4_message_t*) payload;
+ 	bool send_back = false;
+ 
+-	if (ipv4->destination_address == backend->nic->get_ip()) {
++	if (ipv4->destination_address == backend->nic->get_ip() || ipv4->destination_address == 0xFFFFFFFF) {
+ 		int length = ipv4->total_length;
+ 		if (length > size) {
+ 			length = size;
+diff --git a/src/net/udp.cpp b/src/net/udp.cpp
+index 0232126..1a3d870 100644
+--- a/src/net/udp.cpp
++++ b/src/net/udp.cpp
+@@ -68,7 +68,7 @@ bool UdpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_B
+ 			return true;
+ 		}
+ 
+-		if (n->data.handler->remotePort == u.udp_header->dst_port && n->data.handler->remoteIp == u.dst_ip && n->data.handler->localIp == u.dst_ip) {
++		if (n->data.handler->remotePort == u.udp_header->dst_port && (n->data.handler->remoteIp == u.dst_ip || u.dst_ip == 0xFFFFFFFF)) {
+ 			return true;
+ 		}
+ 
+-- 
+2.30.2
+

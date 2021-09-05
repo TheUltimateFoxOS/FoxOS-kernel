@@ -171,11 +171,11 @@ void Am79C973Driver::activate() {
 
 
 
-	this->set_ip(ip.ip);
+	this->set_ip(0);
 
 	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
 	net::AddressResolutionProtocol* arp = new net::AddressResolutionProtocol(ether);
-	net::Ipv4Provider* ipv4 = new net::Ipv4Provider(ether, arp, gip.ip, mask.ip);
+	net::Ipv4Provider* ipv4 = new net::Ipv4Provider(ether, arp, 0xffffffff, 0xffffffff);
 	net::IcmpProvider* icmp = new net::IcmpProvider(ipv4);
 	net::UdpProvider* udp = new net::UdpProvider(ipv4);
 
@@ -190,7 +190,9 @@ void Am79C973Driver::activate() {
 	dhcp->request();
 
 	set_ip(dhcp->ip);
-	
+	ipv4->gateway_ip_be = dhcp->gateway;
+	ipv4->subnet_mask_be = dhcp->subnet;
+
 	arp->broadcast_mac(ipv4->gateway_ip_be);
 
 	//socket->send((uint8_t*)"Hello World", 11);
