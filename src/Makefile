@@ -29,7 +29,7 @@ else
 endif
 
 
-CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -Iinclude -fno-use-cxa-atexit -fno-rtti -fno-exceptions -fno-leading-underscore -fno-exceptions -g
+CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -Iinclude -fno-use-cxa-atexit -fno-rtti -fno-exceptions -fno-leading-underscore -fno-exceptions -fno-stack-protector -g
 ASMFLAGS = -f elf64
 LDFLAGS = -static -Bsymbolic -nostdlib -Tlink.ld --no-dynamic-linker -zmax-page-size=0x1000 -ztext
 

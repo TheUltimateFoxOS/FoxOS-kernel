@@ -50,12 +50,12 @@ ap_trampoline_64:
 
 	; enable coprocessor (fpu and sse)
 	mov rax, cr0
-	and rax, 0xfffffffffffffffb	
-	or rax, 0x22
+	and ax, 0xFFFB
+	or ax, 0x2
 	mov cr0, rax
 
 	mov rax, cr4
-	or rax, 0x0406b0
+	or ax, 3 << 9
 	mov cr4, rax
 
 	fninit
