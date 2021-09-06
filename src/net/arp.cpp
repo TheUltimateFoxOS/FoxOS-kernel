@@ -102,7 +102,7 @@ uint64_t AddressResolutionProtocol::resolve(uint32_t ip_be) {
 		this->request_mac_address(ip_be);
 	}
 
-	int timeout = 100;
+	int timeout = 100000;
 
 	while (result == 0xFFFFFFFFFFFF) {
 		result = this->get_mac_from_cache(ip_be);

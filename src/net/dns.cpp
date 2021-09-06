@@ -71,7 +71,7 @@ uint32_t DomainNameServiceProvider::resolve(char* name) {
 		wait_for_response = true;
 		dns_request(name);
 
-		int timeout = 100;
+		int timeout = 100000;
 		while (true) {
 			if (timeout-- <= 0) {
 				return 0;

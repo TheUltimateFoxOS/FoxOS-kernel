@@ -23,7 +23,7 @@ void DhcpProtocol::request() {
 	make_dhcp_packet(&packet, 1, 0x00000000);
 	socket->send((uint8_t*) &packet, sizeof(dhcp_packet_t));
 
-	int timeout = 100;
+	int timeout = 100000;
 
 	while (!complete) {
 		if (--timeout == 0) {
