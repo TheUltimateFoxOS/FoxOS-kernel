@@ -203,15 +203,17 @@ void Am79C973Driver::activate() {
 
 	//ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
 
-	nic::ip_u dns_ip = {8, 8, 8, 8};
-
-	net::UdpSocket* dns_socket = udp->connect(dns_ip.ip, 53);
+	net::UdpSocket* dns_socket = udp->connect(0x08080808, 53);
 	net::DomainNameServiceProvider* dns = new net::DomainNameServiceProvider(dns_socket);
 	udp->bind(dns_socket, dns);
 
-	dns->dns_request("google.com");
+	uint32_t ip_of_google = dns->resolve("google.com");
+	nic::ip_u ip_of_google_u;
+	ip_of_google_u.ip = ip_of_google;
 
+	driver::global_serial_driver->printf("google: %d.%d.%d.%d\n", ip_of_google_u.ip_p[0], ip_of_google_u.ip_p[1], ip_of_google_u.ip_p[2], ip_of_google_u.ip_p[3]);
 
+	icmp->send_echo_request(ip_of_google);
 }
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <net/udp.h>
+#include <net/listv2.h>
 
 namespace net {
 
@@ -17,8 +18,9 @@ namespace net {
 		uint16_t data_len;
 	} __attribute__((packed));
 
-	struct grehdr_t {
-		uint16_t opts, protocol;
+	struct dns_result_t {
+		uint32_t ip;
+		char name[64];
 	};
 
 	class DomainNameServiceProvider: public UdpHandler {
@@ -28,10 +30,14 @@ namespace net {
 
 			void resolv_domain_to_hostname(char* dst_hostname, char* src_domain);
 
+			uint32_t resolve(char* name);
 			void dns_request(char* name);
 
 			virtual void onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size);
-
+			
 			UdpSocket* socket;
+			list<dns_result_t> results;
+
+			bool wait_for_response;
 	};
 }
