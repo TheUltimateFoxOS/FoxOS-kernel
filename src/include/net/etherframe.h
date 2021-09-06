@@ -30,7 +30,7 @@ namespace net {
 
 	class EtherFrameProvider : public driver::nic::NicDataManager {
 		public:
-			list<EtherFrameHandler*> handlers;
+			listv2<EtherFrameHandler*> handlers;
 
 			EtherFrameProvider(int nic_id);
 			~EtherFrameProvider();

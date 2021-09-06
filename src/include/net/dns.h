@@ -36,7 +36,7 @@ namespace net {
 			virtual void onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size);
 			
 			UdpSocket* socket;
-			list<dns_result_t> results;
+			listv2<dns_result_t> results;
 
 			bool wait_for_response;
 	};

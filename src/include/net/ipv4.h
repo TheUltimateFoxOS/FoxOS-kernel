@@ -38,7 +38,7 @@ namespace net {
 
 	class Ipv4Provider : public net::EtherFrameHandler {
 		public:
-			list<Ipv4Handler*> handlers;
+			listv2<Ipv4Handler*> handlers;
 			AddressResolutionProtocol* arp;
 
 			uint32_t gateway_ip_be;

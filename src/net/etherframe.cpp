@@ -12,7 +12,7 @@ EtherFrameHandler::EtherFrameHandler(EtherFrameProvider* backend, uint16_t ether
 }
 
 EtherFrameHandler::~EtherFrameHandler() {
-	this->backend->handlers.remove(this->backend->handlers.find<EtherFrameHandler*>([](EtherFrameHandler* h, list<EtherFrameHandler*>::node* n) {
+	this->backend->handlers.remove(this->backend->handlers.find<EtherFrameHandler*>([](EtherFrameHandler* h, listv2<EtherFrameHandler*>::node* n) {
 		return h == n->data;
 	}, this));
 }
@@ -39,7 +39,7 @@ bool EtherFrameProvider::recv(uint8_t* data, int32_t size) {
 	bool send_back = false;
 
 	if (frame->dest_mac_be == 0xFFFFFFFFFFFF || frame->dest_mac_be == nic->get_mac()) {
-		list<EtherFrameHandler*>::node* n = this->handlers.find<uint16_t>([](uint16_t t, list<EtherFrameHandler*>::node* n) {
+		listv2<EtherFrameHandler*>::node* n = this->handlers.find<uint16_t>([](uint16_t t, listv2<EtherFrameHandler*>::node* n) {
 			return t == n->data->ether_type_be;
 		}, frame->ether_type_be);
 

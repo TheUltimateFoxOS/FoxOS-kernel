@@ -58,7 +58,7 @@ uint32_t DomainNameServiceProvider::resolve(char* name) {
 	char qname[128];
 	resolv_domain_to_hostname(qname, name);
 
-	list<dns_result_t>::node* n = results.find<char*>([](char* qname, list<dns_result_t>::node* n) {
+	listv2<dns_result_t>::node* n = results.find<char*>([](char* qname, listv2<dns_result_t>::node* n) {
 		return strcmp(qname, n->data.name) == 0;
 	}, qname);
 
@@ -79,7 +79,7 @@ uint32_t DomainNameServiceProvider::resolve(char* name) {
 			}
 		}
 
-		list<dns_result_t>::node* n = results.find<char*>([](char* qname, list<dns_result_t>::node* n) {
+		listv2<dns_result_t>::node* n = results.find<char*>([](char* qname, listv2<dns_result_t>::node* n) {
 			return strcmp(qname, n->data.name) == 0;
 		}, qname);
 

@@ -10,7 +10,7 @@ Ipv4Handler::Ipv4Handler(Ipv4Provider* backend, uint8_t protocol) {
 }
 
 Ipv4Handler::~Ipv4Handler() {
-	this->backend->handlers.remove(this->backend->handlers.find<Ipv4Handler*>([](Ipv4Handler* h, list<Ipv4Handler*>::node* n) {
+	this->backend->handlers.remove(this->backend->handlers.find<Ipv4Handler*>([](Ipv4Handler* h, listv2<Ipv4Handler*>::node* n) {
 		return h == n->data;
 	}, this));	
 }
@@ -47,7 +47,7 @@ bool Ipv4Provider::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
 			length = size;
 		}
 
-		list<Ipv4Handler*>::node* n = this->handlers.find<uint8_t>([](uint8_t t, list<Ipv4Handler*>::node* n) {
+		listv2<Ipv4Handler*>::node* n = this->handlers.find<uint8_t>([](uint8_t t, listv2<Ipv4Handler*>::node* n) {
 			return t == n->data->protocol;
 		}, ipv4->protocol);
 

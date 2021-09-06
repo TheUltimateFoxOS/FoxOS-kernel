@@ -31,6 +31,15 @@
 #include <stivale2.h>
 #include <cmdline.h>
 
+#include <driver/nic/nic.h>
+#include <net/etherframe.h>
+#include <net/arp.h>
+#include <net/ipv4.h>
+#include <net/icmp.h>
+#include <net/udp.h>
+#include <net/dhcp.h>
+#include <net/dns.h>
+
 #include "examples/examples.h"
 
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler {
@@ -131,6 +140,56 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 
 	//layer_test(bootinfo);
 	//test_sound();
+
+	for (int i = 0; i < driver::nic::global_nic_manager->num_Nics; i++) {
+		renderer::global_font_renderer->printf("Configuring NIC %d... ", i);
+
+		net::EtherFrameProvider* ether = new net::EtherFrameProvider(i);
+		net::AddressResolutionProtocol* arp = new net::AddressResolutionProtocol(ether);
+		net::Ipv4Provider* ipv4 = new net::Ipv4Provider(ether, arp, 0xffffffff, 0xffffffff);
+		net::IcmpProvider* icmp = new net::IcmpProvider(ipv4);
+		net::UdpProvider* udp = new net::UdpProvider(ipv4);
+
+
+		net::UdpSocket* dhcp_socket = udp->connect(0xffffffff, 67);
+		net::DhcpProtocol* dhcp = new net::DhcpProtocol(dhcp_socket);
+		udp->bind(dhcp_socket, dhcp);
+
+		dhcp->request();
+
+		driver::nic::global_nic_manager->get_nic(i)->set_ip(dhcp->ip);
+		ipv4->gateway_ip_be = dhcp->gateway;
+		ipv4->subnet_mask_be = dhcp->subnet;
+
+		delete dhcp;
+		delete dhcp_socket;
+
+		arp->broadcast_mac(ipv4->gateway_ip_be);
+
+		net::UdpSocket* dns_socket = udp->connect(0x08080808, 53);
+		net::DomainNameServiceProvider* dns = new net::DomainNameServiceProvider(dns_socket);
+		udp->bind(dns_socket, dns);
+
+		driver::nic::ip_u ip;
+		ip.ip = driver::nic::global_nic_manager->get_nic(i)->get_ip();
+
+		driver::nic::ip_u gateway;
+		gateway.ip = ipv4->gateway_ip_be;
+
+		driver::nic::ip_u subnet;
+		subnet.ip = ipv4->subnet_mask_be;
+
+		renderer::global_font_renderer->printf("%fDone%r. ip: %d.%d.%d.%d, gateway: %d.%d.%d.%d, subnet: %d.%d.%d.%d", 0xff00ff00, ip.ip_p[0], ip.ip_p[1], ip.ip_p[2], ip.ip_p[3], gateway.ip_p[0], gateway.ip_p[1], gateway.ip_p[2], gateway.ip_p[3], subnet.ip_p[0], subnet.ip_p[1], subnet.ip_p[2], subnet.ip_p[3]);
+		renderer::global_font_renderer->printf("\n");
+
+		uint32_t ip_of_google = dns->resolve((char*) "google.com");
+		driver::nic::ip_u ip_of_google_u;
+		ip_of_google_u.ip = ip_of_google;
+
+		driver::global_serial_driver->printf("Resolved google.com to %d.%d.%d.%d\n", ip_of_google_u.ip_p[0], ip_of_google_u.ip_p[1], ip_of_google_u.ip_p[2], ip_of_google_u.ip_p[3]);
+
+		icmp->send_echo_request(ip_of_google);
+	}
 
 	vfs_mount* fat_mount = initialise_fat32(0);
 	mount(fat_mount, (char*) "root");

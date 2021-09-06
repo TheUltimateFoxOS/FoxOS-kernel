@@ -5,7 +5,7 @@
 #include <memory/memory.h>
 
 template <typename T>
-class list {
+class listv2 {
 	public:
 
 		struct node {
@@ -13,13 +13,13 @@ class list {
 			bool taken = false;
 		};
 
-		list(int initial_length) {
+		listv2(int initial_length) {
 			length = initial_length;
 			data = (node*) malloc(length * sizeof(node));
 			memset(data, 0, length * sizeof(T));
 		};
 
-		~list() {
+		~listv2() {
 			free(data);
 		}
 

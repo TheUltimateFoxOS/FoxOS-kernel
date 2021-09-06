@@ -24,5 +24,5 @@ void expand_heap(size_t length);
 inline void* operator new(size_t size) {return malloc(size);}
 inline void* operator new[](size_t size) {return malloc(size);}
 
-inline void operator delete(void* p) {free(p);}
+inline void operator delete(void* p, unsigned long) {free(p);}
 inline void operator delete[](void* p) {free(p);}

@@ -76,8 +76,6 @@ void AddressResolutionProtocol::request_mac_address(uint32_t ip_be) {
 		.dest_ip = ip_be	
 	};
 
-	driver::global_serial_driver->printf("%x", this);
-
 	this->send(arp.dest_mac, (uint8_t*) &arp, sizeof(arp_message_t));
 }
 

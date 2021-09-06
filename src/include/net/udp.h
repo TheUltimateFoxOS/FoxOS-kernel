@@ -51,7 +51,7 @@ namespace net {
 				UdpSocket* handler;
 			};
 
-			list<udp_bind_t> binds;
+			listv2<udp_bind_t> binds;
 
 			int free_port = 1024;
 			

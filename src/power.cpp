@@ -12,6 +12,6 @@ void do_reboot() {
 	outb(0x64, 0xfe);
 	asm("hlt");
 
-	interrupts::Panic p = interrupts::Panic("Reboot failed!");
+	interrupts::Panic p = interrupts::Panic((char*) "Reboot failed!");
 	p.do_it(NULL);
 }

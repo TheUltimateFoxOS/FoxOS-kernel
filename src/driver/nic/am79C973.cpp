@@ -15,7 +15,7 @@
 
 using namespace driver;
 
-#define DEBUG
+//#define DEBUG
 
 class UdpDataPrinter: public net::UdpHandler {
 	public:
@@ -144,76 +144,9 @@ void Am79C973Driver::activate() {
 	register_address_port.Write(0x0);
 	register_data_port.Write(0x42);
 
-	nic::global_nic_manager->add_Nic(this);
-
-	nic::ip_u gip;
-	gip.ip_p[0] = 10;
-	gip.ip_p[1] = 0;
-	gip.ip_p[2] = 2;
-	gip.ip_p[3] = 2;
-
-	nic::ip_u ip;
-	ip.ip_p[0] = 10;
-	ip.ip_p[1] = 0;
-	ip.ip_p[2] = 2;
-	ip.ip_p[3] = 15;
-
-	nic::ip_u mask;
-	mask.ip_p[0] = 255;
-	mask.ip_p[1] = 255;
-	mask.ip_p[2] = 255;
-	mask.ip_p[3] = 0;
-
-	nic::ip_u ip_to_ping;
-	ip_to_ping.ip_p[0] = 8;
-	ip_to_ping.ip_p[1] = 8;
-	ip_to_ping.ip_p[2] = 8;
-	ip_to_ping.ip_p[3] = 8;
-
-
-
 	this->set_ip(0);
 
-	net::EtherFrameProvider* ether = new net::EtherFrameProvider(0);
-	net::AddressResolutionProtocol* arp = new net::AddressResolutionProtocol(ether);
-	net::Ipv4Provider* ipv4 = new net::Ipv4Provider(ether, arp, 0xffffffff, 0xffffffff);
-	net::IcmpProvider* icmp = new net::IcmpProvider(ipv4);
-	net::UdpProvider* udp = new net::UdpProvider(ipv4);
-
-	//UdpDataPrinter* printer = new UdpDataPrinter();
-
-	net::UdpSocket* socket = udp->connect(0xffffffff, 67);
-
-	net::DhcpProtocol* dhcp = new net::DhcpProtocol(socket);
-	udp->bind(socket, dhcp);
-
-	dhcp->request();
-
-	set_ip(dhcp->ip);
-	ipv4->gateway_ip_be = dhcp->gateway;
-	ipv4->subnet_mask_be = dhcp->subnet;
-
-	arp->broadcast_mac(ipv4->gateway_ip_be);
-
-	//socket->send((uint8_t*)"Hello World", 11);
-	//udp->bind(socket, printer);
-
-	//icmp->send_echo_request(ip_to_ping.ip);
-	//icmp->send_echo_request(ip_to_ping2.ip);
-
-	//ipv4->send(gip.ip, 0x008, (uint8_t*)"Hello World!", 12);
-
-	net::UdpSocket* dns_socket = udp->connect(0x08080808, 53);
-	net::DomainNameServiceProvider* dns = new net::DomainNameServiceProvider(dns_socket);
-	udp->bind(dns_socket, dns);
-
-	uint32_t ip_of_google = dns->resolve("google.com");
-	nic::ip_u ip_of_google_u;
-	ip_of_google_u.ip = ip_of_google;
-
-	driver::global_serial_driver->printf("google: %d.%d.%d.%d\n", ip_of_google_u.ip_p[0], ip_of_google_u.ip_p[1], ip_of_google_u.ip_p[2], ip_of_google_u.ip_p[3]);
-
-	icmp->send_echo_request(ip_of_google);
+	nic::global_nic_manager->add_Nic(this);
 }
 
 

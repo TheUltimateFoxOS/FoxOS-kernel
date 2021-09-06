@@ -60,7 +60,7 @@ bool UdpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_B
 		.udp_header = udp
 	};
 
-	list<udp_bind_t>::node* n = binds.find<udp_search_t>([](udp_search_t u, list<udp_bind_t>::node* n) {
+	listv2<udp_bind_t>::node* n = binds.find<udp_search_t>([](udp_search_t u, listv2<udp_bind_t>::node* n) {
 		if (n->data.handler->localPort == u.udp_header->dst_port && n->data.handler->localIp == u.dst_ip && n->data.handler->listening ) {
 			n->data.handler->listening = false;
 			n->data.handler->remotePort = u.udp_header->src_port;
@@ -127,7 +127,7 @@ UdpSocket* UdpProvider::listen(uint16_t port) {
 }
 
 void UdpProvider::disconnect(UdpSocket* socket) {
-	list<udp_bind_t>::node* n = binds.find<UdpSocket*>([](UdpSocket* s, list<udp_bind_t>::node* n) {
+	listv2<udp_bind_t>::node* n = binds.find<UdpSocket*>([](UdpSocket* s, listv2<udp_bind_t>::node* n) {
 		return s == n->data.handler;
 	}, socket);
 
