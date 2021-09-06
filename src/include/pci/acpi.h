@@ -33,6 +33,21 @@ namespace pci {
 			uint64_t reserved;
 		} __attribute__((packed));
 
+		struct hpet_table_t {
+			sdt_header_t header;
+			uint8_t hardware_rev_id;
+			uint8_t info;
+			uint16_t pci_id;
+			uint8_t address_space_id;
+			uint8_t register_width;
+			uint8_t register_offset;
+			uint8_t reserved;
+			uint64_t address;
+			uint8_t hpet_num;
+			uint16_t minim_ticks;
+			uint8_t page_protection;
+		} __attribute__((packed));
+
 		struct device_config_t {
 			uint64_t base_address;
 			uint16_t pci_seg_group;

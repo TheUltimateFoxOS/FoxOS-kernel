@@ -17,6 +17,7 @@
 #include <paging/page_frame_allocator.h>
 
 #include <scheduling/pit/pit.h>
+#include <scheduling/hpet/hpet.h>
 #include <scheduling/scheduler/elf.h>
 #include <interrupts/interrupts.h>
 
@@ -226,22 +227,31 @@ void prepare_acpi(stivale2_struct* bootinfo) {
 
 	pci::acpi::mcfg_header_t* mcfg = NULL;
 	uint8_t* madt = NULL;
+	pci::acpi::hpet_table_t* hpet = NULL;
 
 	if (rsdp->xsdt_address != 0) {
 		pci::acpi::sdt_header_t* xsdt = (pci::acpi::sdt_header_t*) (((pci::acpi::rsdp2_t*) rsdp_tag->rsdp)->xsdt_address);
 
 		mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "MCFG");
 		madt = (uint8_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "APIC");
+		hpet = (pci::acpi::hpet_table_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "HPET");
 	} else {
 		pci::acpi::sdt_header_t* rsdt = (pci::acpi::sdt_header_t*) (uint64_t) (((pci::acpi::rsdp2_t*) rsdp_tag->rsdp)->rsdt_address);
 
 		mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "MCFG");
 		madt = (uint8_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "APIC");
+		hpet = (pci::acpi::hpet_table_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "HPET");
 	}
 
 	parse_madt(madt);
 
 	renderer::global_font_renderer->printf("Booting FoxOS on %d proccesors!\n\n", numcore);
+
+	if (hpet != NULL) {
+		hpet::init_hpet(hpet);
+	} else {
+		driver::global_serial_driver->printf("HPET not found!\n");
+	}
 
 	if (mcfg == NULL) {
 		renderer::global_font_renderer->printf("%fNo mcfg found! Using PCI Configuration Space Access Mechanism!%r\n", 0xff787878);

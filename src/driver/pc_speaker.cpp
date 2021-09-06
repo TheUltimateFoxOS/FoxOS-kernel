@@ -1,5 +1,6 @@
 #include <driver/pc_speaker.h>
 #include <scheduling/pit/pit.h>
+#include <scheduling/hpet/hpet.h>
 #include <port.h>
 
 using namespace driver;
@@ -12,7 +13,11 @@ PcSpeakerDriver::~PcSpeakerDriver() {
 
 void PcSpeakerDriver::activate() {
 	play_note((1 << 4) | 1);
-	PIT::sleep_d(1);
+	if (hpet::is_available()) {
+		hpet::sleep_d(0.5);
+	} else {
+		PIT::sleep_d(0.5);
+	}
 	turn_off();
 }
 

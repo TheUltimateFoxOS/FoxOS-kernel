@@ -7,6 +7,7 @@
 #include <driver/serial.h>
 
 #include <scheduling/pit/pit.h>
+#include <scheduling/hpet/hpet.h>
 #include <scheduling/scheduler/scheduler.h>
 
 #include <paging/page_table_manager.h>
@@ -69,7 +70,11 @@ extern "C" void start_apic_timer(int time_betwen_interrupts) {
 	lapic_write(lapic_ptr, 0x3e0, 0x3);
 	lapic_write(lapic_ptr, 0x380, 0xffffffff);
 
-	PIT::sleep(time_betwen_interrupts);
+	if (hpet::is_available()) {
+		hpet::sleep(time_betwen_interrupts);
+	} else {
+		PIT::sleep(time_betwen_interrupts);
+	}
 
 	lapic_write(lapic_ptr, 0x320, 0x10000);
 
@@ -160,7 +165,11 @@ void start_all_cpus(stivale2_struct* bootinfo) {
 		lapic_wait(lapic_ptr);
 
 
-		PIT::sleep(10);
+		if (hpet::is_available()) {
+			hpet::sleep(10);
+		} else {
+			PIT::sleep(10);
+		}
 
 		for (int j = 0; j < 2; j++) {
 
@@ -168,16 +177,25 @@ void start_all_cpus(stivale2_struct* bootinfo) {
 			lapic_write(lapic_ptr, 0x310, (lapic_read(lapic_ptr, 0x310) & 0x00ffffff) | (i << 24));
 			lapic_write(lapic_ptr, 0x300, (lapic_read(lapic_ptr, 0x300) & 0xfff0f800) | 0x000608);
 
-			PIT::sleep(1);
+			if (hpet::is_available()) {
+				hpet::sleep(1);
+			} else {
+				PIT::sleep(1);
+			}
 
 			lapic_wait(lapic_ptr);
 		}
 
-		int timeout = 1000;
+		int timeout = 100;
 
 		do {
 			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d!\n", i, data->status);
 			//PIT::sleep_d(5);
+			if (hpet::is_available()) {
+				hpet::sleep(10);
+			} else {
+				PIT::sleep(10);
+			}
 			if (--timeout == 0) {
 				driver::global_serial_driver->printf("Timeout on cpu %d!\n", i);
 				goto next;
@@ -218,10 +236,15 @@ void start_all_cpus(stivale2_struct* bootinfo) {
 		smp_tag->smp_info[i].target_stack = (uint64_t) data->stack_ptr;
 		smp_tag->smp_info[i].goto_address = (uint64_t) &stivale2_bootstrap;
 
-		int timeout = 1000;
+		int timeout = 100;
 		do {
 			driver::global_serial_driver->printf("Waiting for cpu %d current status: %d!\n", i, data->status);
 			//PIT::sleep_d(5);
+			if (hpet::is_available()) {
+				hpet::sleep(10);
+			} else {
+				PIT::sleep(10);
+			}
 			if (--timeout == 0) {
 				driver::global_serial_driver->printf("Timeout on cpu %d!\n", i);
 				goto next;
