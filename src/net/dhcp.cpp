@@ -1,6 +1,9 @@
 #include <net/dhcp.h>
 #include <config.h>
 
+#include <scheduling/pit/pit.h>
+#include <scheduling/hpet/hpet.h>
+
 using namespace net;
 
 DhcpProtocol::DhcpProtocol(UdpSocket* socket) {
@@ -20,11 +23,17 @@ void DhcpProtocol::request() {
 	make_dhcp_packet(&packet, 1, 0x00000000);
 	socket->send((uint8_t*) &packet, sizeof(dhcp_packet_t));
 
-	int timeout = 1000000000;
+	int timeout = 100;
 
 	while (!complete) {
 		if (--timeout == 0) {
 			break;
+		}
+
+		if (hpet::is_available()) {
+			hpet::sleep(10);
+		} else {
+			PIT::sleep(10);
 		}
 	}
 }

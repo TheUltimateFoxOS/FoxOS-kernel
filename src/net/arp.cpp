@@ -1,6 +1,9 @@
 #include <net/arp.h>
 #include <driver/serial.h>
 
+#include <scheduling/pit/pit.h>
+#include <scheduling/hpet/hpet.h>
+
 using namespace net;
 
 AddressResolutionProtocol::AddressResolutionProtocol(EtherFrameProvider* ether): EtherFrameHandler(ether, 0x806) {
@@ -99,13 +102,19 @@ uint64_t AddressResolutionProtocol::resolve(uint32_t ip_be) {
 		this->request_mac_address(ip_be);
 	}
 
-	int timeout = 1000000000;
+	int timeout = 100;
 
 	while (result == 0xFFFFFFFFFFFF) {
 		result = this->get_mac_from_cache(ip_be);
 		if (--timeout == 0) {
 			driver::global_serial_driver->printf("timeout for arp request!\n");
 			return 0;
+		}
+
+		if (hpet::is_available()) {
+			hpet::sleep(10);
+		} else {
+			PIT::sleep(10);
 		}
 	}
 

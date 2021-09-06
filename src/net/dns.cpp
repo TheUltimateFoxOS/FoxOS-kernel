@@ -3,6 +3,9 @@
 #include <driver/serial.h>
 #include <driver/nic/nic.h>
 
+#include <scheduling/pit/pit.h>
+#include <scheduling/hpet/hpet.h>
+
 using namespace net;
 
 DomainNameServiceProvider::DomainNameServiceProvider(UdpSocket* socket) : results(100) {
@@ -68,7 +71,7 @@ uint32_t DomainNameServiceProvider::resolve(char* name) {
 		wait_for_response = true;
 		dns_request(name);
 
-		int timeout = 10000000;
+		int timeout = 100;
 		while (true) {
 			if (timeout-- <= 0) {
 				return 0;
@@ -76,6 +79,12 @@ uint32_t DomainNameServiceProvider::resolve(char* name) {
 
 			if (wait_for_response == false) {
 				break;
+			}
+
+			if (hpet::is_available()) {
+				hpet::sleep(10);
+			} else {
+				PIT::sleep(10);
 			}
 		}
 
