@@ -68,3 +68,9 @@ void PageTableManager::map_memory(void* virtual_memory, void* physical_memory){
 	PDE.set_flag(PT_Flag::read_write, true);
 	PT->entries[indexer.P_i] = PDE;
 }
+
+void PageTableManager::map_range(void* virtual_memory, void* physical_memory, size_t range) {
+	for (int i = 0; i < range; i += 1000) {
+		g_page_table_manager.map_memory((void*) ((uint64_t) virtual_memory + i), (void*) ((uint64_t) physical_memory + i));
+	}
+}

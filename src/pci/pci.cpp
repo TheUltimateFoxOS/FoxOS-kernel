@@ -2,7 +2,10 @@
 
 #include <driver/disk/ahci/ahci.h>
 #include <driver/disk/ata.h>
+
 #include <driver/nic/am79C973.h>
+#include <driver/nic/e1000.h>
+
 #include <driver/driver.h>
 
 #include <memory/heap.h>
@@ -10,7 +13,7 @@
 
 using namespace pci;
 
-void enumerate_function(uint64_t address, uint64_t function) {
+void enumerate_function(uint64_t address, uint64_t function, uint16_t bus, uint16_t device) {
 	uint64_t offset = function << 12;
 
 	uint64_t function_address = address + offset;
@@ -58,14 +61,23 @@ void enumerate_function(uint64_t address, uint64_t function) {
 		case 0x1022: //AMD
 			switch (pci_device_header->device_id) {
 				case 0x2000: //AMD am79c973
-					driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) pci_device_header));
+					driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) pci_device_header, bus, device, function));
+					break;
+			}
+			break;
+		case 0x8086: //Intel
+			switch (pci_device_header->device_id) {
+				case 0x100E:
+				case 0x10EA:
+				case 0x153A:
+					driver::global_driver_manager->add_driver(new driver::e1000Driver((pci::pci_header_0_t*) pci_device_header, bus, device, function));
 					break;
 			}
 			break;
 	}
 }
 
-void enumerate_device(uint64_t bus_address, uint64_t device) {
+void enumerate_device(uint64_t bus_address, uint64_t device, uint16_t bus) {
 	uint64_t offset = device << 15;
 
 	uint64_t device_address = bus_address + offset;
@@ -81,7 +93,7 @@ void enumerate_device(uint64_t bus_address, uint64_t device) {
 	} 
 
 	for (uint64_t function = 0; function < 8; function++){
-		enumerate_function(device_address, function);
+		enumerate_function(device_address, function, bus, device);
 	}
 }
 
@@ -101,7 +113,7 @@ void enumerate_bus(uint64_t base_address, uint64_t bus) {
 	} 
 
 	for (uint64_t device = 0; device < 32; device++){
-		enumerate_device(bus_address, device);
+		enumerate_device(bus_address, device, bus);
 	}
 }
 
@@ -215,7 +227,18 @@ void pci::enumerate_pci() {
 							case 0x2000: //AMD am79c973
 								pci::pci_header_0_t* header_copy = new pci::pci_header_0_t;
 								memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
-								driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) header_copy));
+								driver::global_driver_manager->add_driver(new driver::Am79C973Driver((pci::pci_header_0_t*) header_copy, bus, device, function));
+								break;
+						}
+						break;
+					case 0x8086: //Intel
+						switch (pci_device_header->device_id) {
+							case 0x100E:
+							case 0x10EA:
+							case 0x153A:
+								pci::pci_header_0_t* header_copy = new pci::pci_header_0_t;
+								memcpy(header_copy, &pci_header, sizeof(pci::pci_header_0_t));
+								driver::global_driver_manager->add_driver(new driver::e1000Driver((pci::pci_header_0_t*) header_copy, bus, device, function));
 								break;
 						}
 						break;
@@ -223,4 +246,12 @@ void pci::enumerate_pci() {
 			}
 		}
 	}
+}
+
+void pci::enable_mmio(uint16_t bus, uint16_t device, uint16_t function) {
+	pci_write(bus, device, function, 0x4, pci_read(bus, device, function, 0x4) | (1 << 1));
+}
+
+void pci::become_bus_master(uint16_t bus, uint16_t device, uint16_t function) {
+	pci_write(bus, device, function, 0x4, pci_read(bus, device, function, 0x4) | (1 << 2));
 }

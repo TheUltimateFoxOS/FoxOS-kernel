@@ -78,6 +78,16 @@ uint16_t inw(uint16_t _port) {
 	return result;
 }
 
-void outw(uint16_t port, uint16_t data) {
-	asm volatile ("outw %0, %1" : : "a" (data), "Nd" (port));
+void outw(uint16_t _port, uint16_t data) {
+	asm volatile ("outw %0, %1" : : "a" (data), "Nd" (_port));
+}
+
+uint32_t inl(uint16_t _port) {
+	uint32_t result;
+	__asm__ volatile("inl %1, %0" : "=a" (result) : "Nd" (_port));
+	return result;
+}
+
+void outl(uint16_t _port, uint32_t data) {
+	asm volatile ("outl %0, %1" : : "a" (data), "Nd" (_port));
 }

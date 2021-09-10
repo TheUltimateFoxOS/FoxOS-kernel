@@ -60,4 +60,6 @@ namespace pci {
 	pci_header_0_t get_device_header(uint16_t bus, uint16_t device, uint16_t function);
 	void enumerate_pci();
 
+	void enable_mmio(uint16_t bus, uint16_t device, uint16_t function);
+	void become_bus_master(uint16_t bus, uint16_t device, uint16_t function);
 }

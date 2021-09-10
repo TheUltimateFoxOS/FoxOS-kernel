@@ -1,10 +1,10 @@
 #include <driver/nic/am79C973.h>
 #include <driver/serial.h>
-#include <port.h>
+
 #include <interrupts/interrupts.h>
+
 #include <paging/page_frame_allocator.h>
-#include <string.h>
-#include <assert.h>
+
 #include <net/etherframe.h>
 #include <net/arp.h>
 #include <net/ipv4.h>
@@ -12,6 +12,12 @@
 #include <net/udp.h>
 #include <net/dhcp.h>
 #include <net/dns.h>
+
+#include <pci/pci_bar.h>
+
+#include <port.h>
+#include <string.h>
+#include <assert.h>
 
 using namespace driver;
 
@@ -26,7 +32,7 @@ class UdpDataPrinter: public net::UdpHandler {
 
 };
 
-Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(header->interrupt_line + 0x20) {
+Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header, uint16_t bus, uint16_t device, uint16_t function) : InterruptHandler(header->interrupt_line + 0x20) {
 	this->header = header;
 	this->nic_data_manager = nullptr;
 
@@ -51,14 +57,7 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header) : InterruptHandler(h
 
 	driver::global_serial_driver->printf("Am79C973Driver: interrupt %d\n", header->interrupt_line + 0x20);
 
-	for (int i = 0; i < 6; i++) {
-		uint32_t* bar_ptr = (uint32_t*) (&header->BAR0 + i * sizeof(uint32_t));
-		if (*bar_ptr & 1) {
-			driver::global_serial_driver->printf("Am79C973Driver: BAR%d is IO\n", i);
-			this->base_port = *bar_ptr & ~3;
-		}
-	}
-	
+	this->base_port = pci::get_io_port(header, bus, device, function);
 
 	driver::global_serial_driver->printf("Am79C973Driver: base_port: %d\n", this->base_port);
 
@@ -130,6 +129,11 @@ Am79C973Driver::~Am79C973Driver() {
 }
 
 void Am79C973Driver::activate() {
+	if (this->base_port == 0) {
+		driver::global_serial_driver->printf("Am79C973Driver start-up failed: IO port is 0.\n");
+		return;
+	}
+
 	Port16Bit register_data_port(this->base_port + 0x10);
 	Port16Bit register_address_port(this->base_port + 0x12);
 

@@ -29,7 +29,7 @@ namespace driver{
 				uint32_t avail;
 			} __attribute__((packed));
 
-			Am79C973Driver(pci::pci_header_0_t* header);
+			Am79C973Driver(pci::pci_header_0_t* header, uint16_t bus, uint16_t device, uint16_t function);
 			~Am79C973Driver();
 
 			virtual void send(uint8_t* data, int32_t len);

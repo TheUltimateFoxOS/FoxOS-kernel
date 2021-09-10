@@ -28,20 +28,20 @@ namespace pci {
 	const char* get_vendor_name(uint16_t vendor_ID) {
 		switch (vendor_ID) {
 			case 0x8086:
-				return "Intel Corp";
+				return "Intel Corp.";
 			case 0x1022:
-				return "AMD";
+				return "AMD, Inc.";
 			case 0x10DE:
 				return "NVIDIA Corporation";
 			case 0x10EC:
-				return "Realtek Semiconductor Corp";
+				return "Realtek Semiconductor Co., Ltd.";
 		}
 		return to_hstring(vendor_ID);
 	}
 
 	const char* get_device_name(uint16_t vendor_ID, uint16_t device_ID) {
 		switch (vendor_ID) {
-			case 0x8086: // Intel
+			case 0x8086: //Intel
 				switch (device_ID) {
 					case 0x29C0:
 						return "Express DRAM Controller";
@@ -51,8 +51,14 @@ namespace pci {
 						return "6 port SATA Controller [AHCI mode]";
 					case 0x2930:
 						return "SMBus Controller";
+					case 0x100E:
+						return "Intel Gigabit Ethernet"; //Qemu, Bochs, and VirtualBox emmulated NICs
+					case 0x10EA:
+						return "82577LM Gigabit Network Connection";
+					case 0x153A:
+						return "Ethernet Connection I217-LM";
 				}
-			case 0x1022:
+			case 0x1022: //AMD
 				switch (device_ID) {
 					case 0x2000:
 						return "AM79C973";
