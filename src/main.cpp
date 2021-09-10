@@ -166,10 +166,6 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 
 		arp->broadcast_mac(ipv4->gateway_ip_be);
 
-		net::UdpSocket* dns_socket = udp->connect(0x08080808, 53);
-		net::DomainNameServiceProvider* dns = new net::DomainNameServiceProvider(dns_socket);
-		udp->bind(dns_socket, dns);
-
 		driver::nic::ip_u ip;
 		ip.ip = driver::nic::global_nic_manager->get_nic(i)->get_ip();
 
@@ -179,7 +175,14 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 		driver::nic::ip_u subnet;
 		subnet.ip = ipv4->subnet_mask_be;
 
-		renderer::global_font_renderer->printf("%fDone%r. ip: %d.%d.%d.%d, gateway: %d.%d.%d.%d, subnet: %d.%d.%d.%d", 0xff00ff00, ip.ip_p[0], ip.ip_p[1], ip.ip_p[2], ip.ip_p[3], gateway.ip_p[0], gateway.ip_p[1], gateway.ip_p[2], gateway.ip_p[3], subnet.ip_p[0], subnet.ip_p[1], subnet.ip_p[2], subnet.ip_p[3]);
+		driver::nic::ip_u dns_ip;
+		dns_ip.ip = dhcp->dns;
+
+		net::UdpSocket* dns_socket = udp->connect(dns_ip.ip, 53);
+		net::DomainNameServiceProvider* dns = new net::DomainNameServiceProvider(dns_socket);
+		udp->bind(dns_socket, dns);
+
+		renderer::global_font_renderer->printf("%fDone%r. ip: %d.%d.%d.%d, gateway: %d.%d.%d.%d, dns: %d.%d.%d.%d", 0xff00ff00, ip.ip_p[0], ip.ip_p[1], ip.ip_p[2], ip.ip_p[3], gateway.ip_p[0], gateway.ip_p[1], gateway.ip_p[2], gateway.ip_p[3], dns_ip.ip_p[0], dns_ip.ip_p[1], dns_ip.ip_p[2], dns_ip.ip_p[3]);
 		renderer::global_font_renderer->printf("\n");
 
 		uint32_t ip_of_google = dns->resolve((char*) "google.com");

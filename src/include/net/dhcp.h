@@ -38,6 +38,7 @@ namespace net {
 			uint32_t ip;
 			uint32_t gateway;
 			uint32_t subnet;
+			uint32_t dns;
 
 			bool complete = false;
 

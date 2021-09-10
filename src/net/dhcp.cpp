@@ -57,7 +57,8 @@ void DhcpProtocol::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size) {
 			break;
 		case 5:
 			this->ip = packet->your_ip;
-			this->gateway = packet->server_ip;
+			this->gateway = *(uint32_t*) get_dhcp_options(packet, 3);
+			this->dns = *(uint32_t*) get_dhcp_options(packet, 6);
 			this->complete = true;
 			uint32_t* subnet = (uint32_t*) get_dhcp_options(packet, 1);
 			this->subnet = *subnet;
@@ -122,21 +123,25 @@ void DhcpProtocol::make_dhcp_packet(dhcp_packet_t* packet, uint8_t msg_type, uin
 
 	// Host Name
 	*(options++) = 12;
-	*(options++) = 0x09;
+	*(options++) = 1 + strlen(HOSTNAME);
 	memcpy(options, HOSTNAME, strlen(HOSTNAME));
 	options += strlen(HOSTNAME);
 	*(options++) = 0x00;
 
 	// Parameter request list
+	
 	*(options++) = 55;
 	*(options++) = 8;
-	*(options++) = 0x1;
-	*(options++) = 0x3;
-	*(options++) = 0x6;
-	*(options++) = 0xf;
-	*(options++) = 0x2c;
-	*(options++) = 0x2e;
-	*(options++) = 0x2f;
-	*(options++) = 0x39;
-	*(options++) = 0xff;
+	*(options++) = 0x1; // Subnet mask
+	*(options++) = 0x3; // Router
+	*(options++) = 0x6; // Domain name server
+	*(options++) = 0xf; // Domain name
+	*(options++) = 0x2c; // NeTBIOS over TCP/IP name server
+	*(options++) = 0x2e; // NeTBIOS over TCP/IP node type
+	*(options++) = 0x2f; // NeTBIOS over TCP/IP scope
+	*(options++) = 0x39; // Maximum DHCP message size
+
+	*(options++) = 0xff; // End of dhcp packet
+	
+
 }
