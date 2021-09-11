@@ -57,7 +57,7 @@ void fe_set(fe_Context *ctx, fe_Object *sym, fe_Object *v);
 fe_Object* fe_read(fe_Context *ctx, fe_ReadFn fn, void *udata);
 fe_Object* fe_eval(fe_Context *ctx, fe_Object *obj);
 
-//int strlen(char *src);
+int strlen(char *src);
 fe_Object* read_data(fe_Context *ctx, fe_ReadFn fn, void *udata);
 
 void run_test();

@@ -1,5 +1,4 @@
 #include <scripting_languages/fe/fe_runner.h>
-#include <string.h>
 
 char static_reader(fe_Context* ctx, void* udata) {
 	FeRunner* runner = (FeRunner*) udata;
