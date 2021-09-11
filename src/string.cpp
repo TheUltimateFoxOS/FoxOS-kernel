@@ -134,6 +134,14 @@ int memcmp(const void * _s1, const void* _s2, size_t n) {
 	return 0;
 }
 
+void* memset(void* s, int c, size_t n) {
+	unsigned char* p = (unsigned char*) s;
+	while(n--) {
+		*p++ = (unsigned char) c;
+	}
+	return s;
+}
+
 char* strncpy(char* _dst, const char* _src, size_t count) {
 	size_t len = strlen((char*) _src);
 	if(count < len) {

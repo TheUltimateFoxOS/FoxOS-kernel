@@ -1,8 +1,11 @@
 OBJDIR = lib
 BUILDDIR = bin
 
-build:
+build: ./src/lai
 	make -C src
+
+./src/lai:
+	git clone https://github.com/managarm/lai.git src/lai
 
 setup:
 	@mkdir $(BUILDDIR)

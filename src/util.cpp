@@ -215,6 +215,9 @@ void setup_globals(stivale2_struct* bootinfo) {
 	shell::global_shell = &sh;
 }
 
+extern pci::acpi::sdt_header_t* xsdt_lai;
+extern pci::acpi::sdt_header_t* rsdt_lai;
+
 void prepare_acpi(stivale2_struct* bootinfo) {
 	stivale2_struct_tag_rsdp* rsdp_tag = stivale2_tag_find<stivale2_struct_tag_rsdp>(bootinfo, STIVALE2_STRUCT_TAG_RSDP_ID);
 	driver::global_serial_driver->printf("Rsdp: %x", rsdp_tag->rsdp);
@@ -228,11 +231,15 @@ void prepare_acpi(stivale2_struct* bootinfo) {
 
 		mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "MCFG");
 		madt = (uint8_t*) pci::acpi::find_table_xsdt(xsdt, (char*) "APIC");
+
+		xsdt_lai = xsdt;
 	} else {
 		pci::acpi::sdt_header_t* rsdt = (pci::acpi::sdt_header_t*) (uint64_t) (((pci::acpi::rsdp2_t*) rsdp_tag->rsdp)->rsdt_address);
 
 		mcfg = (pci::acpi::mcfg_header_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "MCFG");
 		madt = (uint8_t*) pci::acpi::find_table_rsdt(rsdt, (char*) "APIC");
+
+		rsdt_lai = rsdt;
 	}
 
 	parse_madt(madt);
