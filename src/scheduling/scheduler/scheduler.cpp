@@ -16,7 +16,7 @@ uint64_t_queue task_queue[256];
 bool scheduling = false;
 bool halt_cpu = false;
 
-static uint64_t scheduler_lock = 0;
+define_spinlock(task_queue_lock);
 
 void init_sched() {
 	uint8_t id;
@@ -50,8 +50,7 @@ extern "C" void task_entry();
 
 task* new_task(void* entry) {
 	__asm__ __volatile__ ("cli");
-	atomic_spinlock(&scheduler_lock, 0);
-	atomic_lock(&scheduler_lock, 0);
+	atomic_acquire_spinlock(task_queue_lock);
 
 	task* t = (task*) malloc(sizeof(task));
 	void* stack = global_allocator.request_pages(TASK_STACK_PAGES);
@@ -86,7 +85,7 @@ task* new_task(void* entry) {
 
 	task_queue[idx].add((uint64_t) t);
 
-	atomic_unlock(&scheduler_lock, 0);
+	atomic_release_spinlock(task_queue_lock);
 	__asm__ __volatile__ ("sti");
 
 	return t;
@@ -94,8 +93,7 @@ task* new_task(void* entry) {
 
 void task_exit() {
 	__asm__ __volatile__ ("cli");
-	atomic_spinlock(&scheduler_lock, 0);
-	atomic_lock(&scheduler_lock, 0);
+	atomic_acquire_spinlock(task_queue_lock);
 
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
@@ -110,7 +108,7 @@ void task_exit() {
 	global_allocator.free_pages((void*) t->stack, TASK_STACK_PAGES);
 	free(t);*/
 
-	atomic_unlock(&scheduler_lock, 0);
+	atomic_release_spinlock(task_queue_lock);
 	__asm__ __volatile__ ("sti");
 
 	while (1) {
@@ -187,9 +185,7 @@ extern "C" void schedule(s_registers* regs) {
 		return;
 	}
 
-	atomic_spinlock(&scheduler_lock, 0);
-	atomic_lock(&scheduler_lock, 0);
-
+	atomic_acquire_spinlock(task_queue_lock);
 
 	task* t = (task*) task_queue[id].list[0];
 
@@ -267,5 +263,5 @@ next:
 
 	t->first_sched = false;
 
-	atomic_unlock(&scheduler_lock, 0);
+	atomic_release_spinlock(task_queue_lock);
 }

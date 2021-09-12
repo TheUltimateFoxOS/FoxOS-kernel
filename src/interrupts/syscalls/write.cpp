@@ -4,11 +4,10 @@
 
 #include <scheduling/scheduler/atomic.h>
 
-uint64_t sys_write_lock = 0;
+define_spinlock(write_lock);
 
 extern "C" void sys_write(s_registers regs) {
-	atomic_spinlock(&sys_write_lock, 0);
-	atomic_lock(&sys_write_lock, 0);
+	atomic_acquire_spinlock(write_lock);
 
 	switch(regs.rbx) {
 		case 0:
@@ -25,5 +24,5 @@ extern "C" void sys_write(s_registers regs) {
 			break;
 	}
 
-	atomic_unlock(&sys_write_lock, 0);
+	atomic_release_spinlock(write_lock);
 }

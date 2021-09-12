@@ -6,11 +6,10 @@
 
 #include <driver/serial.h>
 
-uint64_t sys_spawn_lock = 0;
+define_spinlock(spawn_lock);
 
 extern "C" void sys_spawn(s_registers regs) {
-	atomic_spinlock(&sys_spawn_lock, 0);
-	atomic_lock(&sys_spawn_lock, 0);
+	atomic_acquire_spinlock(spawn_lock);
 
 	const char* name = (const char*) regs.rbx;
 	const char** argv = (const char**) regs.rcx;
@@ -33,5 +32,5 @@ extern "C" void sys_spawn(s_registers regs) {
 
 	fclose(file);
 
-	atomic_unlock(&sys_spawn_lock, 0);
+	atomic_release_spinlock(spawn_lock);
 }
