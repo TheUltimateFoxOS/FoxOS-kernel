@@ -1,5 +1,6 @@
 #include <scheduling/scheduler/scheduler.h>
 #include <scheduling/scheduler/elf.h>
+#include <scheduling/scheduler/atomic.h>
 #include <paging/page_frame_allocator.h>
 #include <paging/page_table_manager.h>
 #include <memory/heap.h>
@@ -10,10 +11,12 @@
 #include <config.h>
 #include <stdio.h>
 
+
 uint64_t_queue task_queue[256];
 bool scheduling = false;
-bool spin_lock = false;
 bool halt_cpu = false;
+
+static uint64_t scheduler_lock = 0;
 
 void init_sched() {
 	uint8_t id;
@@ -46,8 +49,9 @@ void init_sched() {
 extern "C" void task_entry();
 
 task* new_task(void* entry) {
-	spin_lock = true;
 	__asm__ __volatile__ ("cli");
+	atomic_spinlock(&scheduler_lock, 0);
+	atomic_lock(&scheduler_lock, 0);
 
 	task* t = (task*) malloc(sizeof(task));
 	void* stack = global_allocator.request_pages(TASK_STACK_PAGES);
@@ -82,15 +86,16 @@ task* new_task(void* entry) {
 
 	task_queue[idx].add((uint64_t) t);
 
+	atomic_unlock(&scheduler_lock, 0);
 	__asm__ __volatile__ ("sti");
-	spin_lock = false;
 
 	return t;
 }
 
 void task_exit() {
-	spin_lock = true;
 	__asm__ __volatile__ ("cli");
+	atomic_spinlock(&scheduler_lock, 0);
+	atomic_lock(&scheduler_lock, 0);
 
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
@@ -105,8 +110,8 @@ void task_exit() {
 	global_allocator.free_pages((void*) t->stack, TASK_STACK_PAGES);
 	free(t);*/
 
+	atomic_unlock(&scheduler_lock, 0);
 	__asm__ __volatile__ ("sti");
-	spin_lock = false;
 
 	while (1) {
 		__asm__ __volatile__ ("nop");
@@ -178,11 +183,13 @@ extern "C" void schedule(s_registers* regs) {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 
-	while(spin_lock);
-
 	if(task_queue[id].len == 0 || !scheduling) {
 		return;
 	}
+
+	atomic_spinlock(&scheduler_lock, 0);
+	atomic_lock(&scheduler_lock, 0);
+
 
 	task* t = (task*) task_queue[id].list[0];
 
@@ -259,4 +266,6 @@ next:
 	regs->rflags = t->regs.rflags;
 
 	t->first_sched = false;
+
+	atomic_unlock(&scheduler_lock, 0);
 }

@@ -1,11 +1,17 @@
 #include <interrupts/interrupts.h>
 #include <scheduling/scheduler/scheduler.h>
+#include <scheduling/scheduler/atomic.h>
 #include <paging/page_frame_allocator.h>
 #include <fs/vfs/vfs.h>
 
 #include <driver/serial.h>
 
+uint64_t sys_spawn_lock = 0;
+
 extern "C" void sys_spawn(s_registers regs) {
+	atomic_spinlock(&sys_spawn_lock, 0);
+	atomic_lock(&sys_spawn_lock, 0);
+
 	const char* name = (const char*) regs.rbx;
 	const char** argv = (const char**) regs.rcx;
 	const char** envp = (const char**) regs.rdx;
@@ -26,4 +32,6 @@ extern "C" void sys_spawn(s_registers regs) {
 	regs.rax = (uint64_t) load_elf((void*) elf_contents, file->size, argv, envp);
 
 	fclose(file);
+
+	atomic_unlock(&sys_spawn_lock, 0);
 }
