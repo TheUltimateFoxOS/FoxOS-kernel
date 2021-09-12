@@ -62,16 +62,8 @@ syscall_handler:
 	cmp rax, max_syscall
 	ja .skip
 
-.spin_lock:
-	cmp [syscall_lock], byte 0
-	jne .spin_lock
-
-	mov [syscall_lock], byte 1
-
 	lea r15, [syscall_table + rax * 8]
 	call [r15]
-
-	mov [syscall_lock], byte 0
 
 .skip:
 
@@ -100,7 +92,6 @@ syscall_handler:
 [GLOBAL syscall_table]
 [GLOBAL syscall_table_end]
 
-
 syscall_table:
 	dq syscall_test
 	dq syscall_test2
@@ -112,7 +103,5 @@ syscall_table:
 	dq schedule
 	dq sys_spawn
 syscall_table_end:
-
-syscall_lock: db 0
 
 max_syscall equ ((syscall_table_end - syscall_table) / 8) -1
