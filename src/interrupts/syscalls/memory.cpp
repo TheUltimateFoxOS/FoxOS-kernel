@@ -3,11 +3,10 @@
 
 #include <scheduling/scheduler/atomic.h>
 
-uint64_t sys_memory_lock = 0;
+define_spinlock(memory_lock);
 
 extern "C" void sys_memory(s_registers regs) {
-	atomic_spinlock(&sys_memory_lock, 0);
-	atomic_lock(&sys_memory_lock, 0);
+	atomic_acquire_spinlock(memory_lock);
 
 	switch(regs.rbx) {
 		case 0:
@@ -18,5 +17,5 @@ extern "C" void sys_memory(s_registers regs) {
 			break;
 	}
 
-	atomic_unlock(&sys_memory_lock, 0);
+	atomic_release_spinlock(memory_lock);
 }
