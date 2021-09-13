@@ -39,6 +39,7 @@
 #include <net/udp.h>
 #include <net/dhcp.h>
 #include <net/dns.h>
+#include <net/tcp.h>
 
 #include "examples/examples.h"
 
@@ -65,6 +66,19 @@ class MouseRendererMouseEventHandler : public driver::MouseEventHandler {
 
 		void OnMouseMove(uint8_t mouse_packet[4]) {
 			renderer::global_mouse_renderer->on_mouse_move(mouse_packet);
+		}
+};
+
+class TcpMsgHandler : public net::TcpHandler {
+	public:
+		bool onTcpMessage(net::TcpSocket* socket, uint8_t* data, size_t size) {
+			driver::global_serial_driver->printf("TCP PACKET: ");
+			for(int i = 0; i < size; i++) {
+				driver::global_serial_driver->printf("%x ", data[i]);
+			}
+			driver::global_serial_driver->printf("\n");
+
+			return true;
 		}
 };
 
@@ -192,6 +206,14 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 		driver::global_serial_driver->printf("Resolved google.com to %d.%d.%d.%d\n", ip_of_google_u.ip_p[0], ip_of_google_u.ip_p[1], ip_of_google_u.ip_p[2], ip_of_google_u.ip_p[3]);
 
 		icmp->send_echo_request(ip_of_google);
+
+		net::TcpProvider* tcp = new net::TcpProvider(ipv4);
+
+		net::TcpSocket* socket = tcp->connect(ip_of_google_u.ip, 80);
+		TcpMsgHandler tcphandler;
+		tcp->bind(socket, &tcphandler);
+		const char* http = "GET / HTTP/1.1\r\nHost: www.google.com\r\n\r\n";
+		socket->send((uint8_t*)http, strlen((char*)http));
 	}
 
 	vfs_mount* fat_mount = initialise_fat32(0);
@@ -204,7 +226,7 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 		driver::global_serial_driver->printf("Hello ap world!\n");
 	});
 
-	task* init_procces_task = new_task((void*) init_procces);
+	//task* init_procces_task = new_task((void*) init_procces); If I don't put this back, then I'm an idiot
 
 	//run_on_ap(crash);
 

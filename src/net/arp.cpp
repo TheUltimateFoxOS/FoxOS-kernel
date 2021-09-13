@@ -76,7 +76,7 @@ void AddressResolutionProtocol::request_mac_address(uint32_t ip_be) {
 		.src_mac = this->backend->nic->get_mac(),
 		.src_ip = this->backend->nic->get_ip(),
 		.dest_mac = 0xFFFFFFFFFFFF,
-		.dest_ip = ip_be	
+		.dest_ip = ip_be
 	};
 
 	this->send(arp.dest_mac, (uint8_t*) &arp, sizeof(arp_message_t));
