@@ -99,7 +99,6 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	//Command line parser to run tests
 	CmdLineParser cmd_line_parser;
 
-	cmd_line_parser.add_handler((char*) "--fe-test", fe_test);
 	cmd_line_parser.add_handler((char*) "--patch-test", test_patch);
 	cmd_line_parser.add_handler((char*) "--disk-test", disk_test);
 	cmd_line_parser.add_handler((char*) "--fat32-test", fat32_test);

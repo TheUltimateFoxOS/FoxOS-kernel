@@ -5,19 +5,12 @@
 #include <interrupts/interrupt_handler.h>
 
 namespace PIT {
-	double time_since_boot = 0;
+	uint64_t time_since_boot = 0;
 
 	uint16_t divisor = 65535;
 
-	void sleep_d(double seconds) {
-		double start_time = time_since_boot;
-		while (time_since_boot < start_time + seconds) {
-			asm("nop");
-		}
-	}
-
 	void sleep(uint64_t milliseconds) {
-		sleep_d((double)milliseconds / 1000);
+		sleep_d(milliseconds / 1000);
 	}
 
 	void set_divisor(uint16_t this_divisor) {
@@ -46,6 +39,14 @@ namespace PIT {
 	}
 	
 	void pit_interrupt_handler(uint8_t ptr) {
-		time_since_boot += 1 / (double)get_frequency();
+		time_since_boot += 1;
+	}
+
+	void sleep_d(uint64_t seconds) {
+		seconds *= get_frequency();
+		uint64_t start = time_since_boot;
+		while (time_since_boot - start < seconds) {
+			asm volatile("nop");
+		}
 	}
 }

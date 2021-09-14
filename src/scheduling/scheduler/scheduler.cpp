@@ -11,6 +11,8 @@
 #include <config.h>
 #include <stdio.h>
 
+extern "C" void _fxsave_if_suported(char* buffer);
+extern "C" void _fxrstor_if_suported(char* buffer);
 
 uint64_t_queue task_queue[256];
 bool scheduling = false;
@@ -25,6 +27,7 @@ void init_sched() {
 
 	for (int i = 0; i < numcore; i++) {
 		task* t = (task*) malloc(sizeof(task));
+		memset(t, 0, sizeof(task));
 		void* stack = global_allocator.request_pages(TASK_STACK_PAGES);
 
 		t->regs.rip = (uint64_t) (void_function) []() { while(1) { __asm__ __volatile__ ("sti; nop"); } };
@@ -53,6 +56,7 @@ task* new_task(void* entry) {
 	atomic_acquire_spinlock(task_queue_lock);
 
 	task* t = (task*) malloc(sizeof(task));
+	memset(t, 0, sizeof(task));
 	void* stack = global_allocator.request_pages(TASK_STACK_PAGES);
 
 	t->regs.rax = (uint64_t) entry;
@@ -210,6 +214,8 @@ extern "C" void schedule(s_registers* regs) {
 		t->regs.rflags = regs->rflags;
 	}
 
+	_fxsave_if_suported(t->fxsr_state);
+
 	task_queue[id].next();
 
 next:
@@ -260,6 +266,8 @@ next:
 	regs->rsi = t->regs.rsi;
 	regs->rdi = t->regs.rdi;
 	regs->rflags = t->regs.rflags;
+
+	_fxrstor_if_suported(t->fxsr_state);
 
 	t->first_sched = false;
 

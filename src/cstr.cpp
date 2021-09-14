@@ -120,6 +120,7 @@ const char* to_string(int64_t value){
 	return intTo_StringOutput;
 }
 
+/* we aren't suporting sse / sse2 in the kernel 
 char doubleTo_StringOutput[128];
 const char* to_string(double value, uint8_t decimalPlaces){
 	if (decimalPlaces > 20) decimalPlaces = 20;
@@ -156,3 +157,4 @@ const char* to_string(double value, uint8_t decimalPlaces){
 const char* to_string(double value){
 	return to_string(value, 2);
 }
+*/
