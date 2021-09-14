@@ -15,7 +15,7 @@ namespace hpet {
 		uint64_t unused4;
 	} __attribute__((packed));
 
-	void sleep_d(double seconds);
+	void sleep_d(uint64_t seconds);
 	void sleep(uint64_t milliseconds);
 
 	void init_hpet(pci::acpi::hpet_table_t* hpet_table);

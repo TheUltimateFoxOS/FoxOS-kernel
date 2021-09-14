@@ -59,6 +59,7 @@ void DomainNameServiceProvider::dns_request(char* name) {
 
 uint32_t DomainNameServiceProvider::resolve(char* name) {
 	char qname[128];
+	memset(qname, 0, 128);
 	resolv_domain_to_hostname(qname, name);
 
 	listv2<dns_result_t>::node* n = results.find<char*>([](char* qname, listv2<dns_result_t>::node* n) {

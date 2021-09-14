@@ -71,7 +71,7 @@ class MouseRendererMouseEventHandler : public driver::MouseEventHandler {
 
 class TcpMsgHandler : public net::TcpHandler {
 	public:
-		bool onTcpMessage(net::TcpSocket* socket, uint8_t* data, size_t size) {
+		bool onTcpMessage(net::TcpSocket* socket, uint8_t* data, size_t size) override {
 			driver::global_serial_driver->printf("TCP PACKET: ");
 			for(int i = 0; i < size; i++) {
 				driver::global_serial_driver->printf("%x ", data[i]);
@@ -225,7 +225,7 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 		driver::global_serial_driver->printf("Hello ap world!\n");
 	});
 
-	//task* init_procces_task = new_task((void*) init_procces); If I don't put this back, then I'm an idiot
+	task* init_procces_task = new_task((void*) init_procces);
 
 	//run_on_ap(crash);
 

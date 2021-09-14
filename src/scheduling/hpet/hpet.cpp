@@ -25,7 +25,7 @@ void hpet::sleep(uint64_t ms) {
 	}
 }
 
-void hpet::sleep_d(double seconds) {
+void hpet::sleep_d(uint64_t seconds) {
 	sleep((uint64_t) (seconds * 1000));
 }
 

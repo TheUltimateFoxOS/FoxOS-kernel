@@ -35,7 +35,7 @@ bool TcpSocket::handleTcpMessage(uint8_t* data, size_t size) {
 }
 
 void TcpSocket::send(uint8_t* data, size_t size) {
-	double time = PIT::time_since_boot;
+	uint64_t time = PIT::time_since_boot;
 	while (this->state != TcpSocketState::ESTABLISHED) {
 		if (PIT::time_since_boot > time + 1000) {
 			driver::global_serial_driver->printf("TCP: Send timeout, connection not established.\n");
