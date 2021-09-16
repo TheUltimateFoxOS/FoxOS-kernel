@@ -32,6 +32,22 @@ stivale2_bootstrap:
 
 	fninit
 
+	mov rax, 1
+	cpuid
+	and ecx, 1 << 26 ; check for XSAVE support
+	test ecx, ecx
+	je .skip_xsave
+
+	mov rax, cr0
+	xor rax, 1 << 3
+	mov cr0, rax
+
+	mov rax, cr4
+	or eax, 1 << 18
+	mov cr4, rax
+
+.skip_xsave:
+
 	mov rbp, rsp ; mark end of stack for stack trace
 
 	; setup the lapic

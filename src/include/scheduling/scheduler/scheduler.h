@@ -8,6 +8,7 @@ typedef void (*signal_handler)(uint8_t signum);
 struct task {
 	s_registers regs;
 	char fxsr_state[512] __attribute__((aligned(16)));
+	void* xsave_state;
 	uint64_t stack;
 	bool first_sched;
 	bool kill_me;

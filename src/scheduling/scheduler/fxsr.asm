@@ -1,7 +1,7 @@
 [bits 64]
 
-[global _fxsave_if_suported]
-_fxsave_if_suported:
+[global _fxsave_if_supported]
+_fxsave_if_supported:
 	mov rax, 1
 	cpuid
 	and edx, 1 << 24 ; check for FXSR
@@ -13,8 +13,8 @@ _fxsave_if_suported:
 .exit:
 	ret
 
-[global _fxrstor_if_suported]
-_fxrstor_if_suported:
+[global _fxrstor_if_supported]
+_fxrstor_if_supported:
 	mov rax, 1
 	cpuid
 	and edx, 1 << 24 ; check for FXSR

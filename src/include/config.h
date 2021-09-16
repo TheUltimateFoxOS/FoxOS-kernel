@@ -21,6 +21,9 @@ extern bool NO_SMP_SHED;
 #define USE_STIVALE2_SMP
 #define TASK_STACK_PAGES 64
 
+/* Only enable if you know why this is a experimental feature */
+//#define XSAVE_SUPPORT
+
 #define AUTOEXEC_PATH "root:/bin/terminal.elf"
 
 struct symbol {

@@ -7,16 +7,24 @@
 
 #include <interrupts/idt.h>
 
+#include <driver/serial.h>
+
 #include <apic/madt.h>
 #include <config.h>
 #include <stdio.h>
 
-extern "C" void _fxsave_if_suported(char* buffer);
-extern "C" void _fxrstor_if_suported(char* buffer);
+extern "C" void _fxsave_if_supported(char* buffer);
+extern "C" void _fxrstor_if_supported(char* buffer);
+extern "C" bool _test_xsave_support();
+extern "C" void _enable_xsave();
+extern "C" uint64_t _get_xsave_area_size();
+extern "C" void _xsave_if_supported(void* buffer);
+extern "C" void _xrstor_if_supported(void* buffer);
 
 uint64_t_queue task_queue[256];
 bool scheduling = false;
 bool halt_cpu = false;
+uint64_t xsave_area = 0;
 
 define_spinlock(task_queue_lock);
 
@@ -24,6 +32,15 @@ void init_sched() {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
 	__asm__ __volatile__ ("sti");
+
+#ifdef XSAVE_SUPPORT
+	if (_test_xsave_support()) {
+		_enable_xsave();
+		xsave_area = _get_xsave_area_size();
+		driver::global_serial_driver->printf("XSAVE support detected\n");
+		driver::global_serial_driver->printf("XSAVE area size: %d\n", xsave_area);
+	}
+#endif
 
 	for (int i = 0; i < numcore; i++) {
 		task* t = (task*) malloc(sizeof(task));
@@ -35,9 +52,15 @@ void init_sched() {
 		t->first_sched = true;
 		t->stack = (uint64_t) stack;
 
+	#ifdef XSAVE_SUPPORT
+		if (xsave_area) {
+			t->xsave_state = global_allocator.request_pages(xsave_area / 0x1000 + 1);
+			memset(t->xsave_state, 0, xsave_area);
+		}
+	#endif
+
 		task_queue[i].add((uint64_t) t);
-	}
-	
+	}	
 
 	scheduling = true;
 
@@ -52,6 +75,12 @@ void init_sched() {
 extern "C" void task_entry();
 
 task* new_task(void* entry) {
+#ifdef XSAVE_SUPPORT
+	if (_test_xsave_support()) {
+		xsave_area = _get_xsave_area_size();
+	}
+#endif
+
 	__asm__ __volatile__ ("cli");
 	atomic_acquire_spinlock(task_queue_lock);
 
@@ -67,6 +96,13 @@ task* new_task(void* entry) {
 	t->is_elf = false;
 	t->lock = false;
 	t->stack = (uint64_t) stack;
+
+#ifdef XSAVE_SUPPORT
+	if (xsave_area) {
+		t->xsave_state = global_allocator.request_pages(xsave_area / 0x1000 + 1);
+		memset(t->xsave_state, 0, xsave_area);
+	}
+#endif
 
 	uint64_t idx = 0;
 
@@ -214,7 +250,11 @@ extern "C" void schedule(s_registers* regs) {
 		t->regs.rflags = regs->rflags;
 	}
 
-	_fxsave_if_suported(t->fxsr_state);
+	_fxsave_if_supported(t->fxsr_state);
+
+#ifdef XSAVE_SUPPORT
+	_xsave_if_supported(t->xsave_state);
+#endif
 
 	task_queue[id].next();
 
@@ -227,6 +267,12 @@ next:
 		}
 		global_allocator.free_pages((void*) t->stack, TASK_STACK_PAGES);
 		free(t);
+
+	#ifdef XSAVE_SUPPORT
+		if (xsave_area) {
+			global_allocator.free_pages(t->xsave_state, xsave_area * 0x1000 + 1);
+		}
+	#endif
 
 		task_queue[id].remove_first();
 		goto next;
@@ -267,7 +313,11 @@ next:
 	regs->rdi = t->regs.rdi;
 	regs->rflags = t->regs.rflags;
 
-	_fxrstor_if_suported(t->fxsr_state);
+	_fxrstor_if_supported(t->fxsr_state);
+
+#ifdef XSAVE_SUPPORT
+	_xrstor_if_supported(t->xsave_state);
+#endif
 
 	t->first_sched = false;
 
