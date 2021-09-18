@@ -6,6 +6,7 @@ uint64_t used_memory;
 bool initialized = false;
 PageFrameAllocator global_allocator;
 
+//#PageFrameAllocator::read_EFI_memory_map-doc: Read the memory map from the EFI and initialize the allocator with it.
 void PageFrameAllocator::read_EFI_memory_map(stivale2_struct* bootinfo){
 	if (initialized) return;
 
@@ -43,6 +44,7 @@ void PageFrameAllocator::read_EFI_memory_map(stivale2_struct* bootinfo){
 	lock_pages(page_bitmap.buffer, page_bitmap.size / 4096 + 1);
 }
 
+//#PageFrameAllocator::init_bitmap-doc: Initialize the bitmap of the allocator to 0.
 void PageFrameAllocator::init_bitmap(size_t bitmapsize, void* buffer_address){
 	page_bitmap.size = bitmapsize;
 	page_bitmap.buffer = (uint8_t*)buffer_address;
@@ -51,6 +53,7 @@ void PageFrameAllocator::init_bitmap(size_t bitmapsize, void* buffer_address){
 	}
 }
 
+//#PageFrameAllocator::request_page-doc: Request a page from the allocator. Returns a physical address.
 uint64_t page_bitmap_index = 0;
 void* PageFrameAllocator::request_page(){
 	for (int i = 0; i < page_bitmap_index; i++) {
@@ -71,6 +74,7 @@ void* PageFrameAllocator::request_page(){
     return NULL; // Page Frame Swap to file
 }
 
+//#PageFrameAllocator::request_pages-doc: Request a number of pages from the allocator. Returns a physical address.
 void* PageFrameAllocator::request_pages(int amount){
 	for (int i = 0; i < page_bitmap_index; i++) {
 		if(page_bitmap[i] == true) {
@@ -98,6 +102,7 @@ void* PageFrameAllocator::request_pages(int amount){
 }
 
 
+//#PageFrameAllocator::free_page-doc: Free a page.
 void PageFrameAllocator::free_page(void* address){
 	uint64_t index = (uint64_t)address / 4096;
 	if (page_bitmap[index] == false) return;
@@ -108,12 +113,14 @@ void PageFrameAllocator::free_page(void* address){
 	}
 }
 
+//#PageFrameAllocator::free_pages-doc: Free a range of pages.
 void PageFrameAllocator::free_pages(void* address, uint64_t page_count){
 	for (int t = 0; t < page_count; t++){
 		free_page((void*)((uint64_t)address + (t * 4096)));
 	}
 }
 
+//#PageFrameAllocator::lock_page-doc: Lock a page.
 void PageFrameAllocator::lock_page(void* address){
 	uint64_t index = (uint64_t)address / 4096;
 	if (page_bitmap[index] == true) return;
@@ -123,12 +130,14 @@ void PageFrameAllocator::lock_page(void* address){
 	}
 }
 
+//#PageFrameAllocator::lock_pages-doc: Lock a range of pages.
 void PageFrameAllocator::lock_pages(void* address, uint64_t page_count){
 	for (int t = 0; t < page_count; t++){
 		lock_page((void*)((uint64_t)address + (t * 4096)));
 	}
 }
 
+//#PageFrameAllocator::unreserve_page-doc: Unreserves a page.
 void PageFrameAllocator::unreserve_page(void* address){
 	uint64_t index = (uint64_t)address / 4096;
 	if (page_bitmap[index] == false) return;
@@ -139,12 +148,14 @@ void PageFrameAllocator::unreserve_page(void* address){
 	}
 }
 
+//#PageFrameAllocator::unreserve_pages-doc: Uneserves a range of pages.
 void PageFrameAllocator::unreserve_pages(void* address, uint64_t page_count){
 	for (int t = 0; t < page_count; t++){
 		unreserve_page((void*)((uint64_t)address + (t * 4096)));
 	}
 }
 
+//#PageFrameAllocator::reserve_page-doc: Reserves a page.
 void PageFrameAllocator::reserve_page(void* address){
 	uint64_t index = (uint64_t)address / 4096;
 	if (page_bitmap[index] == true) return;
@@ -154,18 +165,24 @@ void PageFrameAllocator::reserve_page(void* address){
 	}
 }
 
+//#PageFrameAllocator::reserve_pages-doc: Reserves a range of pages.
 void PageFrameAllocator::reserve_pages(void* address, uint64_t pageCount){
 	for (int t = 0; t < pageCount; t++){
 		reserve_page((void*)((uint64_t)address + (t * 4096)));
 	}
 }
 
+//#PageFrameAllocator::get_free_RAM-doc: Get the amount of free RAM in bytes.
 uint64_t PageFrameAllocator::get_free_RAM(){
 	return free_memory;
 }
+
+//#PageFrameAllocator::get_used_RAM-doc: Get the amount of used memory in bytes.
 uint64_t PageFrameAllocator::get_used_RAM(){
 	return used_memory;
 }
+
+//#PageFrameAllocator::get_reserved_RAM-doc: Get the amount of reserved memory in bytes.
 uint64_t PageFrameAllocator::get_reserved_RAM(){
 	return reserved_memory;
 }

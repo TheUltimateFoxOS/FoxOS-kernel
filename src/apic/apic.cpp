@@ -30,21 +30,24 @@ uint8_t bspid = 0;
 
 cpu cpus[256];
 
+//#lapic_write-doc: Write a register from the lapic.
 void lapic_write(uint64_t lptr, uint64_t reg, uint32_t value) {
 	*((volatile uint32_t*)(lptr + reg)) = value;
 }
 
+//#lapic_read-doc: Read a register from the lapic.
 uint32_t lapic_read(uint64_t lptr, uint64_t reg) {
 	return *((volatile uint32_t*)(lptr + reg));
 }
 
+//#lapic_wait-doc: Wait until a apic command is executed.
 void lapic_wait(uint64_t lptr) {
 	do {
 		__asm__ __volatile__ ("pause" : : : "memory");
 	} while(*((volatile uint32_t*)(lptr + 0x300)) & (1 << 12));
 }
 
-
+//#ap_main-doc: Main entry point for application processors. This function pools until it finds work and then executes it.
 extern "C" void ap_main() {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
@@ -66,6 +69,7 @@ extern "C" void ap_main() {
 	}
 }
 
+//#start_apic_timer-doc: Start the local apic timer. This function is called by the initialising application processors.
 extern "C" void start_apic_timer(int time_betwen_interrupts) {
 	lapic_write(lapic_ptr, 0x3e0, 0x3);
 	lapic_write(lapic_ptr, 0x380, 0xffffffff);
@@ -87,6 +91,7 @@ extern "C" void start_apic_timer(int time_betwen_interrupts) {
 	lapic_write(lapic_ptr, 0x380, ticks);
 }
 
+//#run_on_ap-doc: Run a function on a application processor. Can be used to offload work to the application processor.
 int run_on_ap(void_function function) {
 	if(numcore == 1 || NO_SMP_SHED) {
 		driver::global_serial_driver->printf("Only 1 core in system running on bsp!\n");
@@ -109,6 +114,7 @@ int run_on_ap(void_function function) {
 	
 }
 
+//#wait_for_aps-doc: Wait until all application processors are finished with their work.
 void wait_for_aps() {
 	for (int i = 0; i < numcore; i++) {
 		if(cpus[i].presend) {
@@ -119,6 +125,7 @@ void wait_for_aps() {
 	}
 }
 
+//#start_all_cpus-doc: Boot all application processors and initialize them enough to run the shceduler.
 void start_all_cpus(stivale2_struct* bootinfo) {
 	volatile uint8_t aprunning = 0;
 
