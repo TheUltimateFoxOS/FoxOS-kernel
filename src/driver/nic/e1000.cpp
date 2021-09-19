@@ -22,6 +22,7 @@ using namespace driver;
 
 //#define DEBUG
 
+//#e1000Driver::e1000Driver-doc: e1000Driver constructor.
 e1000Driver::e1000Driver(pci::pci_header_0_t* header, uint16_t bus, uint16_t device, uint16_t function) : InterruptHandler(header->interrupt_line + 0x20) {
 	this->header = header;
 	this->nic_data_manager = nullptr;
@@ -59,6 +60,7 @@ e1000Driver::e1000Driver(pci::pci_header_0_t* header, uint16_t bus, uint16_t dev
 	this->eerprom_exists = false;
 }
 
+//#e1000Driver::~e1000Driver-doc: e1000Driver destructor.
 e1000Driver::~e1000Driver() {
 	for (int i = 0; i < e1000_NUM_RX_DESC; i++) {
 		global_allocator.free_pages((void*) this->rx_descs[i]->addr, ((8192 + 16) / 0x1000) + 1);
@@ -67,6 +69,7 @@ e1000Driver::~e1000Driver() {
 	global_allocator.free_pages(this->tx_ptr, ((sizeof(struct e1000_tx_desc) * e1000_NUM_TX_DESC + 16) / 0x1000) + 1);
 }
 
+//#e1000Driver::write_command-doc: Write to the e1000 device via MMIO or IO ports.
 void e1000Driver::write_command(uint16_t address, uint32_t value) {
 	if (bar_type == 0) {
 		MMIO::write32(this->mem_base + address, value);
@@ -76,6 +79,7 @@ void e1000Driver::write_command(uint16_t address, uint32_t value) {
 	}
 }
 
+//#e1000Driver::read_command-doc: Read from the e1000 device via MMIO or IO ports.
 uint32_t e1000Driver::read_command(uint16_t address) {
 	if (bar_type == 0) {
 		return MMIO::read32(this->mem_base + address);
@@ -85,6 +89,7 @@ uint32_t e1000Driver::read_command(uint16_t address) {
 	}
 }
 
+//#e1000Driver::detect_eeprom-doc: Check if the e1000 device has an EEPROM and set "e1000Driver::eerprom_exists" accordingly.
 bool e1000Driver::detect_eeprom() {
 	uint32_t val = 0;
 	write_command(REG_EEPROM, 0x1);
@@ -97,6 +102,7 @@ bool e1000Driver::detect_eeprom() {
 	return this->eerprom_exists;
 }
 
+//#e1000Driver::read_eeprom-doc: Read from the e1000 device's EEPROM.
 uint32_t e1000Driver::read_eeprom(uint8_t addr) {
 	uint16_t data = 0;
 	uint32_t tmp = 0;
@@ -111,6 +117,7 @@ uint32_t e1000Driver::read_eeprom(uint8_t addr) {
 	return data;
 }
 
+//#e1000Driver::read_mac_address-doc: Read the device's MAC address into "e1000Driver::mac".
 void e1000Driver::read_mac_address() {
 	if (this->eerprom_exists) {
 		uint32_t temp;
@@ -137,6 +144,7 @@ void e1000Driver::read_mac_address() {
 	}
 }
 
+//#e1000Driver::rx_init-doc: Initialise receiving.
 void e1000Driver::rx_init() {
 	struct e1000_rx_desc* descs = (struct e1000_rx_desc*) this->rx_ptr;
 	for (int i = 0; i < e1000_NUM_RX_DESC; i++) {
@@ -144,9 +152,6 @@ void e1000Driver::rx_init() {
 		this->rx_descs[i]->addr = (uint64_t)(uint8_t *) global_allocator.request_pages(((8192 + 16) / 0x1000) + 1);
 		this->rx_descs[i]->status = 0;
 	}
-
-	//write_command(REG_TXDESCLO, (uint32_t)((uint64_t) this->rx_ptr >> 32));
-	//write_command(REG_TXDESCHI, (uint32_t)((uint64_t) this->rx_ptr & 0xFFFFFFFF));
 
 	write_command(REG_RXDESCLO, (uint64_t) this->rx_ptr);
 	write_command(REG_RXDESCHI, 0);
@@ -160,6 +165,7 @@ void e1000Driver::rx_init() {
 	write_command(REG_RCTRL, RCTL_EN| RCTL_SBP| RCTL_UPE | RCTL_MPE | RCTL_LBM_NONE | RTCL_RDMTS_HALF | RCTL_BAM | RCTL_SECRC  | RCTL_BSIZE_8192);
 }
 
+//#e1000Driver::tx_init-doc: Initialise transmitting.
 void e1000Driver::tx_init() {
 	struct e1000_tx_desc* descs = (struct e1000_tx_desc*) this->tx_ptr;
 	for (int i = 0; i < e1000_NUM_TX_DESC; i++) {
@@ -182,11 +188,13 @@ void e1000Driver::tx_init() {
 	write_command(REG_TIPG, 0x0060200A);
 }
 
+//#e1000Driver::start_link-doc: Start the device link.
 void e1000Driver::start_link() {
 	uint32_t val = read_command(REG_CTRL);
 	write_command(REG_CTRL, val | ECTRL_SLU);
 }
 
+//#e1000Driver::activate-doc: Activate the driver.
 void e1000Driver::activate() {
 	if (this->bar_type == 0) {
 		if (!(this->mem_base)) {
@@ -225,6 +233,7 @@ void e1000Driver::activate() {
 	nic::global_nic_manager->add_Nic(this);
 }
 
+//#e1000Driver::receive-doc: Called by the driver interrupt, to process received data.
 void e1000Driver::receive() {
 	bool got_packet = false;
 
@@ -254,6 +263,7 @@ void e1000Driver::receive() {
 	}
 }
 
+//#e1000Driver::send-doc: Send data from the driver.
 void e1000Driver::send(uint8_t* data, int32_t length) {
 	this->tx_descs[this->tx_cur]->addr = (uint64_t) data;
 	this->tx_descs[this->tx_cur]->length = length;
@@ -275,6 +285,7 @@ void e1000Driver::send(uint8_t* data, int32_t length) {
 	while(!(this->tx_descs[old_cur]->status & 0xff));
 }
 
+//#e1000Driver::handle-doc: The driver interrupt handler.
 void e1000Driver::handle() {
 	write_command(REG_IMASK, 0x1);
 
@@ -290,10 +301,12 @@ void e1000Driver::handle() {
 	}
 }
 
+//#e1000Driver::get_name-doc: Get the driver name.
 char* e1000Driver::get_name() {
 	return (char*) "e1000";
 }
 
+//#e1000Driver::get_mac-doc: Get the device's MAC address.
 uint64_t e1000Driver::get_mac() {
 	nic::mac_u m;
 	m.mac_p[0] = this->mac[0];
@@ -306,10 +319,12 @@ uint64_t e1000Driver::get_mac() {
 	return m.mac;
 }
 
+//#e1000Driver::get_ip-doc: Get the device's IP address.
 uint32_t e1000Driver::get_ip() {
 	return this->logicalAddress;
 }
 
+//#e1000Driver::set_ip-doc: Set the device's IP address.
 void e1000Driver::set_ip(uint32_t ip) {
 	this->logicalAddress = ip;
 }

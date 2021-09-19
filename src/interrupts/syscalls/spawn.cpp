@@ -8,6 +8,7 @@
 
 define_spinlock(spawn_lock);
 
+//#sys_spawn-doc: Spawns a new process. The new process will be created from a file witch the calling process needs to supply the path to.
 extern "C" void sys_spawn(s_registers regs) {
 	atomic_acquire_spinlock(spawn_lock);
 

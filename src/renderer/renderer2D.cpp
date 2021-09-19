@@ -6,18 +6,22 @@ using namespace renderer;
 
 Renderer2D* renderer::global_renderer2D;
 
+//#Renderer2D::Renderer2D-doc: Renderer2D constructor.
 Renderer2D::Renderer2D(framebuffer_t* target_frame_buffer) {
 	this->target_frame_buffer = target_frame_buffer;
 }
 
+//#Renderer2D::put_pix-doc: Set a pixel on screen.
 void Renderer2D::put_pix(uint32_t x, uint32_t y, uint32_t colour){
 	*(uint32_t*)((uint64_t)target_frame_buffer->base_address + (x*4) + (y * target_frame_buffer->pixels_per_scanline * 4)) = colour;
 }
 
+//#Renderer2D::get_pix-doc: Get a pixel on screen.
 uint32_t Renderer2D::get_pix(uint32_t x, uint32_t y){
 	return *(uint32_t*)((uint64_t)target_frame_buffer->base_address + (x*4) + (y * target_frame_buffer->pixels_per_scanline * 4));
 }
 
+//#Renderer2D::clear_mouse_cursor-doc: Clear the mouse cursor.
 void Renderer2D::clear_mouse_cursor(uint8_t* mouse_pointer, point_t pos){
 	if (!mouse_drawn) return;
 
@@ -43,6 +47,7 @@ void Renderer2D::clear_mouse_cursor(uint8_t* mouse_pointer, point_t pos){
 	}
 }
 
+//#Renderer2D::draw_overlay_mouse_cursor-doc: Draw the mouse cursor on screen and store what is under it.
 void Renderer2D::draw_overlay_mouse_cursor(uint8_t* mouse_pointer, point_t pos, uint32_t colour) {
 	int xMax = 16;
 	int yMax = 16;
@@ -68,6 +73,7 @@ void Renderer2D::draw_overlay_mouse_cursor(uint8_t* mouse_pointer, point_t pos, 
 	mouse_drawn = true;
 }
 
+//#Renderer2D::scroll_down-doc: Scroll the screen down.
 void Renderer2D::scroll_down() {
 	global_renderer2D->clear_mouse_cursor(global_mouse_renderer->get_mouse_pointer(), global_mouse_renderer->mouse_position);
 	/*for (unsigned long y = 0; y <= 16; y++) { // clear the first line
@@ -99,6 +105,7 @@ void Renderer2D::scroll_down() {
 	global_renderer2D->draw_overlay_mouse_cursor(global_mouse_renderer->get_mouse_pointer(), global_mouse_renderer->mouse_position, 0xffffffff);
 }
 
+//#Renderer2D::load_bitmap-doc: Load a bitmap into the center of the frame buffer at a Y position OR at an X and a Y position.
 void Renderer2D::load_bitmap(uint8_t data[], int y) {
 	uint8_t info[54];
 	int _i = 54;
@@ -179,6 +186,7 @@ void Renderer2D::load_bitmap(uint8_t data[], int x, int y) {
 	//renderer::global_font_renderer->cursor_position = { 0, src_height + 16 };
 }
 
+//#Renderer2D::get_bitmap_info-doc: Get a bitmap's information.
 renderer::point_t Renderer2D::get_bitmap_info(uint8_t data[]) {
 	uint8_t info[54];
 	int _i = 54;

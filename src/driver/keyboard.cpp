@@ -5,6 +5,7 @@
 
 using namespace driver;
 
+//#keymap_de-doc: Return the corresponding charcater from a key number (German layout).
 char keymap_de(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 	if(l_shift || r_shift || caps_lock){
 		switch(key){
@@ -114,6 +115,7 @@ char keymap_de(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 	return 0;
 }
 
+//#keymap_us-doc: Return the corresponding charcater from a key number (US layout).
 char keymap_us(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 	if(l_shift || r_shift || caps_lock){
 		switch(key){
@@ -230,6 +232,7 @@ char keymap_us(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 	return 0;
 }
 
+//#keymap_fr-doc: Return the corresponding charcater from a key number (French layout).
 char keymap_fr(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 	if(l_shift || r_shift || caps_lock){
 		switch(key){
@@ -345,27 +348,33 @@ char keymap_fr(uint8_t key, bool l_shift, bool r_shift, bool caps_lock){
 	return 0;
 }
 
+//#KeyboardEventHandler::KeyboardEventHandler-doc: Empty constructor.
 KeyboardEventHandler::KeyboardEventHandler() {
 
 }
 
+//#KeyboardEventHandler::KeyDown-doc: Virtual function to be overridden. Gets called when a key is pressed.
 void KeyboardEventHandler::KeyDown(char c) {
 
 }
 
+//#KeyboardEventHandler::SpecialKeyDown-doc: Virtual function to be overridden. Gets called when a special key is pressed down.
 void KeyboardEventHandler::SpecialKeyDown(special_key key) {
 
 }
 
+//#KeyboardEventHandler::SpecialKeyUp-doc: Virtual function to be overridden. Gets called when a special key is up.
 void KeyboardEventHandler::SpecialKeyUp(special_key key) {
 
 }
 
+//#KeyboardDriver::KeyboardDriver-doc: Keyboard driver constructor.
 KeyboardDriver::KeyboardDriver(KeyboardEventHandler* handler) : interrupts::InterruptHandler(0x21), dataport(0x60), commandport(0x64) {
 	this->handler = handler;
 	this->keymap = keymap_us_e;
 }
 
+//#KeyboardDriver::activate-doc: Activate the keyboard driver.
 void KeyboardDriver::activate() {
 	while(commandport.Read() & 0x1) {
 		dataport.Read();
@@ -378,10 +387,12 @@ void KeyboardDriver::activate() {
 	dataport.Write(0xf4);
 }
 
+//#KeyboardDriver::is_presend-doc: Get if is pre send.
 bool KeyboardDriver::is_presend() {
 	return true;
 }
 
+//#KeyboardDriver::handle-doc: Keyboard event interrupt handler.
 void KeyboardDriver::handle(){
 	uint8_t key = dataport.Read();
 	if (this->debug_mode) {
@@ -539,6 +550,7 @@ void KeyboardDriver::handle(){
 	}
 }
 
+//#KeyboardDriver::get_name-doc: Get the driver name.
 char* KeyboardDriver::get_name() {
 	return (char*) "keyboard";
 }

@@ -1,5 +1,6 @@
 #include <memory/memory.h>
 
+//#get_memory_size-doc: Get the amount of memory in bytes.
 uint64_t get_memory_size(stivale2_struct* bootinfo) {
 
 	static uint64_t memorySizeBytes = 0;
@@ -14,6 +15,7 @@ uint64_t get_memory_size(stivale2_struct* bootinfo) {
 	return memorySizeBytes;
 }
 
+//#memset-doc: Set a section of memory to a value.
 void memset(void* start, uint8_t value, uint64_t num) {
 	for (uint64_t i = 0; i < num; i++){
 		*(uint8_t*)((uint64_t)start + i) = value;

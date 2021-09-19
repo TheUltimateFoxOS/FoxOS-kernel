@@ -13,6 +13,7 @@
 
 using namespace driver;
 
+//#AHCI_port::configure-doc: Configures the ahci port for usage. Also try's to read the guid partition table.
 void AHCI_port::configure() {
 	stop_command();
 
@@ -47,6 +48,7 @@ void AHCI_port::configure() {
 
 }
 
+//#AHCI_port::stop_command-doc: Used to tell the ahci controller to stop a command.
 void AHCI_port::stop_command() {
 	hba_port->cmd_sts &= ~HBA_PxCMD_ST;
 	hba_port->cmd_sts &= ~HBA_PxCMD_FRE;
@@ -60,6 +62,7 @@ void AHCI_port::stop_command() {
 	}
 }
 
+//#AHCI_port::start_command-doc: Used to tell the ahci controller to start a command.
 void AHCI_port::start_command() {
 	while (hba_port->cmd_sts & HBA_PxCMD_CR);
 
@@ -67,6 +70,7 @@ void AHCI_port::start_command() {
 	hba_port->cmd_sts |= HBA_PxCMD_ST;
 }
 
+//#AHCI_port::read-doc: This function is used to override the default function from the Drive base class.
 void AHCI_port::read(uint64_t sector, uint32_t sector_count, void* buffer) {
 	uint64_t spin = 0;
 	while ((hba_port->task_file_data & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000) {
@@ -124,6 +128,7 @@ void AHCI_port::read(uint64_t sector, uint32_t sector_count, void* buffer) {
 	return;
 }
 
+//#AHCI_port::write-doc: This function is used to override the default function from the Drive base class.
 void AHCI_port::write(uint64_t sector, uint32_t sector_count, void* buffer) {
 	uint64_t spin = 0;
 	while ((hba_port->task_file_data & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000) {

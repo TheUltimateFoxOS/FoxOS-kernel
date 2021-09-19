@@ -23,15 +23,7 @@ using namespace driver;
 
 //#define DEBUG
 
-class UdpDataPrinter: public net::UdpHandler {
-	public:
-		virtual void onUdpMessage(net::UdpSocket *socket, uint8_t* data, size_t size) {
-			driver::global_serial_driver->printf("UDP: %s\n", data);
-			socket->send((uint8_t*) "IT WORKED!!!!!!!!\n", 17);
-		}
-
-};
-
+//#Am79C973Driver::Am79C973Driver-doc: Am79C973Driver constructor.
 Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header, uint16_t bus, uint16_t device, uint16_t function) : InterruptHandler(header->interrupt_line + 0x20) {
 	this->header = header;
 	this->nic_data_manager = nullptr;
@@ -120,6 +112,7 @@ Am79C973Driver::Am79C973Driver(pci::pci_header_0_t* header, uint16_t bus, uint16
 
 }
 
+//#Am79C973Driver::~Am79C973Driver-doc: Am79C973Driver destructor.
 Am79C973Driver::~Am79C973Driver() {
 	global_allocator.free_page(this->sendBufferDescrMemory);
 	global_allocator.free_pages(this->sendBuffers, 5);
@@ -128,6 +121,7 @@ Am79C973Driver::~Am79C973Driver() {
 	global_allocator.free_page(this->init_block);
 }
 
+//#Am79C973Driver::activate-doc: Activate the Am79C973 driver.
 void Am79C973Driver::activate() {
 	if (this->base_port == 0) {
 		driver::global_serial_driver->printf("Am79C973Driver start-up failed: IO port is 0.\n");
@@ -153,7 +147,7 @@ void Am79C973Driver::activate() {
 	nic::global_nic_manager->add_Nic(this);
 }
 
-
+//#Am79C973Driver::handle-doc: The driver interrupt handler.
 void Am79C973Driver::handle() {
 	Port16Bit register_data_port(this->base_port + 0x10);
 	Port16Bit register_address_port(this->base_port + 0x12);
@@ -186,6 +180,7 @@ void Am79C973Driver::handle() {
 	register_data_port.Write(temp);
 }
 
+//#Am79C973Driver::send-doc: Send data from the driver.
 void Am79C973Driver::send(uint8_t* data, int32_t length) {
 	Port16Bit register_data_port(this->base_port + 0x10);
 	Port16Bit register_address_port(this->base_port + 0x12);
@@ -216,6 +211,7 @@ void Am79C973Driver::send(uint8_t* data, int32_t length) {
 	register_data_port.Write(0x48);
 }
 
+//#Am79C973Driver::receive-doc: Called by the driver interrupt, to process received data.
 void Am79C973Driver::receive() {
 	for (; (recvBufferDescr[currentRecvBuffer].flags & 0x80000000) == 0; currentRecvBuffer = (currentRecvBuffer + 1) % 8) {
 		if (!(recvBufferDescr[currentRecvBuffer].flags & 0x40000000) && (recvBufferDescr[currentRecvBuffer].flags & 0x03000000) == 0x03000000) {
@@ -255,10 +251,12 @@ void Am79C973Driver::receive() {
 	}
 }
 
+//#Am79C973Driver::get_name-doc: Get the driver name.
 char* Am79C973Driver::get_name() {
 	return (char*) "am79C973";
 }
 
+//#Am79C973Driver::get_mac-doc: Get the device's MAC address.
 uint64_t Am79C973Driver::get_mac() {
 	uint64_t mac0 = inw(this->base_port + 0x00) % 256;
 	uint64_t mac1 = inw(this->base_port + 0x00) / 256;
@@ -271,10 +269,12 @@ uint64_t Am79C973Driver::get_mac() {
 	return MAC;
 }
 
+//#Am79C973Driver::get_ip-doc: Get the device's IP address.
 uint32_t Am79C973Driver::get_ip() {
 	return this->init_block->logicalAddress;
 }
 
+//#Am79C973Driver::set_ip-doc: Set the device's IP address.
 void Am79C973Driver::set_ip(uint32_t ip) {
 	this->init_block->logicalAddress = ip;
 }

@@ -15,6 +15,7 @@ struct read_buffer {
 
 read_buffer stdin_read_buffer;
 
+//#add_char-doc: Adds a character to the stdin buffer if a process is reading from stdin.
 void add_char(char c) {
 	if(stdin_read_buffer.is_reading) {
 		*stdin_read_buffer.buffer = c;
@@ -28,10 +29,12 @@ void add_char(char c) {
 	}
 }
 
+//#is_reading-doc: Checks if a program is reading from stdin.
 bool is_reading() {
 	return stdin_read_buffer.is_reading;
 }
 
+//#sys_read-doc: The syscall to read n bytes from a file descriptor. Currently only stdin is implemented.
 extern "C" void sys_read(s_registers regs) {
 	switch(regs.rbx) {
 		case 0:

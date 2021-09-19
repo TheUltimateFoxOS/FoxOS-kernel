@@ -5,12 +5,15 @@
 
 using namespace driver;
 
+//#PcSpeakerDriver::PcSpeakerDriver-doc: Empty constructor.
 PcSpeakerDriver::PcSpeakerDriver() {
 }
 
+//#PcSpeakerDriver::~PcSpeakerDriver-doc: Empty destructor.
 PcSpeakerDriver::~PcSpeakerDriver() {
 }
 
+//#PcSpeakerDriver::activate-doc: This function is used to override the default function from the Driver base class.
 void PcSpeakerDriver::activate() {
 	// that just takes more time too boot and is useless
 	/*play_note((1 << 4) | 1);
@@ -22,28 +25,34 @@ void PcSpeakerDriver::activate() {
 	turn_off();*/
 }
 
+//#PcSpeakerDriver::is_presend-doc: This function is used to override the default function from the Driver base class.
 bool PcSpeakerDriver::is_presend() {
 	return true;
 }
 
+//#PcSpeakerDriver::get_name-doc: This function is used to override the default function from the Driver base class.
 char* PcSpeakerDriver::get_name() {
 	return (char*) "pc speaker";
 }
 
+//#PcSpeakerDriver::turn_on-doc: This function is used to turn on the pc speaker.
 void PcSpeakerDriver::turn_on() {
 	outb(0x61, (inb(0x61) | 3));
 }
 
+//#PcSpeakerDriver::turn_off-doc: This function is used to turn off the pc speaker.
 void PcSpeakerDriver::turn_off() {
 	outb(0x61, (inb(0x61) & 0xFC));
 }
 
+//#PcSpeakerDriver::set_frequency-doc: This function is used to set the frequency of the pc speaker.
 void PcSpeakerDriver::set_frequency(uint16_t frequency) {
 	outb(0x43, 0xB6);
 	outb(0x42, (uint8_t) frequency);
 	outb(0x42, (uint8_t) (frequency >> 8));
 }
 
+//#PcSpeakerDriver::play-doc: This function is used to set the frequency of the pc speaker and then automatically starts playing.
 void PcSpeakerDriver::play(uint16_t frequency) {
 	set_frequency(frequency);
 	turn_on();
@@ -60,6 +69,7 @@ uint16_t notes[7][12] = {
 	{ 570, 538, 508, 479, 452, 427, 403, 380, 359, 339, 320, 302 }
 };
 
+//#PcSpeakerDriver::play_note-doc: This function is used to play a note. The note is encoded with the following format: (octave << 4) | note.
 void PcSpeakerDriver::play_note(uint8_t note) {
 	play(notes[note >> 4][note & 0xf]);
 }

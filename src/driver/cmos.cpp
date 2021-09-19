@@ -2,6 +2,7 @@
 
 using namespace driver;
 
+//#driver::cmos_read-doc: Read from the CMOS.
 uint8_t driver::cmos_read(uint8_t address) {
 	Port8Bit port_0x70(0x70);
 	Port8Bit port_0x71(0x71);
@@ -18,6 +19,7 @@ uint8_t driver::cmos_read(uint8_t address) {
 	return port_0x71.Read();
 }
 
+//#driver::convert-doc: Convert "cmos_read" output.
 static uint8_t driver::convert(uint8_t num) {
 	if((cmos_read(0xb) & (1 << 2)) == 0){
 		return (num & 0xf) + ((num >> 4) & 0xf) * 10;
@@ -26,11 +28,13 @@ static uint8_t driver::convert(uint8_t num) {
 	}
 }
 
+//#driver::cmos-doc: Run a CMOS command.
 int driver::cmos(uint8_t function) {
 	int temp = cmos_read(function);
 	return convert(temp);
 }
 
+//#driver::get_fattime-doc: Get a valid fat32 timestamp.
 uint32_t driver::get_fattime() {
 	int sec = cmos(CMOS_READ_SEC) / 2;
 	int min = cmos(CMOS_READ_MIN);

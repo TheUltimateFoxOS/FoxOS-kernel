@@ -13,7 +13,7 @@
 
 using namespace interrupts;
 
-
+//#Panic::Panic-doc: The constructor of the panic class. Can take a exception number or a string.
 Panic::Panic(int intr) {
 	this->intr = intr;
 	this->panic = NULL;
@@ -23,6 +23,7 @@ Panic::Panic(char* panic) {
 	this->panic = panic;
 }
 
+//#Panic::get_panic_message-doc: Converts a exception number in a string.
 char* Panic::get_panic_message() {
 	switch(this->intr){
 		case 0x0:
@@ -91,6 +92,7 @@ char* Panic::get_panic_message() {
 	}
 }
 
+//#Panic::dump_regs-doc: Dump the registers of the CPU using the supplied s_registers structure.
 void Panic::dump_regs(s_registers* regs) {
 	renderer::global_font_renderer->printf("cr0: %d; cr2: %d; cr3: %d; cr4: %d\n", regs->cr0, regs->cr2, regs->cr3, regs->cr4);
 	renderer::global_font_renderer->printf("r8: %d; r9: %d; r10: %d; r11: %d\n", regs->r8, regs->r9, regs->r10, regs->r11);
@@ -102,6 +104,7 @@ void Panic::dump_regs(s_registers* regs) {
 
 extern uint8_t screen_of_death[];
 
+//#Panic::do_it-doc: This function is called when a panic is triggered. Takes a pointer to a struct containing information about the registers. Pointer can be null.
 void Panic::do_it(s_registers* regs) {
 	renderer::point_t bmp_info = renderer::global_renderer2D->get_bitmap_info(screen_of_death);
 

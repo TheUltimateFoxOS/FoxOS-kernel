@@ -3,6 +3,7 @@
 #include <driver/pc_speaker.h>
 #include <scheduling/pit/pit.h>
 
+//#test_sound-doc: Test the sound driver (very loud).
 void test_sound() {
 	driver::PcSpeakerDriver* driver = (driver::PcSpeakerDriver*) driver::global_driver_manager->find_driver_by_name((char*) "pc speaker");
 
