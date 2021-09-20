@@ -10,7 +10,7 @@ OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(CPPSRC))
 OBJS += $(patsubst %.asm, $(OBJDIR)/%_asm.o, $(ASMSRC))
 
 HTML_DOC = $(patsubst %.cpp, $(DOCDIR)/%.html, $(CPPSRC))
-HTML_DOC += $(patsubst %.asm, $(DOCDIR)/%.html, $(ASMSRC))
+HTML_DOC += $(patsubst %.asm, $(DOCDIR)/%_asm.html, $(ASMSRC))
 
 TOOLCHAIN_BASE = /usr/local/foxos-x86_64_elf_gcc
 
@@ -73,7 +73,7 @@ $(DOCDIR)/%.html: %.cpp
 	@python list.py $^ $@ $(DOC_BUILD_ID)
 	
 
-$(DOCDIR)/%.html: %.asm
+$(DOCDIR)/%_asm.html: %.asm
 	@echo "HTML $^ -> $@"
 	@mkdir -p $(@D)
 	@python list.py $^ $@ $(DOC_BUILD_ID)

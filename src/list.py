@@ -356,9 +356,17 @@ def print_file(file, only_index, ptmp):
 
 	head, tail = os.path.split(filetmp)
 
-	f = open(ptmp + "/index.html", "a")
-	f.write("        <li><a href=\"" + filetmp.replace(DOCS_DIR, "/doc").split(".")[:-1][0] + ".html\">" + tail + "</a></li>\n")
-	f.close()
+	if filetmp.endswith(".asm"):
+		f = open(ptmp + "/index.html", "a")
+		print(filetmp.replace(DOCS_DIR, "/doc").split(".")[:-1][0] + "_asm.html")
+		f.write("        <li><a href=\"" + filetmp.replace(DOCS_DIR, "/doc").split(".")[:-1][0] + "_asm.html\">" + tail + "</a></li>\n")
+		f.close()
+	elif filetmp.endswith(".cpp"):
+		f = open(ptmp + "/index.html", "a")
+		f.write("        <li><a href=\"" + filetmp.replace(DOCS_DIR, "/doc").split(".")[:-1][0] + ".html\">" + tail + "</a></li>\n")
+		f.close()
+	else:
+		raise Exception("Unknown file type: " + file)
 
 	if not os.path.exists(head):
 		os.makedirs(head)
