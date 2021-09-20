@@ -67,6 +67,39 @@ index_file_template = """<!DOCTYPE html>
       <ul class="w3-ul w3-hoverable fox-a-nodecoration fox-ul">
 """
 
+no_content_template = """<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - {%FILENAME%}</p>
+    </header>
+    
+    <div class="fox-text">
+      <p>No content to display.</p>
+      <p>If you are seeing this page, it means that the documentation you are searching does not exist! For help with this file please <a href="https://theultimatefoxos.github.io/">contact us!</a></p>
+    </div>
+  </body>
+</html>
+"""
+
 def loadtxt(filename):
 	with open(filename, "r") as f:
 		return f.read()
@@ -80,8 +113,9 @@ def get_file_functions(file, write_to, name):
 
 	if (file.endswith(".asm")):
 		#If an entry is found, run this: entries_found += 1
-		pass
-
+		with open(DEST, "w") as f:
+			f.write(no_content_template.replace("{%FILENAME%}", file.split("/")[-1]))
+		return
 	elif (file.endswith(".cpp")):
 		rproc = r"(([\w \*:]+)(?!.*(=)).+)((?<=[\s:~])((?!.*(if|switch$|do$|for$|while$|\[|\]$)).+)\s*\(([\w\s,<>\[\].=&':/*+]*?)\)\s*(const)?\s*(?={))"
 		code = loadtxt(file)
@@ -290,6 +324,6 @@ else:
 	#print(SOURCE, DEST)
 	if _needs_skip(SOURCE):
 		with open(DEST, "w") as f:
-			f.write("No content!")
+			f.write(no_content_template.replace("{%FILENAME%}", SOURCE.split("/")[-1]))
 	else:
 		get_file_functions(SOURCE, DEST, DEST.split("/")[-1])
