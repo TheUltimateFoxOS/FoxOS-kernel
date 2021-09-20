@@ -358,7 +358,6 @@ def print_file(file, only_index, ptmp):
 
 	if filetmp.endswith(".asm"):
 		f = open(ptmp + "/index.html", "a")
-		print(filetmp.replace(DOCS_DIR, "/doc").split(".")[:-1][0] + "_asm.html")
 		f.write("        <li><a href=\"" + filetmp.replace(DOCS_DIR, "/doc").split(".")[:-1][0] + "_asm.html\">" + tail + "</a></li>\n")
 		f.close()
 	elif filetmp.endswith(".cpp"):
