@@ -1,5 +1,6 @@
 OBJDIR = ../lib
 BUILDDIR = ../bin
+DOCDIR = ../doc
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
@@ -7,6 +8,8 @@ CPPSRC = $(call rwildcard,./,*.cpp)
 ASMSRC = $(call rwildcard,./,*.asm)
 OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(CPPSRC))
 OBJS += $(patsubst %.asm, $(OBJDIR)/%_asm.o, $(ASMSRC))
+
+HTML_DOC = $(patsubst %.cpp, $(DOCDIR)/%.html, $(CPPSRC))
 
 TOOLCHAIN_BASE = /usr/local/foxos-x86_64_elf_gcc
 
@@ -48,3 +51,11 @@ $(OBJDIR)/%_asm.o: %.asm
 	@echo "ASM $^ -> $@"
 	@mkdir -p $(@D)
 	@$(ASM) $(ASMFLAGS) -o $@ $^
+
+doc: $(HTML_DOC)
+	@python list.py index $(PWD) $(PWD)/$(DOCDIR)
+
+$(DOCDIR)/%.html: %.cpp
+	@echo "HTML $^ -> $@"
+	@mkdir -p $(@D)
+	@python list.py $^ $@
