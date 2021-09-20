@@ -4,6 +4,7 @@ bool Bitmap::operator[](uint64_t index){
 	return get(index);
 }
 
+//#Bitmap::get-doc: Get a bit in the bitmap.
 bool Bitmap::get(uint64_t index) {
 	if (index > size * 8) return false;
 
@@ -17,6 +18,7 @@ bool Bitmap::get(uint64_t index) {
 	return false;
 }
 
+//#Bitmap::set-doc: Set a bit in the bitmap.
 bool Bitmap::set(uint64_t index, bool value){
 	if (index > size * 8) return false;
 

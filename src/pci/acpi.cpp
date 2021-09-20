@@ -3,6 +3,7 @@
 using namespace pci;
 using namespace pci::acpi;
 
+//#pci::acpi::find_table_xsdt-doc: Find a table in the ACPI namespace using the xsdt header.
 void* pci::acpi::find_table_xsdt(sdt_header_t* sdt_header, char* signature) {
 	int entries = (sdt_header->length - sizeof(sdt_header_t)) / 8;
 
@@ -20,6 +21,7 @@ void* pci::acpi::find_table_xsdt(sdt_header_t* sdt_header, char* signature) {
 	return 0;
 }
 
+//#pci::acpi::find_table_rsdt-doc: Find a table in the ACPI namespace using the rsdt header.
 void* pci::acpi::find_table_rsdt(sdt_header_t* sdt_header, char* signature) {
 	int entries = (sdt_header->length - sizeof(sdt_header_t)) / 4;
 

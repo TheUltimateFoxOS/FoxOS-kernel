@@ -13,6 +13,7 @@
 
 using namespace pci;
 
+//#enumerate_function-doc: Enumerate all PCI device functions. This function also instantiates the driver for the device if there is a driver available for it.
 void enumerate_function(uint64_t address, uint64_t function, uint16_t bus, uint16_t device) {
 	uint64_t offset = function << 12;
 
@@ -77,6 +78,7 @@ void enumerate_function(uint64_t address, uint64_t function, uint16_t bus, uint1
 	}
 }
 
+//#enumerate_device-doc: Enumerate all PCI devices.
 void enumerate_device(uint64_t bus_address, uint64_t device, uint16_t bus) {
 	uint64_t offset = device << 15;
 
@@ -97,6 +99,7 @@ void enumerate_device(uint64_t bus_address, uint64_t device, uint16_t bus) {
 	}
 }
 
+//#enumerate_bus-doc: Enumerate all PCI buses.
 void enumerate_bus(uint64_t base_address, uint64_t bus) {
 	uint64_t offset = bus << 20;
 
@@ -117,6 +120,7 @@ void enumerate_bus(uint64_t base_address, uint64_t bus) {
 	}
 }
 
+//#pci::enumerate_pci-doc: Enumerate all PCI devices.
 void pci::enumerate_pci(acpi::mcfg_header_t* mcfg) {
 	int entries = ((mcfg->header.length) - sizeof(acpi::mcfg_header_t)) / sizeof(acpi::device_config_t);
 
@@ -128,6 +132,7 @@ void pci::enumerate_pci(acpi::mcfg_header_t* mcfg) {
 	}
 }
 
+//#pci::pci_read-doc: Read from the PCI device.
 uint32_t pci::pci_read(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset) {
 	uint32_t id = 0x1 << 31 | ((bus & 0xFF) << 16) | ((device & 0x1F) << 11) | ((function & 0x07) << 8) | (registeroffset & 0xFC);
 	Port32Bit command_port = Port32Bit(0xcf8);
@@ -137,6 +142,7 @@ uint32_t pci::pci_read(uint16_t bus, uint16_t device, uint16_t function, uint32_
 	return result >> (8 * (registeroffset % 4));
 }
 
+//#pci::pci_write-doc: Write to the PCI device.
 void pci::pci_write(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint32_t value) {
 	uint32_t id = 0x1 << 31 | ((bus & 0xFF) << 16) | ((device & 0x1F) << 11) | ((function & 0x07) << 8) | (registeroffset & 0xFC);
 	Port32Bit command_port = Port32Bit(0xcf8);
@@ -145,10 +151,12 @@ void pci::pci_write(uint16_t bus, uint16_t device, uint16_t function, uint32_t r
 	data_port.Write(value);
 }
 
+//#pci::device_has_functions-doc: Check if a device has a specific function.
 int pci::device_has_functions(uint16_t bus, uint16_t device) {
 	return pci_read(bus, device, 0, 0xe) & (1 << 7);
 }
 
+//#pci::get_device_header-doc: Get the PCI device header. Only needed if we enumerate the devices using the legacy method.
 pci::pci_header_0_t pci::get_device_header(uint16_t bus, uint16_t device, uint16_t function) {
 	pci::pci_header_0_t result;
 	result.header.vendor_id = pci_read(bus, device, function, 0);
@@ -248,10 +256,12 @@ void pci::enumerate_pci() {
 	}
 }
 
+//#pci::enable_mmio-doc: Enables the memory mapped I/O for the device.
 void pci::enable_mmio(uint16_t bus, uint16_t device, uint16_t function) {
 	pci_write(bus, device, function, 0x4, pci_read(bus, device, function, 0x4) | (1 << 1));
 }
 
+//#pci::become_bus_master-doc: Makes the device a bus master.
 void pci::become_bus_master(uint16_t bus, uint16_t device, uint16_t function) {
 	pci_write(bus, device, function, 0x4, pci_read(bus, device, function, 0x4) | (1 << 2));
 }

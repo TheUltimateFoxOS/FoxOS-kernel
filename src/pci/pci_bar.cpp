@@ -4,6 +4,7 @@
 
 using namespace pci;
 
+//#read_bar-doc: Read the mask of the BAR.
 void read_bar(uint32_t* mask, uint16_t bus, uint16_t device, uint16_t function, uint32_t offset) {
 	uint32_t data = pci::pci_read(bus, device, function, offset);
 	pci::pci_write(bus, device, function, offset, 0xffffffff);
@@ -11,6 +12,7 @@ void read_bar(uint32_t* mask, uint16_t bus, uint16_t device, uint16_t function, 
 	pci::pci_write(bus, device, function, offset, data);
 }
 
+//#pci::get_bar-doc: Get a pci bar with some more information about it. The information is: bar type, size, and address.
 pci_bar_t pci::get_bar(uint32_t* bar0, int bar_num, uint16_t bus, uint16_t device, uint16_t function) {
 	pci_bar_t bar;
 	uint32_t* bar_ptr = (uint32_t*) (bar0 + bar_num * sizeof(uint32_t));
@@ -46,6 +48,7 @@ pci_bar_t pci::get_bar(uint32_t* bar0, int bar_num, uint16_t bus, uint16_t devic
 	return bar;
 }
 
+//#pci::get_io_port-doc: Get the IO port address of the device. If the device doesn't have an IO port, 0 is returned.
 uint16_t pci::get_io_port(pci::pci_header_0_t* header, uint16_t bus, uint16_t device, uint16_t function) {
 	uint16_t port = 0;
 	

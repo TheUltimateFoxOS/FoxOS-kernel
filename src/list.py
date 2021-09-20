@@ -117,7 +117,7 @@ def get_file_functions(file, write_to, name):
 			f.write(no_content_template.replace("{%FILENAME%}", file.split("/")[-1]))
 		return
 	elif (file.endswith(".cpp")):
-		rproc = r"(([\w \*:]+)(?!.*(=)).+)((?<=[\s:~])((?!.*(if|switch$|do$|for$|while$|\[|\]$)).+)\s*\(([\w\s,<>\[\].=&':/*+]*?)\)\s*(const)?\s*(?={))"
+		rproc = r"(([\w \*:]+)(?!.*(=)).+)((?<=[\s:~])((?!.*(if|switch$|do$|for$|while$|\[$|\]$)).+)\s*\(([\w\s,<>\[\].=&':/*+]*?)\)\s*(const)?\s*(?={))"
 		code = loadtxt(file)
 		procs = re.finditer(rproc, code)
 

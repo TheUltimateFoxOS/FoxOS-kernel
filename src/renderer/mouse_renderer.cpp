@@ -35,7 +35,7 @@ uint8_t* MouseRenderer::get_mouse_pointer() {
 	return this->mouse_pointer;
 }
 
-//#MouseRenderer::on_mouse_down: Called when a mouse button is pressed. Currently draws dots on the screen.
+//#MouseRenderer::on_mouse_down-doc: Called when a mouse button is pressed. Currently draws dots on the screen.
 void MouseRenderer::on_mouse_down(uint8_t button) {
 	if (button == 1) { //Left
 		global_renderer2D->put_pix(mouse_position.x, mouse_position.y, 0xff00ff00);
@@ -46,7 +46,7 @@ void MouseRenderer::on_mouse_down(uint8_t button) {
 	}
 }
 
-//#MouseRenderer::on_mouse_move: Called when the mouse is moved. Re-draw the cursor to a new position.
+//#MouseRenderer::on_mouse_move-doc: Called when the mouse is moved. Re-draw the cursor to a new position.
 void MouseRenderer::on_mouse_move(uint8_t mouse_packet[4]) {
 	bool xNegative, yNegative, xOverflow, yOverflow;
 
