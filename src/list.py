@@ -7,6 +7,7 @@ import sys
 
 FOXOS_DIR = "./FoxOS-kernel/src"
 DOCS_DIR = "./FoxOS-kernel/doc"
+DOC_TMP_BUILD_FILE = "/tmp/"
 num_functions = 0
 num_functions_desc = 0
 
@@ -111,6 +112,9 @@ def get_file_functions(file, write_to, name):
 	newfile.write(file_template_html.replace("{%FILENAME%}", name))
 	newfile.close()
 
+	global num_functions_desc
+	global num_functions
+
 	if (file.endswith(".asm")):
 		#If an entry is found, run this: entries_found += 1
 		rproc = r"^([\w.]+: *)(?![\w ]+)"
@@ -185,6 +189,8 @@ def get_file_functions(file, write_to, name):
 
 			#print(attrubutes + " --- " + return_type + " --- " + class_name + " --- " + function_name + " --- " + params)
 
+			num_functions += 1
+
 			doc_name = ""
 			if (class_name != ""):
 				doc_name = class_name + "::" + function_name
@@ -206,6 +212,8 @@ def get_file_functions(file, write_to, name):
 			if (attrubutes != ""):
 				text = text + "        <b>Attributes:</b> <code>" + attrubutes + "</code><br/>\n"
 			if (doc_str != ""):
+				num_functions_desc += 1
+
 				text = text + f"        <b>Description:</b> {doc_str}<br/>\n"
 			else:
 				print("\x1b[31mNo description found for " + doc_name + " in " + file + "\x1b[0m")
@@ -276,7 +284,6 @@ def get_file_functions(file, write_to, name):
 
 			#print(attrubutes + " --- " + return_type + " --- " + class_name + " --- " + function_name + " --- " + params)
 		
-			global num_functions
 			num_functions += 1
 
 			doc_name = ""
@@ -302,7 +309,6 @@ def get_file_functions(file, write_to, name):
 			if (attrubutes != ""):
 				text = text + "        <b>Attributes:</b> <code>" + attrubutes + "</code><br/>\n"
 			if (doc_str != ""):
-				global num_functions_desc
 				num_functions_desc += 1
 				text = text + f"        <b>Description:</b> {doc_str}<br/>\n"
 			else:
@@ -431,12 +437,46 @@ if sys.argv[1] == "index":
 
 	print(FOXOS_DIR)
 	find_cpp(FOXOS_DIR, True, True)
+elif sys.argv[1] == "sumary":
+	DOC_TMP_BUILD_FILE += sys.argv[2]
+	with open(DOC_TMP_BUILD_FILE, "r") as f:
+		data = json.load(f)
+		#print(data)
+		
+		num_functions = data["_num_functions"]
+		num_functions_desc = data["_num_functions_desc"]
+	print("Documented " + str(num_functions) + " functions from witch " + str(num_functions_desc) + " have a description. This are " + str(round(num_functions_desc / num_functions * 100)) + "% of the functions.")
+
+	print_progress((num_functions_desc / num_functions) * 100)
 else:
 	SOURCE = sys.argv[1]
 	DEST = sys.argv[2]
+	DOC_TMP_BUILD_FILE += sys.argv[3]
+	
+	if not os.path.isfile(DOC_TMP_BUILD_FILE):
+		with open(DOC_TMP_BUILD_FILE, "w") as f:
+			f.write(json.dumps({
+				"_num_functions": 0,
+				"_num_functions_desc": 0
+			}))
+	else:
+		with open(DOC_TMP_BUILD_FILE, "r") as f:
+			data = json.load(f)
+			#print(data)
+			
+			num_functions = data["_num_functions"]
+			num_functions_desc = data["_num_functions_desc"]
+
 	#print(SOURCE, DEST)
+	#print(num_functions, num_functions_desc)
 	if _needs_skip(SOURCE):
 		with open(DEST, "w") as f:
 			f.write(no_content_template.replace("{%FILENAME%}", SOURCE.split("/")[-1]))
 	else:
 		get_file_functions(SOURCE, DEST, SOURCE.split("/")[-1])
+	
+	with open(DOC_TMP_BUILD_FILE, "w") as f:
+		f.write(json.dumps({
+			"_num_functions": num_functions,
+			"_num_functions_desc": num_functions_desc
+		}))

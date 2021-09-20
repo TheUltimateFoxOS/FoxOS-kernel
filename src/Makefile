@@ -53,15 +53,27 @@ $(OBJDIR)/%_asm.o: %.asm
 	@mkdir -p $(@D)
 	@$(ASM) $(ASMFLAGS) -o $@ $^
 
-doc: $(HTML_DOC)
+DOC_BUILD_ID = $(shell cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 20; echo;)
+
+# we need this so that DOC_BUILD_ID is static
+doc:
+	make _doc DOC_BUILD_ID=$(DOC_BUILD_ID)
+
+_doc: $(HTML_DOC)
 	@python list.py index $(shell pwd) $(shell pwd)/$(DOCDIR)
+
+	@echo "Generated documentation in $(DOCDIR)"
+	@echo "Build ID: $(DOC_BUILD_ID)"
+	
+	@echo "Run: \"python list.py sumary $(DOC_BUILD_ID)\" to see a sumary of the build!"
 
 $(DOCDIR)/%.html: %.cpp
 	@echo "HTML $^ -> $@"
 	@mkdir -p $(@D)
-	@python list.py $^ $@
+	@python list.py $^ $@ $(DOC_BUILD_ID)
+	
 
 $(DOCDIR)/%.html: %.asm
 	@echo "HTML $^ -> $@"
 	@mkdir -p $(@D)
-	@python list.py $^ $@
+	@python list.py $^ $@ $(DOC_BUILD_ID)
