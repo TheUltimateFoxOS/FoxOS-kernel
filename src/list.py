@@ -113,9 +113,122 @@ def get_file_functions(file, write_to, name):
 
 	if (file.endswith(".asm")):
 		#If an entry is found, run this: entries_found += 1
-		with open(DEST, "w") as f:
-			f.write(no_content_template.replace("{%FILENAME%}", file.split("/")[-1]))
-		return
+		rproc = r"^([\w.]+: *)(?![\w ]+)"
+		code = loadtxt(file)
+		procs = re.finditer(rproc, code, flags=re.MULTILINE)
+		for idx, i in enumerate(procs):
+
+			if i.group().strip()[:-1][0] == ".":
+				continue
+
+			sig_find_regex = r"^; ?# ?" + i.group().strip()[:-1] + r"-signature: ?([\w\d ;\":_\-#+\*.,'()]*);?"
+			sig = re.finditer(sig_find_regex, code, flags=re.MULTILINE)
+			sig_str = ""
+			for x in sig:
+				sig_str = x.group(1).strip()
+				if sig_str[-1] == ";":
+					sig_str = sig_str[:-1]
+				if not sig_str.startswith("extern \"C\""):
+					sig_str = "extern \"C\" " + sig_str
+			#print(sig_str)
+
+			doc_find_regex = r"^; ?# ?" + i.group().strip()[:-1] + r"-doc: ?([\w\d ;:_\-#+\*.,'()]*);?"
+			doc = re.finditer(doc_find_regex, code, flags=re.MULTILINE)
+			doc_str = ""
+
+			for x in doc:
+				doc_str += x.group(1)
+
+			if sig_str == "":
+				print("\033[33m" + "No signature found for: " + i.group().strip()[:-1] + "\033[0m")
+				continue
+			else:
+				entries_found += 1
+			
+			out = sig_str.strip()
+
+			return_type = out.split("(", 1)[0].strip()
+			attrubutes = ""
+			if (len(return_type.split(" ")) == 1):
+				function_name = return_type
+				return_type = ""
+			else:
+				ret_array = return_type.split(" ")
+				ret_len = len(ret_array) - 1
+				function_name = ret_array[ret_len].strip()
+
+				ret_array.pop()
+				ret_len = len(ret_array)
+				
+				return_type = ret_array[ret_len-1]
+				is_ret = True
+				for i in reversed(range(ret_len-1)):
+					if ((ret_array[i] == "short" or ret_array[i] == "long" or ret_array[i] == "signed" or ret_array[i] == "unsigned" or ret_array[i] == "const" or ret_array[i] == "restrict" or ret_array[i] == "auto" or ret_array[i] == "inline" or ret_array[i] == "mutable") and is_ret):
+						return_type = ret_array[i] + " " + return_type
+					else:
+						is_ret = False
+						attrubutes = ret_array[i] + " " + attrubutes
+
+				attrubutes = attrubutes.strip()
+				return_type = return_type.strip()
+
+			class_name = ""
+			if (len(function_name.split("::", 1)) != 1):
+				class_name = function_name.split("::", 1)[0]
+				function_name = function_name.split("::", 1)[1]
+
+			if (function_name.startswith("*")):
+				function_name = function_name[1:]
+				return_type = return_type + "*"
+
+			params = out.split("(", 1)[1].split(")", 1)[0]
+
+			#print(attrubutes + " --- " + return_type + " --- " + class_name + " --- " + function_name + " --- " + params)
+
+			doc_name = ""
+			if (class_name != ""):
+				doc_name = class_name + "::" + function_name
+			else:
+				doc_name = function_name
+			
+			doc_find_regex = r"^; ?# ?" + doc_name + r"-doc: ?([\w\d ;:_\-#+\*.,'()]*);?"
+			doc = re.finditer(doc_find_regex, code, flags=re.MULTILINE)
+			doc_str = ""
+
+			for x in doc:
+				doc_str += x.group(1)
+
+			text = "      <div>\n"
+			text = text + "        <h2>" + function_name + "</h2>\n"
+			text = text + "        <b>Signature:</b> <code>" + out + "</code><br/>\n"
+			if (class_name != ""):
+				text = text + "        <b>Class/Namespace:</b> <code>" + class_name + "</code><br/>\n"
+			if (attrubutes != ""):
+				text = text + "        <b>Attributes:</b> <code>" + attrubutes + "</code><br/>\n"
+			if (doc_str != ""):
+				text = text + f"        <b>Description:</b> {doc_str}<br/>\n"
+			else:
+				print("\x1b[31mNo description found for " + doc_name + " in " + file + "\x1b[0m")
+			if (params != ""):
+				text = text + "        <br/>\n"
+				text = text + "        <b>Parameters:</b><br/>\n"
+				text = text + "        <ul>\n"
+				for param_for in params.split(","):
+					param = param_for.strip()
+					text = text + "          <li><code>" + param + "</code></li>\n"
+				text = text + "        </ul>\n"
+			if (return_type != ""):
+				text = text + "        <br/>\n"
+				text = text + "        <b>Return:</b> <code>" + return_type + "</code>\n"
+			text = text + "      </div>\n"
+			text = text + "      <hr>\n"
+
+			f = open(write_to, "a")
+			f.write(text)
+			f.close()
+
+		#with open(DEST, "w") as f:
+		#	f.write(no_content_template.replace("{%FILENAME%}", file.split("/")[-1]))
 	elif (file.endswith(".cpp")):
 		rproc = r"(([\w \*:]+)(?!.*(=)).+)((?<=[\s:~])((?!.*(if|switch$|do$|for$|while$|\[$|\]$)).+)\s*\(([\w\s,<>\[\].=&':/*+]*?)\)\s*(const)?\s*(?={))"
 		code = loadtxt(file)
@@ -326,4 +439,4 @@ else:
 		with open(DEST, "w") as f:
 			f.write(no_content_template.replace("{%FILENAME%}", SOURCE.split("/")[-1]))
 	else:
-		get_file_functions(SOURCE, DEST, DEST.split("/")[-1])
+		get_file_functions(SOURCE, DEST, SOURCE.split("/")[-1])

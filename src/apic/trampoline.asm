@@ -5,6 +5,9 @@
 
 %define to_target(addr) ((addr - ap_trampoline) + 0x8000)
 
+;# ap_trampoline-signature: void ap_trampoline();
+;# ap_trampoline-doc: The main entry point for the application processor after spinup.
+
 ap_trampoline:
 	cli
 	cld
@@ -31,6 +34,10 @@ ap_trampoline:
 	jmp 0x8:to_target(ap_trampoline_64)
 
 [bits 64]
+
+
+;# ap_trampoline_64-signature: void ap_trampoline_64();
+;# ap_trampoline_64-doc: The 64 bit part of the main entry point for the application processor after spinup.
 
 ap_trampoline_64:
 	mov ax, 0x10

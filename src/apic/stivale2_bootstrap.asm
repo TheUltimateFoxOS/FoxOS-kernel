@@ -3,6 +3,9 @@
 [extern start_apic_timer]
 [extern load_gdt]
 
+;# stivale2_bootstrap-signature: void stivale2_bootstrap(stivale2_struct* bootinfo);
+;# stivale2_bootstrap-doc: The main entry point for aplication processors booted using the stivale2 boot protocol smp tag.
+
 stivale2_bootstrap:
 	cli
 

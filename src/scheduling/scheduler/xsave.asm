@@ -1,5 +1,8 @@
 [bits 64]
 
+;# _test_xsave_support-signature: extern "C" bool _test_xsave_support();
+;# _test_xsave_support-doc: Test if the processor supports the XSAVE instruction.
+
 [global _test_xsave_support]
 _test_xsave_support:
 	mov rax, 1
@@ -17,6 +20,9 @@ _test_xsave_support:
 	mov rax, 1
 	ret
 
+;# _enable_xsave-signature: extern "C" void _enable_xsave();
+;# _enable_xsave-doc: Enable the XSAVE instruction.
+
 [global _enable_xsave]
 _enable_xsave:
 	mov rax, cr0
@@ -29,6 +35,9 @@ _enable_xsave:
 
 	ret
 
+;# _get_xsave_area_size-signature: extern "C" uint64_t _get_xsave_area_size();
+;# _get_xsave_area_size-doc: Get the size of the XSAVE area.
+
 [global _get_xsave_area_size]
 _get_xsave_area_size:
 	mov rax, 0xd
@@ -36,6 +45,9 @@ _get_xsave_area_size:
 	cpuid
 	mov rax, rcx
 	ret
+
+;# _xsave_if_supported-signature: extern "C" void _xsave_if_supported(void* buffer);
+;# _xsave_if_supported-doc: Save the extendet cpu state to the XSAVE area if the processor supports it.
 
 [global _xsave_if_supported]
 _xsave_if_supported:
@@ -49,6 +61,9 @@ _xsave_if_supported:
 	xsave [rdi]
 .exit:
 	ret
+
+;# _xrstor_if_supported-signature: extern "C" void _xrstor_if_supported(void* buffer);
+;# _xrstor_if_supported-doc: Restore the extended cpu state from the XSAVE area if the processor supports it.
 
 [global _xrstor_if_supported]
 _xrstor_if_supported:
