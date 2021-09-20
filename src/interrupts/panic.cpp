@@ -156,6 +156,7 @@ void Panic::do_it(s_registers* regs) {
 
 		driver::global_serial_driver->printf("Starting stack trace using %d as max lines!\n", max_lines);
 
+		//#unwind-discard
 		unwind(max_lines, regs->rbp, [](int frame_num, uint64_t rip) {
 			if(resolve_symbol(resolve_symbol(rip)) != 0) {
 				char str[512];

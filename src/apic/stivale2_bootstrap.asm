@@ -70,6 +70,8 @@ stivale2_bootstrap:
 
 	jmp $
 
+;# stivale2_data-discard
+
 stivale2_data:
 	.status: db 0
 	.pagetable: dq 0

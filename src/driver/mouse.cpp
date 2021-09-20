@@ -12,7 +12,7 @@ void MouseEventHandler::OnMouseDown(uint8_t button) {
 
 }
 
-//#MouseEventHandler::OnMouseDown-doc: Virtual function to be overridden. Gets called when the mouse moves.
+//#MouseEventHandler::OnMouseMove-doc: Virtual function to be overridden. Gets called when the mouse moves.
 void MouseEventHandler::OnMouseMove(uint8_t mouse_packet[4]) {
 
 }

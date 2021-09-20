@@ -1,5 +1,6 @@
 #include <bitmap.h>
 
+//#Bitmap::operator[]-doc: Bitmap operator.
 bool Bitmap::operator[](uint64_t index){
 	return get(index);
 }

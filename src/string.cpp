@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdarg.h>
 
+//#strcpy-doc: Copy a source string into a destination string.
 char* strcpy(char* dest, const char* src) {
 	do {
 		*dest++ = *src++;
@@ -8,6 +9,7 @@ char* strcpy(char* dest, const char* src) {
 	return 0;
 }
 
+//#strlen-doc: Get the length of a string.
 int strlen(char* src){
 	int i = 0;
 	while (*src++)
@@ -15,6 +17,7 @@ int strlen(char* src){
 	return i;
 }
 
+//#strnlen-doc: Get the length of a string, with a maximum.
 size_t strnlen(const char *s, size_t maxlen) {
 	size_t i;
 	for (i = 0; i < maxlen; ++i)
@@ -23,6 +26,7 @@ size_t strnlen(const char *s, size_t maxlen) {
 	return i;
 }
 
+//#strcat-doc: Copy a source string into a destination string.
 char* strcat(char* dest, const char* src) {
 	int i;
 	int j;
@@ -37,6 +41,7 @@ char* strcat(char* dest, const char* src) {
 	return dest;
 }
 
+//#strcmp-doc: Compare str1 to str2. Return 0 if they are the same, and 1 if they are different.
 int strcmp(char* str1, char* str2) {
 	int i = 0;
 	int failed = 0;
@@ -52,6 +57,7 @@ int strcmp(char* str1, char* str2) {
 	return failed;
 }
 
+//#strstr-doc: Returns a pointer to the first occurrence of X in Y, or null if X is not in Y.
 const char* strstr(const char* X, const char* Y) {
 	if (*Y == '\0') {
 		return X;
@@ -66,6 +72,7 @@ const char* strstr(const char* X, const char* Y) {
 	return NULL;
 }
 
+//#strchr-doc: Returns a pointer to the first occurrence of the character c in s.
 char* strchr(const char* s, int c) {
 	if(s == NULL) {
 		return NULL;
@@ -79,6 +86,7 @@ char* strchr(const char* s, int c) {
 	return NULL;
 }
 
+//#strrchr-doc: Returns a pointer to the last occurrence of the character c in s.
 char* strrchr(const char* s, int c) {
 	const char *found, *p;
 
@@ -96,6 +104,7 @@ char* strrchr(const char* s, int c) {
 	return (char*) found;
 }
 
+//#strncmp-doc: Compare s1 to s2. Return 0 if they are the same up to the size n of str1, and 1 if they are different.
 int strncmp(const char* s1, const char* s2, size_t n ) {
 	while (n && *s1 && (*s1 == *s2)) {
 		++s1;
@@ -109,6 +118,7 @@ int strncmp(const char* s1, const char* s2, size_t n ) {
 	}
 }
 
+//#memcpy-doc: Copy a chunk of memory at the pointer src and with a size of n into dest.
 void* memcpy(void* dest, const void* src, size_t n){
 	unsigned char* d = (unsigned char*) dest;
 	const unsigned char* s = (unsigned char*) src;
@@ -120,6 +130,7 @@ void* memcpy(void* dest, const void* src, size_t n){
 	return dest;
 }
 
+//#memcmp-doc: Compare _s1 with a size of n to _s2.
 int memcmp(const void * _s1, const void* _s2, size_t n) {
 
 	const unsigned char* s1 = (unsigned char*) _s1;
@@ -135,6 +146,7 @@ int memcmp(const void * _s1, const void* _s2, size_t n) {
 	return 0;
 }
 
+//#strncpy-doc: Copy a number (count) of characters from _src to _dst.
 char* strncpy(char* _dst, const char* _src, size_t count) {
 	size_t len = strlen((char*) _src);
 	if(count < len) {
@@ -163,6 +175,7 @@ __res; })
 
 #define isdigit(c) (c >= '0' && c <= '9')
 
+//#skip_atoi-doc: Convert a string s into an integer.
 int skip_atoi(const char **s) {
 	int i = 0;
 
@@ -171,6 +184,7 @@ int skip_atoi(const char **s) {
 	return i;
 }
 
+//#number_printf-doc: Copy a number into str.
 char *number_printf(char *str, long num, int base, int size, int precision, int type) {
 	static const char digits[17] = "0123456789ABCDEF";
 
@@ -256,6 +270,7 @@ char *number_printf(char *str, long num, int base, int size, int precision, int 
 	return str;
 }
 
+//#vsprintf-doc: Printf some data into buf.
 int vsprintf(char *buf, const char *fmt, va_list args) {
 	int len;
 	unsigned long num;
@@ -426,6 +441,7 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
 	return str - buf;
 }
 
+//#sprintf-doc: Printf some data into buf.
 int sprintf(char *buf, const char *fmt, ...) {
 	va_list args;
 	int i;

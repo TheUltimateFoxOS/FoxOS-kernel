@@ -11,6 +11,7 @@
 #include <string.h>
 #include <assert.h>
 
+//#initialise_fat32-doc: Initialise a fat32 disk from an ID.
 vfs_mount* initialise_fat32(int disk_id) {
 	vfs_mount* mount = new vfs_mount;
 	memset(mount, 0, sizeof(mount));
@@ -37,7 +38,7 @@ vfs_mount* initialise_fat32(int disk_id) {
 	return mount;
 }
 
-
+//#fat32_mount-doc: Mount a VFS node.
 void fat32_mount(vfs_mount* node) {
 	assert(node->data2 < 10);
 
@@ -51,10 +52,12 @@ void fat32_mount(vfs_mount* node) {
 	node->data = fs;
 }
 
+//#fat32_unmount-doc: Unmount a VFS node.
 void fat32_unmount(vfs_mount* node) {
 	global_allocator.free_page(node->data);
 }
 
+//#fat32_open-doc: Open a file stream.
 FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 	FIL fil;
 	BYTE fatmode;
@@ -105,6 +108,7 @@ FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 	return fp;
 }
 
+//#fat32_close-doc: Close a file stream.
 int fat32_close(vfs_mount* node, file_t* stream) {
 	f_close((FIL*) stream->data);
 	free(stream->data);
@@ -112,18 +116,21 @@ int fat32_close(vfs_mount* node, file_t* stream) {
 	return 0;
 }
 
+//#fat32_read-doc: Read from a file stream.
 size_t fat32_read(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* stream) {
 	unsigned int has_read;
 	FRESULT res = f_read((FIL*)stream->data, buffer, size, &has_read);
 	return has_read;
 }
 
+//#fat32_write-doc: Write to a file stream.
 size_t fat32_write(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* stream) {
 	unsigned int has_written;
 	FRESULT res = f_write((FIL*)stream->data, buffer, size, &has_written);
 	return has_written;
 }
 
+//#fat32_opendir-doc: Open a directory stream.
 DIR* fat32_opendir(vfs_mount* node, const char* name) {
 	FATDIR dir;
 	DIR* dp = new DIR;
@@ -141,6 +148,7 @@ DIR* fat32_opendir(vfs_mount* node, const char* name) {
 	return dp;
 }
 
+//#fat32_closedir-doc: Close a directory stream.
 int fat32_closedir(vfs_mount*, DIR* stream) {
 	f_closedir((FATDIR*) stream->data);
 	free(stream->data);
@@ -148,6 +156,7 @@ int fat32_closedir(vfs_mount*, DIR* stream) {
 	return 0;
 }
 
+//#fat32_readdir-doc: Read the next file in a directory stream.
 struct dirent* fat32_readdir(vfs_mount*, DIR* stream) {
 	FILINFO flinf;
 	FRESULT fr = f_readdir((FATDIR*)stream->data, &flinf);
@@ -164,10 +173,12 @@ struct dirent* fat32_readdir(vfs_mount*, DIR* stream) {
 	return out;
 }
 
+//#fat32_rewinddir-doc: Rewind the directory stream to the start.
 void fat32_rewinddir(vfs_mount*, DIR* stream) {
 	f_readdir((FATDIR*) stream->data, 0);
 }
 
+//#fat32_mkdir-doc: Create a folder.
 int fat32_mkdir(vfs_mount*, const char* name, uint32_t) {
 	FRESULT fr = f_mkdir(name);
 	if (fr != FR_OK) {
@@ -177,6 +188,7 @@ int fat32_mkdir(vfs_mount*, const char* name, uint32_t) {
 	return 0;
 }
 
+//#fat32_unlink-doc: Delete a file or folder.
 int fat32_unlink(vfs_mount*, const char* name) {
 	FRESULT fr = f_unlink(name);
 	if (fr != FR_OK) {
@@ -186,6 +198,7 @@ int fat32_unlink(vfs_mount*, const char* name) {
 	return 0;
 }
 
+//#fat32_rename-doc: Rename a file or folder.
 int fat32_rename(vfs_mount*, const char* old_name, const char* new_name) {
 	FRESULT fr = f_rename(old_name, new_name);
 	if (fr != FR_OK) {

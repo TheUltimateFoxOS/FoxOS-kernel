@@ -12,6 +12,7 @@
 
 list* vfs_nodes = NULL;
 
+//#search_for_disk_name-doc: Search nodes for a name.
 bool search_for_disk_name(list_node_t* node, void* d1, void* d2, void* d3, void* d4) {
 	if(strcmp((char*) node->data2, (char*) d2) == 0) {
 		return true;
@@ -20,6 +21,7 @@ bool search_for_disk_name(list_node_t* node, void* d1, void* d2, void* d3, void*
 	}
 }
 
+//#mount-doc: Mount a VFS node to a name, or don't specify a name and get a random one given.
 vfs_result mount(vfs_mount* mount, char* name) {
 	if(vfs_nodes == NULL) {
 		vfs_nodes = new list(MAX_VFS_NODES);
@@ -63,6 +65,7 @@ char* mount(vfs_mount* node_mount) {
 	return node_name;
 }
 
+//#unmount-doc: Unmount a VFS node.
 vfs_result unmount(char* name) {
 	list_node_t* node = vfs_nodes->find_node(search_for_disk_name, NULL, name, NULL, NULL);
 	if (node == NULL) {
@@ -77,6 +80,7 @@ vfs_result unmount(char* name) {
 	return VFS_OK;
 }
 
+//#fopen-doc: Open a file stream.
 FILE* fopen(const char* filename, const char* mode) {
 	char _filename[1024] = "";
 	char* file_path = NULL;
@@ -107,6 +111,7 @@ FILE* fopen(const char* filename, const char* mode) {
 	return out;
 }
 
+//#fclose-doc: Close a file stream.
 int fclose(FILE* stream) {
 	if (stream->mount->close == NULL) {
 		set_task_errno(vfs_result::VFS_MISSING_FUNCTION);
@@ -118,6 +123,7 @@ int fclose(FILE* stream) {
 	return 0;
 }
 
+//#fwrite-doc: Write to a file stream.
 size_t fwrite(void* ptr, size_t size, size_t nmemb, FILE* stream) {
 	if (stream->mount->write == NULL) {
 		set_task_errno(vfs_result::VFS_MISSING_FUNCTION);
@@ -127,6 +133,7 @@ size_t fwrite(void* ptr, size_t size, size_t nmemb, FILE* stream) {
 	return ret;
 }
 
+//#fread-doc: Read from a file stream.
 size_t fread(void* ptr, size_t size, size_t nmemb, FILE* stream) {
 	if (stream->mount->read == NULL) {
 		set_task_errno(vfs_result::VFS_MISSING_FUNCTION);
@@ -136,6 +143,7 @@ size_t fread(void* ptr, size_t size, size_t nmemb, FILE* stream) {
 	return ret;
 }
 
+//#opendir-doc: Open a directory stream.
 DIR* opendir(const char* name) {
 	char _filename[1024] = "";
 	char* file_path = NULL;
@@ -166,6 +174,7 @@ DIR* opendir(const char* name) {
 	return out;	
 }
 
+//#closedir-doc: Close a directory stream.
 int closedir(DIR* stream) {
 	if (stream->mount->close == NULL) {
 		set_task_errno(vfs_result::VFS_MISSING_FUNCTION);
@@ -177,6 +186,7 @@ int closedir(DIR* stream) {
 	return 0;
 }
 
+//#readdir-doc: Read the next file in a directory stream.
 struct dirent* readdir(DIR* stream) {
 	if (stream->mount->readdir == NULL) {
 		set_task_errno(vfs_result::VFS_MISSING_FUNCTION);
@@ -187,6 +197,7 @@ struct dirent* readdir(DIR* stream) {
 	return ret;
 }
 
+//#rewinddir-doc: Rewind the directory stream to the start.
 void rewinddir(DIR* stream) {
 	if (stream->mount->rewinddir == NULL) {
 		set_task_errno(vfs_result::VFS_MISSING_FUNCTION);
@@ -195,6 +206,7 @@ void rewinddir(DIR* stream) {
 	stream->mount->rewinddir(stream->mount, stream);
 }
 
+//#mkdir-doc: Create a directory.
 int mkdir(const char* name, uint32_t mode) {
 	char _filename[1024] = "";
 	char* file_path = NULL;
@@ -223,6 +235,7 @@ int mkdir(const char* name, uint32_t mode) {
 	return ((vfs_mount*) node->data1)->mkdir((vfs_mount*) node->data1, name, mode);
 }
 
+//#unlink-doc: Delete a file or directory.
 int unlink(const char* name) {
 	char _filename[1024] = "";
 	char* file_path = NULL;
@@ -251,6 +264,7 @@ int unlink(const char* name) {
 	return ((vfs_mount*) node->data1)->unlink((vfs_mount*) node->data1, name);
 }
 
+//#rename-doc: Rename a file or directory.
 int rename(const char* old_name, const char* new_name) {
 	if (strcmp((char*) old_name, (char*) new_name) == 0) {
 		return -1;

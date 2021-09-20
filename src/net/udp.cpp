@@ -2,43 +2,53 @@
 
 using namespace net;
 
+//#UdpHandler::UdpHandler-doc: Empty constructor.
 UdpHandler::UdpHandler() {
 
 }
 
+//#UdpHandler::~UdpHandler-doc: Empty constructor.
 UdpHandler::~UdpHandler() {
 
 }
 
+//#UdpHandler::onUdpMessage-doc: Virtual function to be overridden. Called when the UDP client/server receives a message.
 void UdpHandler::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size) {
 
 }
 
+//#UdpSocket::UdpSocket-doc: UdpSocket constructor.
 UdpSocket::UdpSocket(UdpProvider* provider) {
 	this->provider = provider;
 	this->handler = nullptr;
 	this->listening = false;
 }
 
+//#UdpSocket::~UdpSocket-doc: Empty destructor.
 UdpSocket::~UdpSocket() {
 
 }
 
+//#UdpSocket::handleUdpMessage-doc: Called when the UDP client/server receives a message.
 void UdpSocket::handleUdpMessage(uint8_t* data, size_t size) {
 	if (this->handler != nullptr) {
 		this->handler->onUdpMessage(this, data, size);
 	}
 }
 
+//#UdpSocket::send-doc: Send some data using a UDP socket.
 void UdpSocket::send(uint8_t* data, size_t size) {
 	provider->send(this, data, size);
 }
 
+//#UdpSocket::disconnect-doc: Disconnect a socket from the client/server.
 void UdpSocket::disconnect() {
 	provider->disconnect(this);
 }
 
+//#UdpProvider::UdpProvider-doc: Empty constructor.
 UdpProvider::UdpProvider(Ipv4Provider *ipv4Provider): Ipv4Handler(ipv4Provider, 0x11), binds(100) {
+
 }
 
 struct udp_search_t {
@@ -47,6 +57,7 @@ struct udp_search_t {
 	udp_header_t* udp_header;
 };
 
+//#UdpProvider::onInternetProtocolReceived-doc: Called when IP receives a message.
 bool UdpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_BE, uint8_t* payload, uint32_t size) {
 	if (size < sizeof(udp_header_t)) {
 		return false;
@@ -86,6 +97,7 @@ bool UdpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_B
 	return false;
 }
 
+//#UdpProvider::connect-doc: Connect to a UDP server using a given IP address and port.
 UdpSocket* UdpProvider::connect(uint32_t ip, uint16_t port) {
 	UdpSocket* socket = new UdpSocket(this);
 
@@ -107,6 +119,7 @@ UdpSocket* UdpProvider::connect(uint32_t ip, uint16_t port) {
 	return socket;
 }
 
+//#UdpProvider::listen-doc: Open a UDP server on a port.
 UdpSocket* UdpProvider::listen(uint16_t port) {
 	UdpSocket* socket = new UdpSocket(this);
 
@@ -126,6 +139,7 @@ UdpSocket* UdpProvider::listen(uint16_t port) {
 	return socket;
 }
 
+//#UdpProvider::disconnect-doc: Disconnect a socket from a client/server.
 void UdpProvider::disconnect(UdpSocket* socket) {
 	listv2<udp_bind_t>::node* n = binds.find<UdpSocket*>([](UdpSocket* s, listv2<udp_bind_t>::node* n) {
 		return s == n->data.handler;
@@ -137,6 +151,7 @@ void UdpProvider::disconnect(UdpSocket* socket) {
 	binds.remove(n);
 }
 
+//#UdpProvider::send-doc: Send some data using a UDP socket.
 void UdpProvider::send(UdpSocket* socket, uint8_t* data, size_t size) {
 	uint16_t total_size = size + sizeof(udp_header_t);
 	uint8_t* packet = (uint8_t*)malloc(total_size);
@@ -156,6 +171,7 @@ void UdpProvider::send(UdpSocket* socket, uint8_t* data, size_t size) {
 	free(packet);
 }
 
+//#UdpProvider::bind-doc: Bind a UDP handler to a socket.
 void UdpProvider::bind(UdpSocket* socket, UdpHandler* handler) {
 	socket->handler = handler;
 }

@@ -32,7 +32,7 @@ void hpet::sleep_d(uint64_t seconds) {
 	sleep((uint64_t) (seconds * 1000));
 }
 
-//#hpet::sleepis_available_d-doc: Get if the HPET is available.
+//#hpet::is_available-doc: Get if the HPET is available.
 bool hpet::is_available() {
 	return hpet_ != nullptr;
 }

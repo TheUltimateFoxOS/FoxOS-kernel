@@ -102,7 +102,9 @@ ap_trampoline_64:
 	call [to_target(ap_trampoline_data.entry)]
 
 	jmp $
- 
+
+;# ap_trampoline_data-discard
+
 ap_trampoline_data:
 	.status: db 0
 	.pagetable: dq 0

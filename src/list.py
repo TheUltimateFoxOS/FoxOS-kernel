@@ -142,6 +142,11 @@ def get_file_functions(file, write_to, name):
 
 			for x in doc:
 				doc_str += x.group(1)
+			
+			maybe_discard = r"; ?# ?" + i.group().strip()[:-1] + r"-discard"
+			if (re.search(maybe_discard, code)):
+				continue
+			
 
 			if sig_str == "":
 				print("\033[33m" + "No signature found for: " + i.group().strip()[:-1] + "\033[0m")
@@ -238,7 +243,7 @@ def get_file_functions(file, write_to, name):
 		#with open(DEST, "w") as f:
 		#	f.write(no_content_template.replace("{%FILENAME%}", file.split("/")[-1]))
 	elif (file.endswith(".cpp")):
-		rproc = r"(([\w \*:]+)(?!.*(=)).+)((?<=[\s:~])((?!.*(if|switch$|do$|for$|while$|\[$|\]$)).+)\s*\(([\w\s,<>\[\].=&':/*+]*?)\)\s*(const)?\s*(?={))"
+		rproc = r"(([\w \*:]+)(?!.*(=)).+)((?<=[\s:~])((?!.*(if|switch$|do$|for$|while|\[$|\]$)).+)\s*\(([\w\s,<>\[\].=&':/*+]*?)\)\s*(const)?\s*(?={))"
 		code = loadtxt(file)
 		procs = re.finditer(rproc, code)
 
@@ -294,7 +299,11 @@ def get_file_functions(file, write_to, name):
 			doc_name = doc_name.replace("[", "\\[")
 			doc_name = doc_name.replace("]", "\\]")
 
-			doc_find_regex = r"\/{2}#" + doc_name + r"-doc: ?([\w\d ;:_\-#+\*.,']*)"
+			maybe_discard = r"\/{2} ?# ?" + doc_name + r"-discard"
+			if (re.search(maybe_discard, code)):
+				continue
+
+			doc_find_regex = r"\/{2} ?# ?" + doc_name + r"-doc: ?([\w\d ;:_\-#+\*.,']*)"
 			doc = re.finditer(doc_find_regex, code)
 			doc_str = ""
 

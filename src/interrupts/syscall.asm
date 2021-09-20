@@ -95,6 +95,9 @@ syscall_handler:
 [GLOBAL syscall_table]
 [GLOBAL syscall_table_end]
 
+;# syscall_table-discard
+;# syscall_table_end-discard
+
 syscall_table:
 	dq syscall_test
 	dq syscall_test2
