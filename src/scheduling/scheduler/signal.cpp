@@ -4,6 +4,7 @@
 #define ASSERT_NO_PANIC // dont panic
 #include <assert.h>
 
+//#handle_signal-doc: Handels a signal. Calls the signal handler witch the current task has registered. Returns false if there is no handler registered.
 bool handle_signal(int signum) {
 	int id;
 	task* t;
@@ -20,6 +21,7 @@ assert_fail:
 	return false;
 }
 
+//#register_signal_handler-doc: Registers a signal handler for a signal for the current task.
 void register_signal_handler(int signum, uint64_t handler) {
 	int id;
 	task* t;

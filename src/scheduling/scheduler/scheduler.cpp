@@ -28,6 +28,7 @@ uint64_t xsave_area = 0;
 
 define_spinlock(task_queue_lock);
 
+//#init_sched-doc: Initialize the scheduler. This starts a empty idle task for every cpu core.
 void init_sched() {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );
@@ -74,6 +75,7 @@ void init_sched() {
 
 extern "C" void task_entry();
 
+//#new_task-doc: Create a new task. The entry point passed can't be a elf file.
 task* new_task(void* entry) {
 #ifdef XSAVE_SUPPORT
 	if (_test_xsave_support()) {
@@ -131,6 +133,7 @@ task* new_task(void* entry) {
 	return t;
 }
 
+//#task_exit-doc: Terminate the current task. Marks the task as dead and then waits in a infinite loop until the next timer tick.
 void task_exit() {
 	__asm__ __volatile__ ("cli");
 	atomic_acquire_spinlock(task_queue_lock);
@@ -156,6 +159,7 @@ void task_exit() {
 	}
 }
 
+//#load_elf-doc: Load an elf file into memory and start it. Here you can pass the argv and envp array.
 task* load_elf(void* ptr, uint64_t file_size, const char **argv, const char **envp) {
 	Elf64_Ehdr* header = (Elf64_Ehdr*) ptr;
 
@@ -217,6 +221,7 @@ task* load_elf(void* ptr, uint64_t file_size, const char **argv, const char **en
 #include <driver/serial.h>
 #include <interrupts/panic.h>
 
+//#schedule-doc: The main scheduler. Gets called from the timer interrupt. Loads the next task for the current core and delets the task if needed else it restores the cpu state and jumps to the task.
 extern "C" void schedule(s_registers* regs) {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );

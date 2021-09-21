@@ -289,8 +289,6 @@ def get_file_functions(file, write_to, name):
 
 			#print(attrubutes + " --- " + return_type + " --- " + class_name + " --- " + function_name + " --- " + params)
 		
-			num_functions += 1
-
 			doc_name = ""
 			if (class_name != ""):
 				doc_name = class_name + "::" + function_name
@@ -302,6 +300,8 @@ def get_file_functions(file, write_to, name):
 			maybe_discard = r"\/{2} ?# ?" + doc_name + r"-discard"
 			if (re.search(maybe_discard, code)):
 				continue
+
+			num_functions += 1
 
 			doc_find_regex = r"\/{2} ?# ?" + doc_name + r"-doc: ?([\w\d ;:_\-#+\*.,']*)"
 			doc = re.finditer(doc_find_regex, code)

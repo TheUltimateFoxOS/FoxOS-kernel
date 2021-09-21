@@ -65,7 +65,8 @@ _doc: $(HTML_DOC)
 	@echo "Generated documentation in $(DOCDIR)"
 	@echo "Build ID: $(DOC_BUILD_ID)"
 	
-	@echo "Run: \"python list.py sumary $(DOC_BUILD_ID)\" to see a sumary of the build!"
+	@#echo "Run: \"python list.py sumary $(DOC_BUILD_ID)\" to see a sumary of the build!"
+	@python list.py sumary $(DOC_BUILD_ID)
 
 $(DOCDIR)/%.html: %.cpp
 	@echo "HTML $^ -> $@"

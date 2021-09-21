@@ -107,7 +107,7 @@ HeapSegHdr* HeapSegHdr::split(size_t split_length){
 	return new_split_hdr;
 }
 
-//#expand_heap-doc: Expand the head size.
+//#expand_heap-doc: Expand the heap size.
 void expand_heap(size_t length){
 	if (length % 0x1000) {
 		length -= length % 0x1000;
@@ -131,6 +131,7 @@ void expand_heap(size_t length){
 	new_segment->combine_backward();
 }
 
+//#HeapSegHdr::combine_forward-doc: Combine the next part of the heap with the current one. Used to expand the heap size.
 void HeapSegHdr::combine_forward(){
 	if (next == NULL) return;
 	if (!next->free) return;
@@ -146,6 +147,7 @@ void HeapSegHdr::combine_forward(){
 	next = next->next;
 }
 
+//#HeapSegHdr::combine_backward-doc: Combine the next part of the heap with the current one. Used to expand the heap size.
 void HeapSegHdr::combine_backward(){
 	if (last != NULL && last->free) last->combine_forward();
 }

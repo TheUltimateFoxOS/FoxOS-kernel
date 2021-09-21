@@ -10,6 +10,7 @@
 
 using namespace gpt;
 
+//#gpt::read_gpt-doc: Read the guid partition table from a disk. Returns false if an error occurred. Automaticaly registers a new virtual disk for every partition found.
 bool gpt::read_gpt(driver::disk::Disk* disk) {
 	gpt_header* header = (gpt_header*) global_allocator.request_page();
 	disk->read(1, 1, (void*) header);

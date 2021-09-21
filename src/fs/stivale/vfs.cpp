@@ -6,7 +6,7 @@
 
 #include <scheduling/scheduler/errno.h>
 
-
+//#initialise_stivale_modules-doc: Initialise a new mount point for a stivale module mount.
 vfs_mount* initialise_stivale_modules(stivale2_struct* bootinfo) {
 	vfs_mount* mount = new vfs_mount;
 	memset(mount, 0, sizeof(mount));
@@ -25,6 +25,7 @@ vfs_mount* initialise_stivale_modules(stivale2_struct* bootinfo) {
 	return mount;
 }
 
+//#stivale_modules_mount-doc: The mount function for a stivale mount point.
 void stivale_modules_mount(vfs_mount* node) {
 	stivale2_module* mod = (stivale2_module*) node->data;
 
@@ -34,6 +35,7 @@ void stivale_modules_mount(vfs_mount* node) {
 
 }
 
+//#stivale_modules_open-doc: The open function for a stivale mount point.
 FILE* stivale_modules_open(vfs_mount* node, const char* file, const char* mode) {
 	FILE* fp = new FILE;
 
@@ -81,6 +83,7 @@ found:
 	return fp;
 }
 
+//#stivale_modules_close-doc: The close function for a stivale mount point.
 int stivale_modules_close(vfs_mount* node, file_t* stream) {
 	stream->data = NULL;
 	stream->size = 0;
@@ -89,6 +92,7 @@ int stivale_modules_close(vfs_mount* node, file_t* stream) {
 	return 0;
 }
 
+//#stivale_modules_read-doc: The read function for a stivale mount point.
 size_t stivale_modules_read(vfs_mount* node, void* buffer, size_t size, size_t nmemb, file_t* stream) {
 	for (int i = 0; i < size; i++) {
 		*(uint8_t*) ((uint64_t) buffer + i) = *((uint8_t*) stream->data + i);
