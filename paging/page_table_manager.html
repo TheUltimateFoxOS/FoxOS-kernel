@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - page_table_manager.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>PageTableManager</h2>
+        <b>Signature:</b> <code>PageTableManager::PageTableManager(PageTable* PML4_address)</code><br/>
+        <b>Class/Namespace:</b> <code>PageTableManager</code><br/>
+        <b>Description:</b> Constructor for the PageTableManager class. Needs a physical address of the page table to be used.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>PageTable* PML4_address</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>map_memory</h2>
+        <b>Signature:</b> <code>void PageTableManager::map_memory(void* virtual_memory, void* physical_memory)</code><br/>
+        <b>Class/Namespace:</b> <code>PageTableManager</code><br/>
+        <b>Description:</b> Map a page of memory to a virtual address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* virtual_memory</code></li>
+          <li><code>void* physical_memory</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>map_range</h2>
+        <b>Signature:</b> <code>void PageTableManager::map_range(void* virtual_memory, void* physical_memory, size_t range)</code><br/>
+        <b>Class/Namespace:</b> <code>PageTableManager</code><br/>
+        <b>Description:</b> Map a range of physical memory to virtual memory.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* virtual_memory</code></li>
+          <li><code>void* physical_memory</code></li>
+          <li><code>size_t range</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

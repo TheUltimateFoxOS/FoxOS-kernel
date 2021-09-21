@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - dns.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>DomainNameServiceProvider</h2>
+        <b>Signature:</b> <code>DomainNameServiceProvider::DomainNameServiceProvider(UdpSocket* socket) : results(100)</code><br/>
+        <b>Class/Namespace:</b> <code>DomainNameServiceProvider</code><br/>
+        <b>Description:</b> DomainNameServiceProvider constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>UdpSocket* socket</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~DomainNameServiceProvider</h2>
+        <b>Signature:</b> <code>DomainNameServiceProvider::~DomainNameServiceProvider()</code><br/>
+        <b>Class/Namespace:</b> <code>DomainNameServiceProvider</code><br/>
+        <b>Description:</b> DomainNameServiceProvider destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>resolv_domain_to_hostname</h2>
+        <b>Signature:</b> <code>void DomainNameServiceProvider::resolv_domain_to_hostname(char* dst_hostname, char* src_domain)</code><br/>
+        <b>Class/Namespace:</b> <code>DomainNameServiceProvider</code><br/>
+        <b>Description:</b> Resolve src_domain to dst_hostname.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* dst_hostname</code></li>
+          <li><code>char* src_domain</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>dns_request</h2>
+        <b>Signature:</b> <code>void DomainNameServiceProvider::dns_request(char* name)</code><br/>
+        <b>Class/Namespace:</b> <code>DomainNameServiceProvider</code><br/>
+        <b>Description:</b> Send a DNS request.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>resolve</h2>
+        <b>Signature:</b> <code>uint32_t DomainNameServiceProvider::resolve(char* name)</code><br/>
+        <b>Class/Namespace:</b> <code>DomainNameServiceProvider</code><br/>
+        <b>Description:</b> Resolve a domain name to an IP address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>onUdpMessage</h2>
+        <b>Signature:</b> <code>void DomainNameServiceProvider::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>DomainNameServiceProvider</code><br/>
+        <b>Description:</b> Called when a UDP message is received by the DNS client.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>UdpSocket *socket</code></li>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

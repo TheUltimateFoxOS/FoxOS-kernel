@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - driver.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>Driver</h2>
+        <b>Signature:</b> <code>Driver::Driver()</code><br/>
+        <b>Class/Namespace:</b> <code>Driver</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>~Driver</h2>
+        <b>Signature:</b> <code>Driver::~Driver()</code><br/>
+        <b>Class/Namespace:</b> <code>Driver</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>activate</h2>
+        <b>Signature:</b> <code>void Driver::activate()</code><br/>
+        <b>Class/Namespace:</b> <code>Driver</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Activate the driver.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>is_presend</h2>
+        <b>Signature:</b> <code>bool Driver::is_presend()</code><br/>
+        <b>Class/Namespace:</b> <code>Driver</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Get if is pre send.<br/>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_name</h2>
+        <b>Signature:</b> <code>char* Driver::get_name()</code><br/>
+        <b>Class/Namespace:</b> <code>Driver</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Get the driver's name.<br/>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>DriverManager</h2>
+        <b>Signature:</b> <code>DriverManager::DriverManager()</code><br/>
+        <b>Class/Namespace:</b> <code>DriverManager</code><br/>
+        <b>Description:</b> DriverManager constructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>add_driver</h2>
+        <b>Signature:</b> <code>void DriverManager::add_driver(Driver* driver)</code><br/>
+        <b>Class/Namespace:</b> <code>DriverManager</code><br/>
+        <b>Description:</b> Add a driver to the driver manager.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>Driver* driver</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>set_status</h2>
+        <b>Signature:</b> <code>void DriverManager::set_status(char* status, uint64_t color)</code><br/>
+        <b>Class/Namespace:</b> <code>DriverManager</code><br/>
+        <b>Description:</b> Print the device status onto the screen.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* status</code></li>
+          <li><code>uint64_t color</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>activate_driver</h2>
+        <b>Signature:</b> <code>void DriverManager::activate_driver(bool force, Driver* driver)</code><br/>
+        <b>Class/Namespace:</b> <code>DriverManager</code><br/>
+        <b>Description:</b> Activate a driver.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>bool force</code></li>
+          <li><code>Driver* driver</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>activate_all</h2>
+        <b>Signature:</b> <code>void DriverManager::activate_all(bool force)</code><br/>
+        <b>Class/Namespace:</b> <code>DriverManager</code><br/>
+        <b>Description:</b> Activate all drivers.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>bool force</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>find_driver_by_name</h2>
+        <b>Signature:</b> <code>Driver* DriverManager::find_driver_by_name(char* name)</code><br/>
+        <b>Class/Namespace:</b> <code>DriverManager</code><br/>
+        <b>Description:</b> Find a driver by name.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>Driver*</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

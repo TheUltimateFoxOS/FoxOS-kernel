@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - heap.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>initialize_heap</h2>
+        <b>Signature:</b> <code>void initialize_heap(void* heap_address, size_t page_count)</code><br/>
+        <b>Description:</b> Initialize the memory heap.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* heap_address</code></li>
+          <li><code>size_t page_count</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>free</h2>
+        <b>Signature:</b> <code>void free(void* address)</code><br/>
+        <b>Description:</b> Free some allocated memory at an address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>malloc</h2>
+        <b>Signature:</b> <code>void* malloc(size_t size)</code><br/>
+        <b>Description:</b> Allocate some memory.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>realloc</h2>
+        <b>Signature:</b> <code>void* realloc(void* ptr, size_t oldSize, size_t size)</code><br/>
+        <b>Description:</b> Re-allocate some memory with a different size.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* ptr</code></li>
+          <li><code>size_t oldSize</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>split</h2>
+        <b>Signature:</b> <code>HeapSegHdr* HeapSegHdr::split(size_t split_length)</code><br/>
+        <b>Class/Namespace:</b> <code>HeapSegHdr</code><br/>
+        <b>Description:</b> Split a heap segment.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>size_t split_length</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>HeapSegHdr*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>expand_heap</h2>
+        <b>Signature:</b> <code>void expand_heap(size_t length)</code><br/>
+        <b>Description:</b> Expand the heap size.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>size_t length</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>combine_forward</h2>
+        <b>Signature:</b> <code>void HeapSegHdr::combine_forward()</code><br/>
+        <b>Class/Namespace:</b> <code>HeapSegHdr</code><br/>
+        <b>Description:</b> Combine the next part of the heap with the current one. Used to expand the heap size.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>combine_backward</h2>
+        <b>Signature:</b> <code>void HeapSegHdr::combine_backward()</code><br/>
+        <b>Class/Namespace:</b> <code>HeapSegHdr</code><br/>
+        <b>Description:</b> Combine the next part of the heap with the current one. Used to expand the heap size.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

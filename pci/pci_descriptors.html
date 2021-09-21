@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - pci_descriptors.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>get_vendor_name</h2>
+        <b>Signature:</b> <code>const char* get_vendor_name(uint16_t vendor_ID)</code><br/>
+        <b>Description:</b> Get the vendor name of a pci device as a string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t vendor_ID</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_device_name</h2>
+        <b>Signature:</b> <code>const char* get_device_name(uint16_t vendor_ID, uint16_t device_ID)</code><br/>
+        <b>Description:</b> Get the device name of a pci device as a string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t vendor_ID</code></li>
+          <li><code>uint16_t device_ID</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>mass_storage_controller_subclass_name</h2>
+        <b>Signature:</b> <code>const char* mass_storage_controller_subclass_name(uint8_t subclass_code)</code><br/>
+        <b>Description:</b> Get the subclass name of a mass storage controller as a string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t subclass_code</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>serial_bus_controller_subclass_name</h2>
+        <b>Signature:</b> <code>const char* serial_bus_controller_subclass_name(uint8_t subclass_code)</code><br/>
+        <b>Description:</b> Get the subclass name of a serial bus controller as a string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t subclass_code</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>bridge_device_subclass_name</h2>
+        <b>Signature:</b> <code>const char* bridge_device_subclass_name(uint8_t subclass_code)</code><br/>
+        <b>Description:</b> Get the subclass name of a bridge device as a string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t subclass_code</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_subclass_name</h2>
+        <b>Signature:</b> <code>const char* get_subclass_name(uint8_t class_code, uint8_t subclass_code)</code><br/>
+        <b>Description:</b> Get the subclass name of a device as a string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t class_code</code></li>
+          <li><code>uint8_t subclass_code</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_prog_IF_name</h2>
+        <b>Signature:</b> <code>const char* get_prog_IF_name(uint8_t class_code, uint8_t subclass_code, uint8_t prog_IF)</code><br/>
+        <b>Description:</b> Get the interface name of a device as a string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t class_code</code></li>
+          <li><code>uint8_t subclass_code</code></li>
+          <li><code>uint8_t prog_IF</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - page_frame_allocator.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>read_EFI_memory_map</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::read_EFI_memory_map(stivale2_struct* bootinfo)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Read the memory map from the EFI and initialize the allocator with it.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>stivale2_struct* bootinfo</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>init_bitmap</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::init_bitmap(size_t bitmapsize, void* buffer_address)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Initialize the bitmap of the allocator to 0.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>size_t bitmapsize</code></li>
+          <li><code>void* buffer_address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>request_page</h2>
+        <b>Signature:</b> <code>void* PageFrameAllocator::request_page()</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Request a page from the allocator. Returns a physical address.<br/>
+        <br/>
+        <b>Return:</b> <code>void*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>request_pages</h2>
+        <b>Signature:</b> <code>void* PageFrameAllocator::request_pages(int amount)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Request a number of pages from the allocator. Returns a physical address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int amount</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>free_page</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::free_page(void* address)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Free a page.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>free_pages</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::free_pages(void* address, uint64_t page_count)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Free a range of pages.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+          <li><code>uint64_t page_count</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>lock_page</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::lock_page(void* address)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Lock a page.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>lock_pages</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::lock_pages(void* address, uint64_t page_count)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Lock a range of pages.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+          <li><code>uint64_t page_count</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>unreserve_page</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::unreserve_page(void* address)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Unreserves a page.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>unreserve_pages</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::unreserve_pages(void* address, uint64_t page_count)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Uneserves a range of pages.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+          <li><code>uint64_t page_count</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>reserve_page</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::reserve_page(void* address)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Reserves a page.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>reserve_pages</h2>
+        <b>Signature:</b> <code>void PageFrameAllocator::reserve_pages(void* address, uint64_t pageCount)</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Reserves a range of pages.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* address</code></li>
+          <li><code>uint64_t pageCount</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_free_RAM</h2>
+        <b>Signature:</b> <code>uint64_t PageFrameAllocator::get_free_RAM()</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Get the amount of free RAM in bytes.<br/>
+        <br/>
+        <b>Return:</b> <code>uint64_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_used_RAM</h2>
+        <b>Signature:</b> <code>uint64_t PageFrameAllocator::get_used_RAM()</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Get the amount of used memory in bytes.<br/>
+        <br/>
+        <b>Return:</b> <code>uint64_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_reserved_RAM</h2>
+        <b>Signature:</b> <code>uint64_t PageFrameAllocator::get_reserved_RAM()</code><br/>
+        <b>Class/Namespace:</b> <code>PageFrameAllocator</code><br/>
+        <b>Description:</b> Get the amount of reserved memory in bytes.<br/>
+        <br/>
+        <b>Return:</b> <code>uint64_t</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

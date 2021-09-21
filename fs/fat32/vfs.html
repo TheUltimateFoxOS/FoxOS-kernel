@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - vfs.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>initialise_fat32</h2>
+        <b>Signature:</b> <code>vfs_mount* initialise_fat32(int disk_id)</code><br/>
+        <b>Description:</b> Initialise a fat32 disk from an ID.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int disk_id</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>vfs_mount*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_mount</h2>
+        <b>Signature:</b> <code>void fat32_mount(vfs_mount* node)</code><br/>
+        <b>Description:</b> Mount a VFS node.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount* node</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_unmount</h2>
+        <b>Signature:</b> <code>void fat32_unmount(vfs_mount* node)</code><br/>
+        <b>Description:</b> Unmount a VFS node.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount* node</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_open</h2>
+        <b>Signature:</b> <code>FILE* fat32_open(vfs_mount* node, const char* file, const char* mode)</code><br/>
+        <b>Description:</b> Open a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount* node</code></li>
+          <li><code>const char* file</code></li>
+          <li><code>const char* mode</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>FILE*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_close</h2>
+        <b>Signature:</b> <code>int fat32_close(vfs_mount* node, file_t* stream)</code><br/>
+        <b>Description:</b> Close a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount* node</code></li>
+          <li><code>file_t* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_read</h2>
+        <b>Signature:</b> <code>size_t fat32_read(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* stream)</code><br/>
+        <b>Description:</b> Read from a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>void* buffer</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>size_t nmemb</code></li>
+          <li><code>file_t* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>size_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_write</h2>
+        <b>Signature:</b> <code>size_t fat32_write(vfs_mount*, void* buffer, size_t size, size_t nmemb, file_t* stream)</code><br/>
+        <b>Description:</b> Write to a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>void* buffer</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>size_t nmemb</code></li>
+          <li><code>file_t* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>size_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_opendir</h2>
+        <b>Signature:</b> <code>DIR* fat32_opendir(vfs_mount* node, const char* name)</code><br/>
+        <b>Description:</b> Open a directory stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount* node</code></li>
+          <li><code>const char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>DIR*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_closedir</h2>
+        <b>Signature:</b> <code>int fat32_closedir(vfs_mount*, DIR* stream)</code><br/>
+        <b>Description:</b> Close a directory stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>DIR* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_readdir</h2>
+        <b>Signature:</b> <code>struct dirent* fat32_readdir(vfs_mount*, DIR* stream)</code><br/>
+        <b>Attributes:</b> <code>struct</code><br/>
+        <b>Description:</b> Read the next file in a directory stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>DIR* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>dirent*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_rewinddir</h2>
+        <b>Signature:</b> <code>void fat32_rewinddir(vfs_mount*, DIR* stream)</code><br/>
+        <b>Description:</b> Rewind the directory stream to the start.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>DIR* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_mkdir</h2>
+        <b>Signature:</b> <code>int fat32_mkdir(vfs_mount*, const char* name, uint32_t)</code><br/>
+        <b>Description:</b> Create a folder.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>const char* name</code></li>
+          <li><code>uint32_t</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_unlink</h2>
+        <b>Signature:</b> <code>int fat32_unlink(vfs_mount*, const char* name)</code><br/>
+        <b>Description:</b> Delete a file or folder.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>const char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_rename</h2>
+        <b>Signature:</b> <code>int fat32_rename(vfs_mount*, const char* old_name, const char* new_name)</code><br/>
+        <b>Description:</b> Rename a file or folder.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>const char* old_name</code></li>
+          <li><code>const char* new_name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

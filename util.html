@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - util.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>prepare_memory</h2>
+        <b>Signature:</b> <code>void prepare_memory(stivale2_struct* bootinfo)</code><br/>
+        <b>Description:</b> Read's the memory map and initialises the PageFrameAllocator also loads a new page table.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>stivale2_struct* bootinfo</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>set_idt_gate</h2>
+        <b>Signature:</b> <code>void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector)</code><br/>
+        <b>Description:</b> Sets the interrupt gate for the given interrupt.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* handler</code></li>
+          <li><code>uint8_t entry_offset</code></li>
+          <li><code>uint8_t type_attr</code></li>
+          <li><code>uint8_t selector</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>prepare_interrupts</h2>
+        <b>Signature:</b> <code>void prepare_interrupts()</code><br/>
+        <b>Description:</b> Sets up the IDT and the interrupt handlers. Also remaps the programable interrupt controller.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>setup_globals</h2>
+        <b>Signature:</b> <code>void setup_globals(stivale2_struct* bootinfo)</code><br/>
+        <b>Description:</b> Setup global variables. This function initializes the FontRenderer, MouseRenderer, Renderer2D, DriverManager, SerialDriver, DiskManager, NicManager and Shell.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>stivale2_struct* bootinfo</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>prepare_acpi</h2>
+        <b>Signature:</b> <code>void prepare_acpi(stivale2_struct* bootinfo)</code><br/>
+        <b>Description:</b> This function initializes the hpet if available. Also parses the matd table and sets up pci devices either using mcfg or the legacy method.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>stivale2_struct* bootinfo</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>init_kernel</h2>
+        <b>Signature:</b> <code>KernelInfo init_kernel(stivale2_struct* bootinfo)</code><br/>
+        <b>Description:</b> Initializes the core kernel features. like the memory manager's, the timer, the framebuffer, the renderer's, the kernel symbol resolver and interrupts.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>stivale2_struct* bootinfo</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>KernelInfo</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

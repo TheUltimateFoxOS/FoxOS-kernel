@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - ipv4.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>Ipv4Handler</h2>
+        <b>Signature:</b> <code>Ipv4Handler::Ipv4Handler(Ipv4Provider* backend, uint8_t protocol)</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Handler</code><br/>
+        <b>Description:</b> Ipv4Handler constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>Ipv4Provider* backend</code></li>
+          <li><code>uint8_t protocol</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~Ipv4Handler</h2>
+        <b>Signature:</b> <code>Ipv4Handler::~Ipv4Handler()</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Handler</code><br/>
+        <b>Description:</b> Ipv4Handler destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>send</h2>
+        <b>Signature:</b> <code>void Ipv4Handler::send(uint32_t dest_ip_be, uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Handler</code><br/>
+        <b>Description:</b> Send some data using IPV4.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t dest_ip_be</code></li>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>onInternetProtocolReceived</h2>
+        <b>Signature:</b> <code>bool Ipv4Handler::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_BE, uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Handler</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Called when IP receives a message.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t srcIP_BE</code></li>
+          <li><code>uint32_t dstIP_BE</code></li>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>Ipv4Provider</h2>
+        <b>Signature:</b> <code>Ipv4Provider::Ipv4Provider(EtherFrameProvider* backend, AddressResolutionProtocol* arp, uint32_t gateway_ip_be, uint32_t subnet_mask_be) : EtherFrameHandler(backend, 0x0800), handlers(100)</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Provider</code><br/>
+        <b>Description:</b> Ipv4Provider constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>EtherFrameProvider* backend</code></li>
+          <li><code>AddressResolutionProtocol* arp</code></li>
+          <li><code>uint32_t gateway_ip_be</code></li>
+          <li><code>uint32_t subnet_mask_be</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~Ipv4Provider</h2>
+        <b>Signature:</b> <code>Ipv4Provider::~Ipv4Provider()</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Provider</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>onEtherFrameReceived</h2>
+        <b>Signature:</b> <code>bool Ipv4Provider::onEtherFrameReceived(uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Provider</code><br/>
+        <b>Description:</b> Called when the ether frame receives a message.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>send</h2>
+        <b>Signature:</b> <code>void Ipv4Provider::send(uint32_t dest_ip_be, uint8_t protocol, uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Provider</code><br/>
+        <b>Description:</b> Send some data using IPV4.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t dest_ip_be</code></li>
+          <li><code>uint8_t protocol</code></li>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>checksum</h2>
+        <b>Signature:</b> <code>uint16_t Ipv4Provider::checksum(uint16_t* data, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>Ipv4Provider</code><br/>
+        <b>Description:</b> Create a 2 byte checksum from a data pointer with a given size.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t* data</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint16_t</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

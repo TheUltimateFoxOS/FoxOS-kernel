@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - apic.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>lapic_write</h2>
+        <b>Signature:</b> <code>void lapic_write(uint64_t lptr, uint64_t reg, uint32_t value)</code><br/>
+        <b>Description:</b> Write a register from the lapic.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t lptr</code></li>
+          <li><code>uint64_t reg</code></li>
+          <li><code>uint32_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>lapic_read</h2>
+        <b>Signature:</b> <code>uint32_t lapic_read(uint64_t lptr, uint64_t reg)</code><br/>
+        <b>Description:</b> Read a register from the lapic.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t lptr</code></li>
+          <li><code>uint64_t reg</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>lapic_wait</h2>
+        <b>Signature:</b> <code>void lapic_wait(uint64_t lptr)</code><br/>
+        <b>Description:</b> Wait until a apic command is executed.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t lptr</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>ap_main</h2>
+        <b>Signature:</b> <code>extern "C" void ap_main()</code><br/>
+        <b>Attributes:</b> <code>extern "C"</code><br/>
+        <b>Description:</b> Main entry point for application processors. This function pools until it finds work and then executes it.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>start_apic_timer</h2>
+        <b>Signature:</b> <code>extern "C" void start_apic_timer(int time_betwen_interrupts)</code><br/>
+        <b>Attributes:</b> <code>extern "C"</code><br/>
+        <b>Description:</b> Start the local apic timer. This function is called by the initialising application processors.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int time_betwen_interrupts</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>run_on_ap</h2>
+        <b>Signature:</b> <code>int run_on_ap(void_function function)</code><br/>
+        <b>Description:</b> Run a function on a application processor. Can be used to offload work to the application processor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void_function function</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>wait_for_aps</h2>
+        <b>Signature:</b> <code>void wait_for_aps()</code><br/>
+        <b>Description:</b> Wait until all application processors are finished with their work.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>start_all_cpus</h2>
+        <b>Signature:</b> <code>void start_all_cpus(stivale2_struct* bootinfo)</code><br/>
+        <b>Description:</b> Boot all application processors and initialize them enough to run the shceduler.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>stivale2_struct* bootinfo</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

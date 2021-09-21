@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - renderer2D.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>Renderer2D</h2>
+        <b>Signature:</b> <code>Renderer2D::Renderer2D(framebuffer_t* target_frame_buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Renderer2D constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>framebuffer_t* target_frame_buffer</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>put_pix</h2>
+        <b>Signature:</b> <code>void Renderer2D::put_pix(uint32_t x, uint32_t y, uint32_t colour)</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Set a pixel on screen.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t x</code></li>
+          <li><code>uint32_t y</code></li>
+          <li><code>uint32_t colour</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_pix</h2>
+        <b>Signature:</b> <code>uint32_t Renderer2D::get_pix(uint32_t x, uint32_t y)</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Get a pixel on screen.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t x</code></li>
+          <li><code>uint32_t y</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>clear_mouse_cursor</h2>
+        <b>Signature:</b> <code>void Renderer2D::clear_mouse_cursor(uint8_t* mouse_pointer, point_t pos)</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Clear the mouse cursor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* mouse_pointer</code></li>
+          <li><code>point_t pos</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>draw_overlay_mouse_cursor</h2>
+        <b>Signature:</b> <code>void Renderer2D::draw_overlay_mouse_cursor(uint8_t* mouse_pointer, point_t pos, uint32_t colour)</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Draw the mouse cursor on screen and store what is under it.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* mouse_pointer</code></li>
+          <li><code>point_t pos</code></li>
+          <li><code>uint32_t colour</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>scroll_down</h2>
+        <b>Signature:</b> <code>void Renderer2D::scroll_down()</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Scroll the screen down.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>load_bitmap</h2>
+        <b>Signature:</b> <code>void Renderer2D::load_bitmap(uint8_t data[], int y)</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Load a bitmap into the center of the frame buffer at a Y position OR at an X and a Y position.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t data[]</code></li>
+          <li><code>int y</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>load_bitmap</h2>
+        <b>Signature:</b> <code>void Renderer2D::load_bitmap(uint8_t data[], int x, int y)</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Load a bitmap into the center of the frame buffer at a Y position OR at an X and a Y position.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t data[]</code></li>
+          <li><code>int x</code></li>
+          <li><code>int y</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_bitmap_info</h2>
+        <b>Signature:</b> <code>renderer::point_t Renderer2D::get_bitmap_info(uint8_t data[])</code><br/>
+        <b>Class/Namespace:</b> <code>Renderer2D</code><br/>
+        <b>Description:</b> Get a bitmap's information.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t data[]</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>renderer::point_t</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

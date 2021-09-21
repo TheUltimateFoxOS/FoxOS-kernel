@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - layer_renderer.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>allocate_layer_matching</h2>
+        <b>Signature:</b> <code>layer_t* renderer::allocate_layer_matching(framebuffer_t* target_frame_buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>renderer</code><br/>
+        <b>Description:</b> Allocates a new layer matching the given framebuffer configuration.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>framebuffer_t* target_frame_buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>layer_t*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>destroy_layer</h2>
+        <b>Signature:</b> <code>void renderer::destroy_layer(layer_t* layer)</code><br/>
+        <b>Class/Namespace:</b> <code>renderer</code><br/>
+        <b>Description:</b> Destroys a layer.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>layer_t* layer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>layer_renderer</h2>
+        <b>Signature:</b> <code>layer_renderer::layer_renderer(framebuffer_t* target_frame_buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>layer_renderer</code><br/>
+        <b>Description:</b> Layer renderer constructor. Takes a target framebuffer.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>framebuffer_t* target_frame_buffer</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~layer_renderer</h2>
+        <b>Signature:</b> <code>layer_renderer::~layer_renderer()</code><br/>
+        <b>Class/Namespace:</b> <code>layer_renderer</code><br/>
+        <b>Description:</b> Destructor for the layer renderer.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>render_layer</h2>
+        <b>Signature:</b> <code>void layer_renderer::render_layer(layer_t* layer, bool base_layer)</code><br/>
+        <b>Class/Namespace:</b> <code>layer_renderer</code><br/>
+        <b>Description:</b> Renders a layer to the buffer. If the layer is the first layer please set the base_layer to true.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>layer_t* layer</code></li>
+          <li><code>bool base_layer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>render</h2>
+        <b>Signature:</b> <code>void layer_renderer::render()</code><br/>
+        <b>Class/Namespace:</b> <code>layer_renderer</code><br/>
+        <b>Description:</b> Renders the buffer to the target framebuffer.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

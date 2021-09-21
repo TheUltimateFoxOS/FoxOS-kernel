@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - keyboard.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>KeyboardEventHandler</h2>
+        <b>Signature:</b> <code>KeyboardEventHandler::KeyboardEventHandler()</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardEventHandler</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>KeyDown</h2>
+        <b>Signature:</b> <code>void KeyboardEventHandler::KeyDown(char c)</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardEventHandler</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Gets called when a key is pressed.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char c</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>SpecialKeyDown</h2>
+        <b>Signature:</b> <code>void KeyboardEventHandler::SpecialKeyDown(special_key key)</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardEventHandler</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Gets called when a special key is pressed down.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>special_key key</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>SpecialKeyUp</h2>
+        <b>Signature:</b> <code>void KeyboardEventHandler::SpecialKeyUp(special_key key)</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardEventHandler</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Gets called when a special key is up.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>special_key key</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>KeyboardDriver</h2>
+        <b>Signature:</b> <code>KeyboardDriver::KeyboardDriver(KeyboardEventHandler* handler) : interrupts::InterruptHandler(0x21), dataport(0x60), commandport(0x64)</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardDriver</code><br/>
+        <b>Description:</b> Keyboard driver constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>KeyboardEventHandler* handler</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>activate</h2>
+        <b>Signature:</b> <code>void KeyboardDriver::activate()</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardDriver</code><br/>
+        <b>Description:</b> Activate the keyboard driver.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>is_presend</h2>
+        <b>Signature:</b> <code>bool KeyboardDriver::is_presend()</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardDriver</code><br/>
+        <b>Description:</b> Get if is pre send.<br/>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>handle</h2>
+        <b>Signature:</b> <code>void KeyboardDriver::handle()</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardDriver</code><br/>
+        <b>Description:</b> Keyboard event interrupt handler.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_name</h2>
+        <b>Signature:</b> <code>char* KeyboardDriver::get_name()</code><br/>
+        <b>Class/Namespace:</b> <code>KeyboardDriver</code><br/>
+        <b>Description:</b> Get the driver name.<br/>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

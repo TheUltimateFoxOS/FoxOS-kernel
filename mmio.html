@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - mmio.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>read8</h2>
+        <b>Signature:</b> <code>uint8_t MMIO::read8(uint64_t p_address)</code><br/>
+        <b>Class/Namespace:</b> <code>MMIO</code><br/>
+        <b>Description:</b> Read a uint8 from an MMIO address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t p_address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint8_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read16</h2>
+        <b>Signature:</b> <code>uint16_t MMIO::read16(uint64_t p_address)</code><br/>
+        <b>Class/Namespace:</b> <code>MMIO</code><br/>
+        <b>Description:</b> Read a uint16 from an MMIO address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t p_address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint16_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read32</h2>
+        <b>Signature:</b> <code>uint32_t MMIO::read32(uint64_t p_address)</code><br/>
+        <b>Class/Namespace:</b> <code>MMIO</code><br/>
+        <b>Description:</b> Read a uint32 from an MMIO address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t p_address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read64</h2>
+        <b>Signature:</b> <code>uint64_t MMIO::read64(uint64_t p_address)</code><br/>
+        <b>Class/Namespace:</b> <code>MMIO</code><br/>
+        <b>Description:</b> Read a uint64 from an MMIO address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t p_address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint64_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write8</h2>
+        <b>Signature:</b> <code>void MMIO::write8(uint64_t p_address,uint8_t p_value)</code><br/>
+        <b>Class/Namespace:</b> <code>MMIO</code><br/>
+        <b>Description:</b> Write a uint8 to an MMIO address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t p_address</code></li>
+          <li><code>uint8_t p_value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write16</h2>
+        <b>Signature:</b> <code>void MMIO::write16(uint64_t p_address,uint16_t p_value)</code><br/>
+        <b>Class/Namespace:</b> <code>MMIO</code><br/>
+        <b>Description:</b> Write a uint16 to an MMIO address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t p_address</code></li>
+          <li><code>uint16_t p_value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write32</h2>
+        <b>Signature:</b> <code>void MMIO::write32(uint64_t p_address,uint32_t p_value)</code><br/>
+        <b>Class/Namespace:</b> <code>MMIO</code><br/>
+        <b>Description:</b> Write a uint32 to an MMIO address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t p_address</code></li>
+          <li><code>uint32_t p_value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write64</h2>
+        <b>Signature:</b> <code>void MMIO::write64(uint64_t p_address,uint64_t p_value)</code><br/>
+        <b>Class/Namespace:</b> <code>MMIO</code><br/>
+        <b>Description:</b> Write a uint64 to an MMIO address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t p_address</code></li>
+          <li><code>uint64_t p_value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - pci_bar.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>read_bar</h2>
+        <b>Signature:</b> <code>void read_bar(uint32_t* mask, uint16_t bus, uint16_t device, uint16_t function, uint32_t offset)</code><br/>
+        <b>Description:</b> Read the mask of the BAR.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t* mask</code></li>
+          <li><code>uint16_t bus</code></li>
+          <li><code>uint16_t device</code></li>
+          <li><code>uint16_t function</code></li>
+          <li><code>uint32_t offset</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_bar</h2>
+        <b>Signature:</b> <code>pci_bar_t pci::get_bar(uint32_t* bar0, int bar_num, uint16_t bus, uint16_t device, uint16_t function)</code><br/>
+        <b>Class/Namespace:</b> <code>pci</code><br/>
+        <b>Description:</b> Get a pci bar with some more information about it. The information is: bar type, size, and address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t* bar0</code></li>
+          <li><code>int bar_num</code></li>
+          <li><code>uint16_t bus</code></li>
+          <li><code>uint16_t device</code></li>
+          <li><code>uint16_t function</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>pci_bar_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_io_port</h2>
+        <b>Signature:</b> <code>uint16_t pci::get_io_port(pci::pci_header_0_t* header, uint16_t bus, uint16_t device, uint16_t function)</code><br/>
+        <b>Class/Namespace:</b> <code>pci</code><br/>
+        <b>Description:</b> Get the IO port address of the device. If the device doesn't have an IO port, 0 is returned.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>pci::pci_header_0_t* header</code></li>
+          <li><code>uint16_t bus</code></li>
+          <li><code>uint16_t device</code></li>
+          <li><code>uint16_t function</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint16_t</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

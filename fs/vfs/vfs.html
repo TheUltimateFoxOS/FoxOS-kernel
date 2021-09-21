@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - vfs.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>search_for_disk_name</h2>
+        <b>Signature:</b> <code>bool search_for_disk_name(list_node_t* node, void* d1, void* d2, void* d3, void* d4)</code><br/>
+        <b>Description:</b> Search nodes for a name.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>list_node_t* node</code></li>
+          <li><code>void* d1</code></li>
+          <li><code>void* d2</code></li>
+          <li><code>void* d3</code></li>
+          <li><code>void* d4</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>mount</h2>
+        <b>Signature:</b> <code>vfs_result mount(vfs_mount* mount, char* name)</code><br/>
+        <b>Description:</b> Mount a VFS node to a name, or don't specify a name and get a random one given.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount* mount</code></li>
+          <li><code>char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>vfs_result</code>
+      </div>
+      <hr>
+      <div>
+        <h2>mount</h2>
+        <b>Signature:</b> <code>char* mount(vfs_mount* node_mount)</code><br/>
+        <b>Description:</b> Mount a VFS node to a name, or don't specify a name and get a random one given.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount* node_mount</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>unmount</h2>
+        <b>Signature:</b> <code>vfs_result unmount(char* name)</code><br/>
+        <b>Description:</b> Unmount a VFS node.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>vfs_result</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fopen</h2>
+        <b>Signature:</b> <code>FILE* fopen(const char* filename, const char* mode)</code><br/>
+        <b>Description:</b> Open a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* filename</code></li>
+          <li><code>const char* mode</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>FILE*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fclose</h2>
+        <b>Signature:</b> <code>int fclose(FILE* stream)</code><br/>
+        <b>Description:</b> Close a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>FILE* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fwrite</h2>
+        <b>Signature:</b> <code>size_t fwrite(void* ptr, size_t size, size_t nmemb, FILE* stream)</code><br/>
+        <b>Description:</b> Write to a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* ptr</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>size_t nmemb</code></li>
+          <li><code>FILE* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>size_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fread</h2>
+        <b>Signature:</b> <code>size_t fread(void* ptr, size_t size, size_t nmemb, FILE* stream)</code><br/>
+        <b>Description:</b> Read from a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* ptr</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>size_t nmemb</code></li>
+          <li><code>FILE* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>size_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>opendir</h2>
+        <b>Signature:</b> <code>DIR* opendir(const char* name)</code><br/>
+        <b>Description:</b> Open a directory stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>DIR*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>closedir</h2>
+        <b>Signature:</b> <code>int closedir(DIR* stream)</code><br/>
+        <b>Description:</b> Close a directory stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>DIR* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>readdir</h2>
+        <b>Signature:</b> <code>struct dirent* readdir(DIR* stream)</code><br/>
+        <b>Attributes:</b> <code>struct</code><br/>
+        <b>Description:</b> Read the next file in a directory stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>DIR* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>dirent*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>rewinddir</h2>
+        <b>Signature:</b> <code>void rewinddir(DIR* stream)</code><br/>
+        <b>Description:</b> Rewind the directory stream to the start.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>DIR* stream</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>mkdir</h2>
+        <b>Signature:</b> <code>int mkdir(const char* name, uint32_t mode)</code><br/>
+        <b>Description:</b> Create a directory.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* name</code></li>
+          <li><code>uint32_t mode</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>unlink</h2>
+        <b>Signature:</b> <code>int unlink(const char* name)</code><br/>
+        <b>Description:</b> Delete a file or directory.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>rename</h2>
+        <b>Signature:</b> <code>int rename(const char* old_name, const char* new_name)</code><br/>
+        <b>Description:</b> Rename a file or directory.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* old_name</code></li>
+          <li><code>const char* new_name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

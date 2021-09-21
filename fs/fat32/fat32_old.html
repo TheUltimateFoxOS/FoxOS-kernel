@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - fat32_old.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>read_sector</h2>
+        <b>Signature:</b> <code>int fat32_old::read_sector(uint8_t* buffer, uint32_t sector)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Reads a sector from the disk.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* buffer</code></li>
+          <li><code>uint32_t sector</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write_sector</h2>
+        <b>Signature:</b> <code>int fat32_old::write_sector(uint8_t* buffer, uint32_t sector)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Writes a sector to the disk.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* buffer</code></li>
+          <li><code>uint32_t sector</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fs_read_sector</h2>
+        <b>Signature:</b> <code>int fat32_old::fs_read_sector(uint8_t* buffer, uint32_t sector)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Read a sector with the fs_start_sector offset.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* buffer</code></li>
+          <li><code>uint32_t sector</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>MBR_read</h2>
+        <b>Signature:</b> <code>MBR_info_t fat32_old::MBR_read(uint8_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Reads the MBR from the disk.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>MBR_info_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>BPB_read</h2>
+        <b>Signature:</b> <code>fs_info_t fat32_old::BPB_read(uint8_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Reads the BPB from the disk.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>fs_info_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read_info</h2>
+        <b>Signature:</b> <code>fs_info_t fat32_old::read_info(uint8_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Reads the fs info from the disk.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>fs_info_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fsync</h2>
+        <b>Signature:</b> <code>int fat32_old::fsync(sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Syncs the disk.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fetch</h2>
+        <b>Signature:</b> <code>int fat32_old::fetch(uint32_t sector, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Fetches a sector from the disk.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t sector</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_fat_entry</h2>
+        <b>Signature:</b> <code>uint32_t fat32_old::get_fat_entry(uint32_t cluster, fs_info_t fs_info, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Gets a FAT entry.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t cluster</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>format_file_name</h2>
+        <b>Signature:</b> <code>char* fat32_old::format_file_name(directory_entry_t *entry)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Formats a file name to a fat32 name.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>directory_entry_t *entry</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read_one_file_info</h2>
+        <b>Signature:</b> <code>file_info_t fat32_old::read_one_file_info(directory_entry_t* dir_entry, uint32_t cluster, fs_info_t fs_info)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Reads the info of a file.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>directory_entry_t* dir_entry</code></li>
+          <li><code>uint32_t cluster</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>file_info_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>find_file</h2>
+        <b>Signature:</b> <code>file_info_t* fat32_old::find_file(uint32_t cluster, const char *filename, file_info_t *fp, fs_info_t fs_info, sector_buffer_t *buffer, int recursive)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Finds a file in the directory.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t cluster</code></li>
+          <li><code>const char *filename</code></li>
+          <li><code>file_info_t *fp</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t *buffer</code></li>
+          <li><code>int recursive</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>file_info_t*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fopen</h2>
+        <b>Signature:</b> <code>file_info_t* fat32_old::fopen(const char *filename, const char *mode, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Almost posix compliant implementation of fopen.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char *filename</code></li>
+          <li><code>const char *mode</code></li>
+          <li><code>file_info_t* fp</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>file_info_t*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>find_free_cluster</h2>
+        <b>Signature:</b> <code>uint32_t fat32_old::find_free_cluster(uint32_t base, fs_info_t fs_info, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Finds a free cluster.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t base</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>set_fat_entry</h2>
+        <b>Signature:</b> <code>int fat32_old::set_fat_entry(uint32_t cluster, uint32_t value, fs_info_t fs_info, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Sets a fat entry.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t cluster</code></li>
+          <li><code>uint32_t value</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fseek</h2>
+        <b>Signature:</b> <code>int fat32_old::fseek(file_info_t* fp, int32_t base, long offset, fs_info_t fs_info, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Almost posix compliant implementation of fseek.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>file_info_t* fp</code></li>
+          <li><code>int32_t base</code></li>
+          <li><code>long offset</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>cluster_to_sector</h2>
+        <b>Signature:</b> <code>uint32_t fat32_old::cluster_to_sector(uint32_t cluster, fs_info_t fs_info)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Converts a cluster number to a sector number.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t cluster</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fread</h2>
+        <b>Signature:</b> <code>int fat32_old::fread(uint8_t* dest, size_t size, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Almost posix compliant implementation of fread.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* dest</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>file_info_t* fp</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fwrite</h2>
+        <b>Signature:</b> <code>int fat32_old::fwrite(uint8_t* src, uint32_t size, uint32_t count, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Almost posix compliant implementation of fwrite.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* src</code></li>
+          <li><code>uint32_t size</code></li>
+          <li><code>uint32_t count</code></li>
+          <li><code>file_info_t* fp</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>ffsync</h2>
+        <b>Signature:</b> <code>int fat32_old::ffsync(file_info_t* fp, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Flush the file system buffers.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>file_info_t* fp</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fclose</h2>
+        <b>Signature:</b> <code>int fat32_old::fclose(file_info_t* fp, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Almost posix compliant implementation of fclose.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>file_info_t* fp</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>touch</h2>
+        <b>Signature:</b> <code>int fat32_old::touch(const char* filename, fs_info_t fs_info, sector_buffer_t* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Create a new file.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* filename</code></li>
+          <li><code>fs_info_t fs_info</code></li>
+          <li><code>sector_buffer_t* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>show_info</h2>
+        <b>Signature:</b> <code>void fat32_old::show_info(fs_info_t fs_info)</code><br/>
+        <b>Class/Namespace:</b> <code>fat32_old</code><br/>
+        <b>Description:</b> Print information about the file system to the serial console.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>fs_info_t fs_info</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

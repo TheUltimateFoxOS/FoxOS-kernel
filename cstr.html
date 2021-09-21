@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - cstr.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>to_string</h2>
+        <b>Signature:</b> <code>const char* to_string(uint64_t value)</code><br/>
+        <b>Description:</b> Convert a number to a string. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>to_hstring</h2>
+        <b>Signature:</b> <code>const char* to_hstring(uint64_t value)</code><br/>
+        <b>Description:</b> Convert a number to a string. The string will be in hexadecimal. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>to_hstring</h2>
+        <b>Signature:</b> <code>const char* to_hstring(uint32_t value)</code><br/>
+        <b>Description:</b> Convert a number to a string. The string will be in hexadecimal. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>to_hstring</h2>
+        <b>Signature:</b> <code>const char* to_hstring(uint16_t value)</code><br/>
+        <b>Description:</b> Convert a number to a string. The string will be in hexadecimal. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>to_hstring</h2>
+        <b>Signature:</b> <code>const char* to_hstring(uint8_t value)</code><br/>
+        <b>Description:</b> Convert a number to a string. The string will be in hexadecimal. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>to_string</h2>
+        <b>Signature:</b> <code>const char* to_string(int64_t value)</code><br/>
+        <b>Description:</b> Convert a number to a string. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int64_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>to_string</h2>
+        <b>Signature:</b> <code>const char* to_string(double value, uint8_t decimalPlaces)</code><br/>
+        <b>Description:</b> Convert a number to a string. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>double value</code></li>
+          <li><code>uint8_t decimalPlaces</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>to_string</h2>
+        <b>Signature:</b> <code>const char* to_string(double value)</code><br/>
+        <b>Description:</b> Convert a number to a string. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>double value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

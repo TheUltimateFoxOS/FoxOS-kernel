@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - tcp.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>TcpHandler</h2>
+        <b>Signature:</b> <code>TcpHandler::TcpHandler()</code><br/>
+        <b>Class/Namespace:</b> <code>TcpHandler</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>~TcpHandler</h2>
+        <b>Signature:</b> <code>TcpHandler::~TcpHandler()</code><br/>
+        <b>Class/Namespace:</b> <code>TcpHandler</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>onTcpMessage</h2>
+        <b>Signature:</b> <code>bool TcpHandler::onTcpMessage(TcpSocket* socket, uint8_t* data, size_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpHandler</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Called when the TCP client<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>TcpSocket* socket</code></li>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>TcpSocket</h2>
+        <b>Signature:</b> <code>TcpSocket::TcpSocket(TcpProvider* provider)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
+        <b>Description:</b> TcpSocket destrcutor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>TcpProvider* provider</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~TcpSocket</h2>
+        <b>Signature:</b> <code>TcpSocket::~TcpSocket()</code><br/>
+        <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
+        <b>Description:</b> Empty destrcutor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>handleTcpMessage</h2>
+        <b>Signature:</b> <code>bool TcpSocket::handleTcpMessage(uint8_t* data, size_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
+        <b>Description:</b> Called when the TCP client<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>send</h2>
+        <b>Signature:</b> <code>void TcpSocket::send(uint8_t* data, size_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
+        <b>Description:</b> Send some data using a TCP socket.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>disconnect</h2>
+        <b>Signature:</b> <code>void TcpSocket::disconnect()</code><br/>
+        <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
+        <b>Description:</b> Disconnect a socket from the client<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>TcpProvider</h2>
+        <b>Signature:</b> <code>TcpProvider::TcpProvider(Ipv4Provider *ipv4Provider): Ipv4Handler(ipv4Provider, 0x06), binds(100)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>Ipv4Provider *ipv4Provider</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>onInternetProtocolReceived</h2>
+        <b>Signature:</b> <code>bool TcpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_BE, uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
+        <b>Description:</b> Called when IP receives a message.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t srcIP_BE</code></li>
+          <li><code>uint32_t dstIP_BE</code></li>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>connect</h2>
+        <b>Signature:</b> <code>TcpSocket* TcpProvider::connect(uint32_t ip, uint16_t port)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
+        <b>Description:</b> Connect to a TCP server using a given IP address and port.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t ip</code></li>
+          <li><code>uint16_t port</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>TcpSocket*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>listen</h2>
+        <b>Signature:</b> <code>TcpSocket* TcpProvider::listen(uint16_t port)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
+        <b>Description:</b> Open a TCP server on a port.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t port</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>TcpSocket*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>disconnect</h2>
+        <b>Signature:</b> <code>void TcpProvider::disconnect(TcpSocket* socket)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
+        <b>Description:</b> Disconnect a socket from a client<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>TcpSocket* socket</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>send</h2>
+        <b>Signature:</b> <code>void TcpProvider::send(TcpSocket* socket, uint8_t* data, size_t size, uint16_t flags)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
+        <b>Description:</b> Send some data using a TCP socket.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>TcpSocket* socket</code></li>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>uint16_t flags</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>bind</h2>
+        <b>Signature:</b> <code>void TcpProvider::bind(TcpSocket* socket, TcpHandler* handler)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
+        <b>Description:</b> Bind a TCP handler to a socket.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>TcpSocket* socket</code></li>
+          <li><code>TcpHandler* handler</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - string.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>strcpy</h2>
+        <b>Signature:</b> <code>char* strcpy(char* dest, const char* src)</code><br/>
+        <b>Description:</b> Copy a source string into a destination string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* dest</code></li>
+          <li><code>const char* src</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strlen</h2>
+        <b>Signature:</b> <code>int strlen(char* src)</code><br/>
+        <b>Description:</b> Get the length of a string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* src</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strnlen</h2>
+        <b>Signature:</b> <code>size_t strnlen(const char *s, size_t maxlen)</code><br/>
+        <b>Description:</b> Get the length of a string, with a maximum.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char *s</code></li>
+          <li><code>size_t maxlen</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>size_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strcat</h2>
+        <b>Signature:</b> <code>char* strcat(char* dest, const char* src)</code><br/>
+        <b>Description:</b> Copy a source string into a destination string.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* dest</code></li>
+          <li><code>const char* src</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strcmp</h2>
+        <b>Signature:</b> <code>int strcmp(char* str1, char* str2)</code><br/>
+        <b>Description:</b> Compare str1 to str2. Return 0 if they are the same, and 1 if they are different.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* str1</code></li>
+          <li><code>char* str2</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strstr</h2>
+        <b>Signature:</b> <code>const char* strstr(const char* X, const char* Y)</code><br/>
+        <b>Description:</b> Returns a pointer to the first occurrence of X in Y, or null if X is not in Y.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* X</code></li>
+          <li><code>const char* Y</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>const char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strchr</h2>
+        <b>Signature:</b> <code>char* strchr(const char* s, int c)</code><br/>
+        <b>Description:</b> Returns a pointer to the first occurrence of the character c in s.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* s</code></li>
+          <li><code>int c</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strrchr</h2>
+        <b>Signature:</b> <code>char* strrchr(const char* s, int c)</code><br/>
+        <b>Description:</b> Returns a pointer to the last occurrence of the character c in s.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* s</code></li>
+          <li><code>int c</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strncmp</h2>
+        <b>Signature:</b> <code>int strncmp(const char* s1, const char* s2, size_t n )</code><br/>
+        <b>Description:</b> Compare s1 to s2. Return 0 if they are the same up to the size n of str1, and 1 if they are different.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* s1</code></li>
+          <li><code>const char* s2</code></li>
+          <li><code>size_t n</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>memcpy</h2>
+        <b>Signature:</b> <code>void* memcpy(void* dest, const void* src, size_t n)</code><br/>
+        <b>Description:</b> Copy a chunk of memory at the pointer src and with a size of n into dest.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* dest</code></li>
+          <li><code>const void* src</code></li>
+          <li><code>size_t n</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>memcmp</h2>
+        <b>Signature:</b> <code>int memcmp(const void * _s1, const void* _s2, size_t n)</code><br/>
+        <b>Description:</b> Compare _s1 with a size of n to _s2.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const void * _s1</code></li>
+          <li><code>const void* _s2</code></li>
+          <li><code>size_t n</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>strncpy</h2>
+        <b>Signature:</b> <code>char* strncpy(char* _dst, const char* _src, size_t count)</code><br/>
+        <b>Description:</b> Copy a number <br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* _dst</code></li>
+          <li><code>const char* _src</code></li>
+          <li><code>size_t count</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>skip_atoi</h2>
+        <b>Signature:</b> <code>int skip_atoi(const char **s)</code><br/>
+        <b>Description:</b> Convert a string s into an integer.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char **s</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>number_printf</h2>
+        <b>Signature:</b> <code>char *number_printf(char *str, long num, int base, int size, int precision, int type)</code><br/>
+        <b>Description:</b> Copy a number into str.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char *str</code></li>
+          <li><code>long num</code></li>
+          <li><code>int base</code></li>
+          <li><code>int size</code></li>
+          <li><code>int precision</code></li>
+          <li><code>int type</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>vsprintf</h2>
+        <b>Signature:</b> <code>int vsprintf(char *buf, const char *fmt, va_list args)</code><br/>
+        <b>Description:</b> Printf some data into buf.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char *buf</code></li>
+          <li><code>const char *fmt</code></li>
+          <li><code>va_list args</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>sprintf</h2>
+        <b>Signature:</b> <code>int sprintf(char *buf, const char *fmt, ...)</code><br/>
+        <b>Description:</b> Printf some data into buf.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char *buf</code></li>
+          <li><code>const char *fmt</code></li>
+          <li><code>...</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

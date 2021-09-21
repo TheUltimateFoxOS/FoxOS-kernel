@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - cmdline.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>CmdLineParser</h2>
+        <b>Signature:</b> <code>CmdLineParser::CmdLineParser() : list(100)</code><br/>
+        <b>Class/Namespace:</b> <code>CmdLineParser</code><br/>
+        <b>Description:</b> Empty constructor. Calles the constructor of list.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>~CmdLineParser</h2>
+        <b>Signature:</b> <code>CmdLineParser::~CmdLineParser()</code><br/>
+        <b>Class/Namespace:</b> <code>CmdLineParser</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>add_handler</h2>
+        <b>Signature:</b> <code>void CmdLineParser::add_handler(char* name, cmdline_handler handler)</code><br/>
+        <b>Class/Namespace:</b> <code>CmdLineParser</code><br/>
+        <b>Description:</b> Registers a handler for a command line option.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* name</code></li>
+          <li><code>cmdline_handler handler</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>find_handler</h2>
+        <b>Signature:</b> <code>bool find_handler(list_node_t* node, void* d1, void* d2, void* d3, void* d4)</code><br/>
+        <b>Description:</b> Helper function to find a handler for a command line argument.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>list_node_t* node</code></li>
+          <li><code>void* d1</code></li>
+          <li><code>void* d2</code></li>
+          <li><code>void* d3</code></li>
+          <li><code>void* d4</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>parse</h2>
+        <b>Signature:</b> <code>void CmdLineParser::parse(char* cmdline)</code><br/>
+        <b>Class/Namespace:</b> <code>CmdLineParser</code><br/>
+        <b>Description:</b> Parses the command line and calls the appropriate handler.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* cmdline</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

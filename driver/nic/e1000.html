@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - e1000.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>~e1000Driver</h2>
+        <b>Signature:</b> <code>e1000Driver::~e1000Driver()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> e1000Driver destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>write_command</h2>
+        <b>Signature:</b> <code>void e1000Driver::write_command(uint16_t address, uint32_t value)</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Write to the e1000 device via MMIO or IO ports.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t address</code></li>
+          <li><code>uint32_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read_command</h2>
+        <b>Signature:</b> <code>uint32_t e1000Driver::read_command(uint16_t address)</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Read from the e1000 device via MMIO or IO ports.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t address</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>detect_eeprom</h2>
+        <b>Signature:</b> <code>bool e1000Driver::detect_eeprom()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Check if the e1000 device has an EEPROM and set <br/>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read_eeprom</h2>
+        <b>Signature:</b> <code>uint32_t e1000Driver::read_eeprom(uint8_t addr)</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Read from the e1000 device's EEPROM.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t addr</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read_mac_address</h2>
+        <b>Signature:</b> <code>void e1000Driver::read_mac_address()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Read the device's MAC address into <br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>rx_init</h2>
+        <b>Signature:</b> <code>void e1000Driver::rx_init()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Initialise receiving.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>tx_init</h2>
+        <b>Signature:</b> <code>void e1000Driver::tx_init()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Initialise transmitting.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>start_link</h2>
+        <b>Signature:</b> <code>void e1000Driver::start_link()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Start the device link.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>activate</h2>
+        <b>Signature:</b> <code>void e1000Driver::activate()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Activate the driver.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>receive</h2>
+        <b>Signature:</b> <code>void e1000Driver::receive()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Called by the driver interrupt, to process received data.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>send</h2>
+        <b>Signature:</b> <code>void e1000Driver::send(uint8_t* data, int32_t length)</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Send data from the driver.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* data</code></li>
+          <li><code>int32_t length</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>handle</h2>
+        <b>Signature:</b> <code>void e1000Driver::handle()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> The driver interrupt handler.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_name</h2>
+        <b>Signature:</b> <code>char* e1000Driver::get_name()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Get the driver name.<br/>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_mac</h2>
+        <b>Signature:</b> <code>uint64_t e1000Driver::get_mac()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Get the device's MAC address.<br/>
+        <br/>
+        <b>Return:</b> <code>uint64_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_ip</h2>
+        <b>Signature:</b> <code>uint32_t e1000Driver::get_ip()</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Get the device's IP address.<br/>
+        <br/>
+        <b>Return:</b> <code>uint32_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>set_ip</h2>
+        <b>Signature:</b> <code>void e1000Driver::set_ip(uint32_t ip)</code><br/>
+        <b>Class/Namespace:</b> <code>e1000Driver</code><br/>
+        <b>Description:</b> Set the device's IP address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t ip</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

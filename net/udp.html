@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - udp.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>UdpHandler</h2>
+        <b>Signature:</b> <code>UdpHandler::UdpHandler()</code><br/>
+        <b>Class/Namespace:</b> <code>UdpHandler</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>~UdpHandler</h2>
+        <b>Signature:</b> <code>UdpHandler::~UdpHandler()</code><br/>
+        <b>Class/Namespace:</b> <code>UdpHandler</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>onUdpMessage</h2>
+        <b>Signature:</b> <code>void UdpHandler::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpHandler</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Called when the UDP client<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>UdpSocket *socket</code></li>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>UdpSocket</h2>
+        <b>Signature:</b> <code>UdpSocket::UdpSocket(UdpProvider* provider)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpSocket</code><br/>
+        <b>Description:</b> UdpSocket constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>UdpProvider* provider</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~UdpSocket</h2>
+        <b>Signature:</b> <code>UdpSocket::~UdpSocket()</code><br/>
+        <b>Class/Namespace:</b> <code>UdpSocket</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>handleUdpMessage</h2>
+        <b>Signature:</b> <code>void UdpSocket::handleUdpMessage(uint8_t* data, size_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpSocket</code><br/>
+        <b>Description:</b> Called when the UDP client<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>send</h2>
+        <b>Signature:</b> <code>void UdpSocket::send(uint8_t* data, size_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpSocket</code><br/>
+        <b>Description:</b> Send some data using a UDP socket.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>disconnect</h2>
+        <b>Signature:</b> <code>void UdpSocket::disconnect()</code><br/>
+        <b>Class/Namespace:</b> <code>UdpSocket</code><br/>
+        <b>Description:</b> Disconnect a socket from the client<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>UdpProvider</h2>
+        <b>Signature:</b> <code>UdpProvider::UdpProvider(Ipv4Provider *ipv4Provider): Ipv4Handler(ipv4Provider, 0x11), binds(100)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpProvider</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>Ipv4Provider *ipv4Provider</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>onInternetProtocolReceived</h2>
+        <b>Signature:</b> <code>bool UdpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_BE, uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpProvider</code><br/>
+        <b>Description:</b> Called when IP receives a message.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t srcIP_BE</code></li>
+          <li><code>uint32_t dstIP_BE</code></li>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>connect</h2>
+        <b>Signature:</b> <code>UdpSocket* UdpProvider::connect(uint32_t ip, uint16_t port)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpProvider</code><br/>
+        <b>Description:</b> Connect to a UDP server using a given IP address and port.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t ip</code></li>
+          <li><code>uint16_t port</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>UdpSocket*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>listen</h2>
+        <b>Signature:</b> <code>UdpSocket* UdpProvider::listen(uint16_t port)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpProvider</code><br/>
+        <b>Description:</b> Open a UDP server on a port.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t port</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>UdpSocket*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>disconnect</h2>
+        <b>Signature:</b> <code>void UdpProvider::disconnect(UdpSocket* socket)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpProvider</code><br/>
+        <b>Description:</b> Disconnect a socket from a client<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>UdpSocket* socket</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>send</h2>
+        <b>Signature:</b> <code>void UdpProvider::send(UdpSocket* socket, uint8_t* data, size_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpProvider</code><br/>
+        <b>Description:</b> Send some data using a UDP socket.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>UdpSocket* socket</code></li>
+          <li><code>uint8_t* data</code></li>
+          <li><code>size_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>bind</h2>
+        <b>Signature:</b> <code>void UdpProvider::bind(UdpSocket* socket, UdpHandler* handler)</code><br/>
+        <b>Class/Namespace:</b> <code>UdpProvider</code><br/>
+        <b>Description:</b> Bind a UDP handler to a socket.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>UdpSocket* socket</code></li>
+          <li><code>UdpHandler* handler</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

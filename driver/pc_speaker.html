@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - pc_speaker.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>PcSpeakerDriver</h2>
+        <b>Signature:</b> <code>PcSpeakerDriver::PcSpeakerDriver()</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>~PcSpeakerDriver</h2>
+        <b>Signature:</b> <code>PcSpeakerDriver::~PcSpeakerDriver()</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>activate</h2>
+        <b>Signature:</b> <code>void PcSpeakerDriver::activate()</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> This function is used to override the default function from the Driver base class.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>is_presend</h2>
+        <b>Signature:</b> <code>bool PcSpeakerDriver::is_presend()</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> This function is used to override the default function from the Driver base class.<br/>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_name</h2>
+        <b>Signature:</b> <code>char* PcSpeakerDriver::get_name()</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> This function is used to override the default function from the Driver base class.<br/>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>turn_on</h2>
+        <b>Signature:</b> <code>void PcSpeakerDriver::turn_on()</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> This function is used to turn on the pc speaker.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>turn_off</h2>
+        <b>Signature:</b> <code>void PcSpeakerDriver::turn_off()</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> This function is used to turn off the pc speaker.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>set_frequency</h2>
+        <b>Signature:</b> <code>void PcSpeakerDriver::set_frequency(uint16_t frequency)</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> This function is used to set the frequency of the pc speaker.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t frequency</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>play</h2>
+        <b>Signature:</b> <code>void PcSpeakerDriver::play(uint16_t frequency)</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> This function is used to set the frequency of the pc speaker and then automatically starts playing.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t frequency</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>play_note</h2>
+        <b>Signature:</b> <code>void PcSpeakerDriver::play_note(uint8_t note)</code><br/>
+        <b>Class/Namespace:</b> <code>PcSpeakerDriver</code><br/>
+        <b>Description:</b> This function is used to play a note. The note is encoded with the following format: <br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t note</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

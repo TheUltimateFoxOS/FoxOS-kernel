@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - etherframe.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>EtherFrameHandler</h2>
+        <b>Signature:</b> <code>EtherFrameHandler::EtherFrameHandler(EtherFrameProvider* backend, uint16_t ether_type)</code><br/>
+        <b>Class/Namespace:</b> <code>EtherFrameHandler</code><br/>
+        <b>Description:</b> EtherFrameHandler constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>EtherFrameProvider* backend</code></li>
+          <li><code>uint16_t ether_type</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~EtherFrameHandler</h2>
+        <b>Signature:</b> <code>EtherFrameHandler::~EtherFrameHandler()</code><br/>
+        <b>Class/Namespace:</b> <code>EtherFrameHandler</code><br/>
+        <b>Description:</b> EtherFrameHandler destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>onEtherFrameReceived</h2>
+        <b>Signature:</b> <code>bool EtherFrameHandler::onEtherFrameReceived(uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>EtherFrameHandler</code><br/>
+        <b>Description:</b> Virtual function to be overridden. Called when the ether frame receives a message.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>send</h2>
+        <b>Signature:</b> <code>void EtherFrameHandler::send(uint64_t dest_mac_be, uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>EtherFrameHandler</code><br/>
+        <b>Description:</b> Send some data with the ether frame.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t dest_mac_be</code></li>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>EtherFrameProvider</h2>
+        <b>Signature:</b> <code>EtherFrameProvider::EtherFrameProvider(int nic_id) : driver::nic::NicDataManager(nic_id), handlers(100)</code><br/>
+        <b>Class/Namespace:</b> <code>EtherFrameProvider</code><br/>
+        <b>Description:</b> Empty constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int nic_id</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~EtherFrameProvider</h2>
+        <b>Signature:</b> <code>EtherFrameProvider::~EtherFrameProvider()</code><br/>
+        <b>Class/Namespace:</b> <code>EtherFrameProvider</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>recv</h2>
+        <b>Signature:</b> <code>bool EtherFrameProvider::recv(uint8_t* data, int32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>EtherFrameProvider</code><br/>
+        <b>Description:</b> Called when the network card gets a message.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint8_t* data</code></li>
+          <li><code>int32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>send_f</h2>
+        <b>Signature:</b> <code>void EtherFrameProvider::send_f(uint64_t dest_mac_be, uint16_t ether_type_be, uint8_t* payload, uint32_t size)</code><br/>
+        <b>Class/Namespace:</b> <code>EtherFrameProvider</code><br/>
+        <b>Description:</b> Send a etherframe message.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t dest_mac_be</code></li>
+          <li><code>uint16_t ether_type_be</code></li>
+          <li><code>uint8_t* payload</code></li>
+          <li><code>uint32_t size</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - elf.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>ElfSymbolResolver</h2>
+        <b>Signature:</b> <code>ElfSymbolResolver::ElfSymbolResolver(void* raw_elf_file)</code><br/>
+        <b>Class/Namespace:</b> <code>ElfSymbolResolver</code><br/>
+        <b>Description:</b> The constructor for the ElfSymbolResolver class. NOTE: the pointer to the raw elf file needs to contain a non loaded elf file.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* raw_elf_file</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>resolve</h2>
+        <b>Signature:</b> <code>void* ElfSymbolResolver::resolve(char* symbol_name)</code><br/>
+        <b>Class/Namespace:</b> <code>ElfSymbolResolver</code><br/>
+        <b>Description:</b> Resolve a symbol either to a string or to a address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char* symbol_name</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>resolve</h2>
+        <b>Signature:</b> <code>char* ElfSymbolResolver::resolve(void* symbol_addr)</code><br/>
+        <b>Class/Namespace:</b> <code>ElfSymbolResolver</code><br/>
+        <b>Description:</b> Resolve a symbol either to a string or to a address.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* symbol_addr</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

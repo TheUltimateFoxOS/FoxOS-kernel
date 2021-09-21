@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - serial.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>Serial</h2>
+        <b>Signature:</b> <code>Serial::Serial(uint16_t port_n) : port(port_n)</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Constructor for the serial class. Configures the given port.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t port_n</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>serial_recieved</h2>
+        <b>Signature:</b> <code>int Serial::serial_recieved()</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Check if we recieved something on the serial port.<br/>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>is_transmit_empty</h2>
+        <b>Signature:</b> <code>int Serial::is_transmit_empty()</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Check if we can send the next byte.<br/>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read_serial</h2>
+        <b>Signature:</b> <code>char Serial::read_serial()</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Read a byte from the serial port. Waits until a byte is recieved.<br/>
+        <br/>
+        <b>Return:</b> <code>char</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write_serial</h2>
+        <b>Signature:</b> <code>void Serial::write_serial(char a)</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Write a byte or string to the serial port.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char a</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write_serial</h2>
+        <b>Signature:</b> <code>void Serial::write_serial(const char* str)</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Write a byte or string to the serial port.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* str</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>putc</h2>
+        <b>Signature:</b> <code>void Serial::putc(char c)</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Writes a char to the serial console.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char c</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>puts</h2>
+        <b>Signature:</b> <code>void Serial::puts(const char *s)</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Writes a string to the serial console.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char *s</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>putn</h2>
+        <b>Signature:</b> <code>void Serial::putn(unsigned long x, int base)</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Writes a number to the serial console.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>unsigned long x</code></li>
+          <li><code>int base</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>printf</h2>
+        <b>Signature:</b> <code>void Serial::printf(const char* fmt, ...)</code><br/>
+        <b>Class/Namespace:</b> <code>Serial</code><br/>
+        <b>Description:</b> Writes a formatted string to the serial console. The following formats are supported: <br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* fmt</code></li>
+          <li><code>...</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

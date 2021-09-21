@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - ata.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>AdvancedTechnologyAttachment</h2>
+        <b>Signature:</b> <code>AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(bool master, uint16_t portBase, char* name): dataPort(portBase), error_port(portBase + 0x1), sector_count_port(portBase + 0x2), lba_low_port(portBase + 0x3), lba_mid_port(portBase + 0x4), lba_hi_port(portBase + 0x5), device_port(portBase + 0x6), command_port(portBase + 0x7), control_port(portBase + 0x206)</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> If the ATA device is present, this will try to read the guid partition table and register the device as a disk.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>bool master</code></li>
+          <li><code>uint16_t portBase</code></li>
+          <li><code>char* name</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~AdvancedTechnologyAttachment</h2>
+        <b>Signature:</b> <code>AdvancedTechnologyAttachment::~AdvancedTechnologyAttachment()</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>is_presend</h2>
+        <b>Signature:</b> <code>bool AdvancedTechnologyAttachment::is_presend()</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> This function is used to override the default function from the Driver base class.<br/>
+        <br/>
+        <b>Return:</b> <code>bool</code>
+      </div>
+      <hr>
+      <div>
+        <h2>activate</h2>
+        <b>Signature:</b> <code>void AdvancedTechnologyAttachment::activate()</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> This function is used to override the default function from the Driver base class.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read28</h2>
+        <b>Signature:</b> <code>void AdvancedTechnologyAttachment::read28(uint32_t sector, uint8_t* data, int count)</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> This function reads a sector from the disk. The count parameter specifies how many bytes to write in the sector the max is 512 bytes.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t sector</code></li>
+          <li><code>uint8_t* data</code></li>
+          <li><code>int count</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write28</h2>
+        <b>Signature:</b> <code>void AdvancedTechnologyAttachment::write28(uint32_t sectorNum, uint8_t* data, uint32_t count)</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> This function writes a sector to the disk. The count parameter specifies how many bytes to write in the sector the max is 512 bytes.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint32_t sectorNum</code></li>
+          <li><code>uint8_t* data</code></li>
+          <li><code>uint32_t count</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>flush</h2>
+        <b>Signature:</b> <code>void AdvancedTechnologyAttachment::flush()</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> This function is used to flush to make sure the data is actually written to the media.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read</h2>
+        <b>Signature:</b> <code>void AdvancedTechnologyAttachment::read(uint64_t sector, uint32_t sector_count, void* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> This function is used to override the default function from the Drive base class.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t sector</code></li>
+          <li><code>uint32_t sector_count</code></li>
+          <li><code>void* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write</h2>
+        <b>Signature:</b> <code>void AdvancedTechnologyAttachment::write(uint64_t sector, uint32_t sector_count, void* buffer)</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> This function is used to override the default function from the Drive base class.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint64_t sector</code></li>
+          <li><code>uint32_t sector_count</code></li>
+          <li><code>void* buffer</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_name</h2>
+        <b>Signature:</b> <code>char* AdvancedTechnologyAttachment::get_name()</code><br/>
+        <b>Class/Namespace:</b> <code>AdvancedTechnologyAttachment</code><br/>
+        <b>Description:</b> This function is used to override the default function from the Driver base class.<br/>
+        <br/>
+        <b>Return:</b> <code>char*</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

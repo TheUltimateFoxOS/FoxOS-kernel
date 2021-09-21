@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - list.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>list</h2>
+        <b>Signature:</b> <code>list::list(int max_len)</code><br/>
+        <b>Class/Namespace:</b> <code>list</code><br/>
+        <b>Description:</b> Constructor for the list class allocates memory for the list depending on the size of the list.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int max_len</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~list</h2>
+        <b>Signature:</b> <code>list::~list()</code><br/>
+        <b>Class/Namespace:</b> <code>list</code><br/>
+        <b>Description:</b> Destructor for the list class frees the memory allocated for the list.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>find_node</h2>
+        <b>Signature:</b> <code>list_node_t* list::find_node(search_function f, void* d1, void* d2, void* d3, void* d4)</code><br/>
+        <b>Class/Namespace:</b> <code>list</code><br/>
+        <b>Description:</b> Finds a node in the list using a comparison function.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>search_function f</code></li>
+          <li><code>void* d1</code></li>
+          <li><code>void* d2</code></li>
+          <li><code>void* d3</code></li>
+          <li><code>void* d4</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>list_node_t*</code>
+      </div>
+      <hr>
+      <div>
+        <h2>remove_node</h2>
+        <b>Signature:</b> <code>void list::remove_node(list_node_t* node)</code><br/>
+        <b>Class/Namespace:</b> <code>list</code><br/>
+        <b>Description:</b> Removes a node from the list using a pointer to the node.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>list_node_t* node</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>add_node</h2>
+        <b>Signature:</b> <code>list_node_t* list::add_node(void* d1, void* d2, void* d3, void* d4)</code><br/>
+        <b>Class/Namespace:</b> <code>list</code><br/>
+        <b>Description:</b> Adds a node to the list. Returns the pointer to the node.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* d1</code></li>
+          <li><code>void* d2</code></li>
+          <li><code>void* d3</code></li>
+          <li><code>void* d4</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>list_node_t*</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

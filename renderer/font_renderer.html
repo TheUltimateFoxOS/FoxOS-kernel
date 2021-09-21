@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
+    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - font_renderer.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>FontRenderer</h2>
+        <b>Signature:</b> <code>FontRenderer::FontRenderer(framebuffer_t* target_frame_buffer, psf1_font_t* font)</code><br/>
+        <b>Class/Namespace:</b> <code>FontRenderer</code><br/>
+        <b>Description:</b> FontRenderer constructor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>framebuffer_t* target_frame_buffer</code></li>
+          <li><code>psf1_font_t* font</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>printf</h2>
+        <b>Signature:</b> <code>void FontRenderer::printf(const char* str, ...)</code><br/>
+        <b>Class/Namespace:</b> <code>FontRenderer</code><br/>
+        <b>Description:</b> Print some text on to the frame buffer.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* str</code></li>
+          <li><code>...</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>putc</h2>
+        <b>Signature:</b> <code>void FontRenderer::putc(char c)</code><br/>
+        <b>Class/Namespace:</b> <code>FontRenderer</code><br/>
+        <b>Description:</b> Print a character on to the frame buffer.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>char c</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>puts</h2>
+        <b>Signature:</b> <code>void FontRenderer::puts(const char* s)</code><br/>
+        <b>Class/Namespace:</b> <code>FontRenderer</code><br/>
+        <b>Description:</b> Print string on to the frame buffer.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* s</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>putn</h2>
+        <b>Signature:</b> <code>void FontRenderer::putn(unsigned long x, int base)</code><br/>
+        <b>Class/Namespace:</b> <code>FontRenderer</code><br/>
+        <b>Description:</b> Print a number on to the frame buffer.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>unsigned long x</code></li>
+          <li><code>int base</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>clear</h2>
+        <b>Signature:</b> <code>void FontRenderer::clear()</code><br/>
+        <b>Class/Namespace:</b> <code>FontRenderer</code><br/>
+        <b>Description:</b> Clear the frame buffer.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>clear_line</h2>
+        <b>Signature:</b> <code>void FontRenderer::clear_line()</code><br/>
+        <b>Class/Namespace:</b> <code>FontRenderer</code><br/>
+        <b>Description:</b> Clear a line of the frame buffer.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>
