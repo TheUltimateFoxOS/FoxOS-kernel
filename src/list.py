@@ -453,6 +453,8 @@ if sys.argv[1] == "index":
 
 	print(FOXOS_DIR)
 	find_cpp(FOXOS_DIR, True, True)
+	with open(DOCS_DIR + "/index.html", "w") as f:
+		f.write("      </ul>\n    </div>\n  </body>\n</html>")
 elif sys.argv[1] == "sumary":
 	DOC_TMP_BUILD_FILE += sys.argv[2]
 	with open(DOC_TMP_BUILD_FILE, "r") as f:
