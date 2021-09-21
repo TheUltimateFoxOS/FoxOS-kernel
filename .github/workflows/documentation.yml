@@ -1,0 +1,27 @@
+name: Build the kernel documentation and deploy it to GitHub Pages
+
+on:
+  push:
+    branches: [ main, docs ]
+  workflow_dispatch:
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3 python-is-python3 make
+      - name: Build the kernel documentation
+        run: make doc
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc/
