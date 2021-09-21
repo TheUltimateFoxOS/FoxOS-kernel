@@ -54,19 +54,20 @@ $(OBJDIR)/%_asm.o: %.asm
 	@$(ASM) $(ASMFLAGS) -o $@ $^
 
 DOC_BUILD_ID = $(shell cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 20; echo;)
+WEBPATH = "/doc"
 
 # we need this so that DOC_BUILD_ID is static
 doc:
 	make _doc DOC_BUILD_ID=$(DOC_BUILD_ID)
 
 _doc: $(HTML_DOC)
-	@python list.py index $(shell pwd) $(shell pwd)/$(DOCDIR)
+	@python list.py index $(shell pwd) $(shell pwd)/$(DOCDIR) $(WEBPATH)
 
 	@echo "Generated documentation in $(DOCDIR)"
 	@echo "Build ID: $(DOC_BUILD_ID)"
 	
-	@#echo "Run: \"python list.py sumary $(DOC_BUILD_ID)\" to see a sumary of the build!"
-	@python list.py sumary $(DOC_BUILD_ID)
+	@#echo "Run: \"python list.py summary $(DOC_BUILD_ID)\" to see a sumary of the build!"
+	@python list.py summary $(DOC_BUILD_ID)
 
 $(DOCDIR)/%.html: %.cpp
 	@echo "HTML $^ -> $@"

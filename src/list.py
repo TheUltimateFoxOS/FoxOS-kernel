@@ -8,6 +8,7 @@ import sys
 FOXOS_DIR = "./FoxOS-kernel/src"
 DOCS_DIR = "./FoxOS-kernel/doc"
 DOC_TMP_BUILD_FILE = "/tmp/"
+DOC_WEB_PATH = "/doc"
 num_functions = 0
 num_functions_desc = 0
 
@@ -367,11 +368,11 @@ def print_file(file, only_index, ptmp):
 
 	if filetmp.endswith(".asm"):
 		f = open(ptmp + "/index.html", "a")
-		f.write("        <li><a href=\"" + filetmp.replace(DOCS_DIR, "/doc").split(".")[:-1][0] + "_asm.html\">" + tail + "</a></li>\n")
+		f.write("        <li><a href=\"" + filetmp.replace(DOCS_DIR, DOC_WEB_PATH).split(".")[:-1][0] + "_asm.html\">" + tail + "</a></li>\n")
 		f.close()
 	elif filetmp.endswith(".cpp"):
 		f = open(ptmp + "/index.html", "a")
-		f.write("        <li><a href=\"" + filetmp.replace(DOCS_DIR, "/doc").split(".")[:-1][0] + ".html\">" + tail + "</a></li>\n")
+		f.write("        <li><a href=\"" + filetmp.replace(DOCS_DIR, DOC_WEB_PATH).split(".")[:-1][0] + ".html\">" + tail + "</a></li>\n")
 		f.close()
 	else:
 		raise Exception("Unknown file type: " + file)
@@ -394,7 +395,7 @@ def find_cpp(path, only_index, is_root):
 
 	if (is_root == False):
 		f = open(ptmp + "/index.html", "a")
-		f.write("        <li><a href=\"" + phead.replace(DOCS_DIR, "/doc") + "\">..</a></li>\n")
+		f.write("        <li><a href=\"" + phead.replace(DOCS_DIR, DOC_WEB_PATH) + "\">..</a></li>\n")
 		f.close()
 
 	files = glob.glob(path + "/*")
@@ -407,7 +408,7 @@ def find_cpp(path, only_index, is_root):
 			if not os.path.exists(filetmp):
 				os.makedirs(filetmp)
 
-			webpath = filetmp.replace(DOCS_DIR, "/doc")
+			webpath = filetmp.replace(DOCS_DIR, DOC_WEB_PATH)
 			webhead, webtail = os.path.split(webpath)
 			head, tail = os.path.split(filetmp)
 
@@ -443,6 +444,7 @@ def print_progress(progress):
 if sys.argv[1] == "index":
 	FOXOS_DIR = sys.argv[2]
 	DOCS_DIR = sys.argv[3]
+	DOC_WEB_PATH = sys.argv[4]
 
 	if not os.path.exists(DOCS_DIR):
 		os.makedirs(DOCS_DIR)
@@ -453,7 +455,7 @@ if sys.argv[1] == "index":
 
 	print(FOXOS_DIR)
 	find_cpp(FOXOS_DIR, True, True)
-elif sys.argv[1] == "sumary":
+elif sys.argv[1] == "summary":
 	DOC_TMP_BUILD_FILE += sys.argv[2]
 	with open(DOC_TMP_BUILD_FILE, "r") as f:
 		data = json.load(f)

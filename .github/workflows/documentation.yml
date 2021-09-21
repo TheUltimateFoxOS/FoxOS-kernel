@@ -18,7 +18,7 @@ jobs:
           sudo apt update
           sudo apt install -y python3 python-is-python3 make
       - name: Build the kernel documentation
-        run: make -C src doc
+        run: make -C src doc WEBPATH=/FoxOS-kernel
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
