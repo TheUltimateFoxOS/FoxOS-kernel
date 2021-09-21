@@ -450,7 +450,7 @@ if sys.argv[1] == "index":
 		os.makedirs(DOCS_DIR)
 	
 	#print(DOCS_DIR + "/index.html")
-	with open(DOCS_DIR + "/index.html", "w") as f:
+	with open(DOCS_DIR + "/index.html", "a") as f:
 		f.write(index_file_template)
 
 	print(FOXOS_DIR)
