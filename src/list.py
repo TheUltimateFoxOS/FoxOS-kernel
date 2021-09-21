@@ -16,8 +16,8 @@ file_template_html = """<!DOCTYPE html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
-    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
     <title>FoxOS - Docs</title>
   </head>
@@ -26,7 +26,7 @@ file_template_html = """<!DOCTYPE html>
       <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
         <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
         <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
-        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="/FoxOS-kernel/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
         <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
       </div>
     </div>
@@ -44,8 +44,8 @@ index_file_template = """<!DOCTYPE html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
-    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
     <title>FoxOS - Docs</title>
   </head>
@@ -54,7 +54,7 @@ index_file_template = """<!DOCTYPE html>
       <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
         <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
         <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
-        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="/FoxOS-kernel//" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
         <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
       </div>
     </div>
@@ -73,8 +73,8 @@ no_content_template = """<!DOCTYPE html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <link rel="stylesheet" href="https://foxos.glitch.me/style.css">
-    <link rel="stylesheet" href="https://foxos.glitch.me/w3.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
     <title>FoxOS - Docs</title>
   </head>
@@ -83,7 +83,7 @@ no_content_template = """<!DOCTYPE html>
       <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
         <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
         <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
-        <a href="/docs/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="/FoxOS-kernel//" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
         <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
       </div>
     </div>
