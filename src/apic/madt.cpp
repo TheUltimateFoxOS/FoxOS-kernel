@@ -7,6 +7,7 @@ uint8_t numcore = 0;
 uint64_t lapic_ptr = 0;
 uint64_t ioapic_ptr = 0;
 
+//#parse_madt-doc: Used to parse the MADT table.
 void parse_madt(uint8_t *ptr) {
 	uint8_t *ptr2;
 	uint32_t len;
@@ -19,7 +20,7 @@ void parse_madt(uint8_t *ptr) {
 			case 0:  // found Processor Local APIC
 				if(ptr[4] & 1) {
 					lapic_ids[numcore++] = ptr[3];
-				 }
+				}
 				break;
 
 			case 1:  // found IOAPIC

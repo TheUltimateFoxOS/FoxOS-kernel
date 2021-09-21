@@ -2,6 +2,7 @@
 #include <driver/serial.h>
 #include <string.h>
 
+//#ElfSymbolResolver::ElfSymbolResolver-doc: The constructor for the ElfSymbolResolver class. NOTE: the pointer to the raw elf file needs to contain a non loaded elf file.
 ElfSymbolResolver::ElfSymbolResolver(void* raw_elf_file) {
 	Elf64_Ehdr* ehdr = (Elf64_Ehdr*) raw_elf_file;
 
@@ -35,6 +36,7 @@ ElfSymbolResolver::ElfSymbolResolver(void* raw_elf_file) {
 	}
 }
 
+//#ElfSymbolResolver::resolve-doc: Resolve a symbol either to a string or to a address.
 void* ElfSymbolResolver::resolve(char* symbol_name) {
 	for (int i = 0; i < this->sym_info.sym_count; i++) {
 		Elf64_Sym* sym = &this->sym_info.sym_entries[i];

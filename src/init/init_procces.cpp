@@ -17,10 +17,12 @@ bool autoexec = false;
 extern "C" void syscall_table();
 extern "C" void syscall_table_end();
 
+//#set_autoexec-doc: Configures the init procces to run the predefined file on startup.
 void set_autoexec() {
 	autoexec = true;
 }
 
+//#__init_procces_sighandler-doc: The standard init procces signal handler. Just shows the general panic screen.
 void __init_procces_sighandler(int signum) {
 	char error[256];
 
@@ -30,6 +32,7 @@ void __init_procces_sighandler(int signum) {
 	panic->do_it(nullptr);
 }
 
+//#init_procces-doc: The init procces is the first procces that runs after the kernel got the scheduler up and running! Depending on the configuration this procces will load a predefined or custom execurable file.
 extern "C" void init_procces() {
 	int errno = 0;
 	for (int i = 0; i < 32; i++) {

@@ -3,6 +3,7 @@
 #include <interrupts/panic.h>
 #include <stivale2.h>
 
+//#do_reboot-doc: Reboot FoxOS
 void do_reboot() {
 	uint8_t good = 0x02;
 	while (good & 0x02) {

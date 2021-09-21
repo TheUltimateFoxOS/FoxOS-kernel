@@ -5,6 +5,7 @@
 
 define_spinlock(memory_lock);
 
+//#sys_memory-doc: The syscall handler to allocate memory.
 extern "C" void sys_memory(s_registers regs) {
 	atomic_acquire_spinlock(memory_lock);
 

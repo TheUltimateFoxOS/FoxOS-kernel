@@ -11,6 +11,7 @@ void* heap_start;
 void* heap_end;
 HeapSegHdr* last_hdr;
 
+//#initialize_heap-doc: Initialize the memory heap.
 void initialize_heap(void* heap_address, size_t page_count){
 	void* pos = heap_address;
 
@@ -31,6 +32,7 @@ void initialize_heap(void* heap_address, size_t page_count){
 	last_hdr = start_seg;
 }
 
+//#free-doc: Free some allocated memory at an address.
 void free(void* address){
 	HeapSegHdr* segment = (HeapSegHdr*)address - 1;
 	segment->free = true;
@@ -38,6 +40,7 @@ void free(void* address){
 	segment->combine_backward();
 }
 
+//#malloc-doc: Allocate some memory.
 void* malloc(size_t size){
 	if (size % 0x10 > 0){ // it is not a multiple of 0x10
 		size -= (size % 0x10);
@@ -66,6 +69,7 @@ void* malloc(size_t size){
 	return malloc(size);
 }
 
+//#realloc-doc: Re-allocate some memory with a different size.
 void* realloc(void* ptr, size_t oldSize, size_t size) {
 	if (size == 0) {
 		free(ptr);
@@ -84,6 +88,7 @@ void* realloc(void* ptr, size_t oldSize, size_t size) {
 	}
 }
 
+//#HeapSegHdr::split-doc: Split a heap segment.
 HeapSegHdr* HeapSegHdr::split(size_t split_length){
 	if (split_length < 0x10) return NULL;
 	int64_t split_seg_length = length - split_length - (sizeof(HeapSegHdr));
@@ -102,6 +107,7 @@ HeapSegHdr* HeapSegHdr::split(size_t split_length){
 	return new_split_hdr;
 }
 
+//#expand_heap-doc: Expand the heap size.
 void expand_heap(size_t length){
 	if (length % 0x1000) {
 		length -= length % 0x1000;
@@ -125,6 +131,7 @@ void expand_heap(size_t length){
 	new_segment->combine_backward();
 }
 
+//#HeapSegHdr::combine_forward-doc: Combine the next part of the heap with the current one. Used to expand the heap size.
 void HeapSegHdr::combine_forward(){
 	if (next == NULL) return;
 	if (!next->free) return;
@@ -140,6 +147,7 @@ void HeapSegHdr::combine_forward(){
 	next = next->next;
 }
 
+//#HeapSegHdr::combine_backward-doc: Combine the next part of the heap with the current one. Used to expand the heap size.
 void HeapSegHdr::combine_backward(){
 	if (last != NULL && last->free) last->combine_forward();
 }

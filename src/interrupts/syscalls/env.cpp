@@ -7,6 +7,7 @@
 
 #include <power.h>
 
+//#sys_env-doc: Syscall to control various system features. Can be used to change the keymap, get argv/envp/errno and to register a signal handler.
 extern "C" void sys_env(s_registers regs) {
 	uint8_t id;
 	__asm__ __volatile__ ("mov $1, %%eax; cpuid; shrl $24, %%ebx;": "=b"(id) : : );

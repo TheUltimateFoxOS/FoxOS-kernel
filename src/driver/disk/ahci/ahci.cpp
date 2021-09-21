@@ -14,6 +14,7 @@
 
 using namespace driver;
 
+//#check_port_type-doc: Check the port type for a ahci port.
 port_type_t check_port_type(HBA_port* port) {
 	uint32_t sataStatus = port->sata_status;
 
@@ -37,6 +38,7 @@ port_type_t check_port_type(HBA_port* port) {
 	}
 }
 
+//#AHCI::probe_ports-doc: Probe the ports for a ahci controller.
 void AHCI::probe_ports() {
 	uint32_t portsImplemented = AHCI::ABAR->ports_implemented;
 	for (int i = 0; i < 32; i++){
@@ -54,6 +56,7 @@ void AHCI::probe_ports() {
 	}
 }
 
+//#AHCI::AHCI-doc: Constructor for the AHCI driver. Configures the controller and every port.
 AHCI::AHCI(pci::pci_device_header_t* pci_base_address) {
 	driver::global_serial_driver->printf("AHCI driver instance initialized.\n");
 	this->pci_base_address = pci_base_address;
@@ -75,6 +78,7 @@ AHCI::AHCI(pci::pci_device_header_t* pci_base_address) {
 	}
 }
 
+//#AHCI::~AHCI-doc: Empty destructor for the AHCI driver.
 AHCI::~AHCI() {
 	
 }

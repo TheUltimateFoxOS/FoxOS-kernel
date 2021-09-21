@@ -6,6 +6,7 @@
 
 define_spinlock(write_lock);
 
+//#sys_write-doc: Syscall to write to a file descriptor. Currently only stdout and stderr are supported.
 extern "C" void sys_write(s_registers regs) {
 	atomic_acquire_spinlock(write_lock);
 

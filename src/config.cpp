@@ -3,6 +3,7 @@
 
 bool NO_SMP_SHED = false;
 
+//#set_no_smp_shed-doc: Configure the kernel to not use SMP threads.
 void set_no_smp_shed() {
 	NO_SMP_SHED = true;
 }
@@ -13,10 +14,12 @@ uint64_t resolve_symbol(char* name) {
 	return (uint64_t) elf_symbol_resolver->resolve(name);
 }
 
+//#resolve_symbol-doc: Resolves a symbol from the kernel ELF file.
 char* resolve_symbol(uint64_t address) {
 	return elf_symbol_resolver->resolve((void*) address);
 }
 
+//#unwind-doc: Unwind the stack to the previous frames. A callback function is called for each frame.
 void unwind(int max, uint64_t rbp, void (*callback)(int frame_num, uint64_t rip)) {
 	stack_frame_t* stack = (stack_frame_t*) rbp;
 	for(int i = 0; stack->rbp != 0 && i < max; i++) {
@@ -28,6 +31,7 @@ void unwind(int max, uint64_t rbp, void (*callback)(int frame_num, uint64_t rip)
 //	db 0x49, 0xbf, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0 ; mov r15, someval
 //	db 0x41, 0xff, 0xe7 ; jmp r15
 
+//#patch-doc: Patch a function by replacing the first instruction with a jump to the target address.
 patch_t* patch(char* name, uint64_t new_func) {
 	uint64_t old_func = resolve_symbol(name);
 	patch_t* patch = (patch_t*) malloc(sizeof(patch_t));
@@ -54,6 +58,7 @@ patch_t* patch(char* name, uint64_t new_func) {
 	return patch;
 }
 
+//#unpatch-doc: Revert a previously patched function.
 void unpatch(patch_t* patch) {
 	memcpy(patch->old_addr, patch->old_code, 13);
 	free(patch);

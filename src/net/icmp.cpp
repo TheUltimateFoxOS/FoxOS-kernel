@@ -4,14 +4,17 @@
 
 using namespace net;
 
+//#IcmpProvider::IcmpProvider-doc: Empty constructor for the IcmpProvider class.
 IcmpProvider::IcmpProvider(Ipv4Provider* ipv4) : Ipv4Handler(ipv4, 0x01) {
 
 }
 
+//#IcmpProvider::~IcmpProvider-doc: Empty destructor for the IcmpProvider class.
 IcmpProvider::~IcmpProvider() {
 
 }
 
+//#IcmpProvider::onInternetProtocolReceived-doc: Handle an internet protocol packet.
 bool IcmpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_BE, uint8_t* payload, uint32_t size) {
 	if (size < sizeof(icmp_message_t)) {
 		return false;
@@ -45,6 +48,7 @@ bool IcmpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_
 	return false;
 }
 
+//#IcmpProvider::send_echo_request-doc: Send a echo request to the specified ip.
 void IcmpProvider::send_echo_request(uint32_t dstIP_BE) {
 	icmp_message_t icmp = {
 		.type = 8,

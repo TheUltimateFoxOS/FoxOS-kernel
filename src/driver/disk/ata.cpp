@@ -5,6 +5,7 @@
 
 using namespace driver;
 
+//#AdvancedTechnologyAttachment::AdvancedTechnologyAttachment-doc: If the ATA device is present, this will try to read the guid partition table and register the device as a disk.
 AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(bool master, uint16_t portBase, char* name): dataPort(portBase), error_port(portBase + 0x1), sector_count_port(portBase + 0x2), lba_low_port(portBase + 0x3), lba_mid_port(portBase + 0x4), lba_hi_port(portBase + 0x5), device_port(portBase + 0x6), command_port(portBase + 0x7), control_port(portBase + 0x206) {
 	this->master = master;
 	this->name = name;
@@ -18,9 +19,11 @@ AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(bool master, uint16_t
 	}
 }
 
+//#AdvancedTechnologyAttachment::~AdvancedTechnologyAttachment-doc: Empty destructor.
 AdvancedTechnologyAttachment::~AdvancedTechnologyAttachment() {
 }
 
+//#AdvancedTechnologyAttachment::is_presend-doc: This function is used to override the default function from the Driver base class.
 bool AdvancedTechnologyAttachment::is_presend() {
 	device_port.Write(master ? 0xA0 : 0xB0);
 	control_port.Write(0);
@@ -64,9 +67,11 @@ bool AdvancedTechnologyAttachment::is_presend() {
 	return true;
 }
 
+//#AdvancedTechnologyAttachment::activate-doc: This function is used to override the default function from the Driver base class.
 void AdvancedTechnologyAttachment::activate() {
 }
 
+//#AdvancedTechnologyAttachment::read28-doc: This function reads a sector from the disk. The count parameter specifies how many bytes to write in the sector the max is 512 bytes.
 void AdvancedTechnologyAttachment::read28(uint32_t sector, uint8_t* data, int count) {
 	if(sector & 0xF0000000) {
 		return;
@@ -109,6 +114,7 @@ void AdvancedTechnologyAttachment::read28(uint32_t sector, uint8_t* data, int co
 	}
 }
 
+//#AdvancedTechnologyAttachment::write28-doc: This function writes a sector to the disk. The count parameter specifies how many bytes to write in the sector the max is 512 bytes.
 void AdvancedTechnologyAttachment::write28(uint32_t sectorNum, uint8_t* data, uint32_t count) {
 	if(sectorNum > 0x0FFFFFFF) {
 		return;
@@ -140,6 +146,7 @@ void AdvancedTechnologyAttachment::write28(uint32_t sectorNum, uint8_t* data, ui
 	}
 }
 
+//#AdvancedTechnologyAttachment::flush-doc: This function is used to flush to make sure the data is actually written to the media.
 void AdvancedTechnologyAttachment::flush() {
 	device_port.Write(master ? 0xE0 : 0xF0);
 	command_port.Write(0xE7);
@@ -158,18 +165,21 @@ void AdvancedTechnologyAttachment::flush() {
 	}
 }
 
+//#AdvancedTechnologyAttachment::read-doc: This function is used to override the default function from the Drive base class.
 void AdvancedTechnologyAttachment::read(uint64_t sector, uint32_t sector_count, void* buffer) {
 	for (int i = 0; i < sector_count; i++) {
 		read28(sector + i, (uint8_t*) buffer + (i * bytes_per_sector), bytes_per_sector);
 	}	
 }
 
+//#AdvancedTechnologyAttachment::write-doc: This function is used to override the default function from the Drive base class.
 void AdvancedTechnologyAttachment::write(uint64_t sector, uint32_t sector_count, void* buffer) {
 	for (int i = 0; i < sector_count; i++) {
 		write28(sector + i, (uint8_t*) buffer + (i * bytes_per_sector), bytes_per_sector);
 	}
 }
 
+//#AdvancedTechnologyAttachment::get_name-doc: This function is used to override the default function from the Driver base class.
 char* AdvancedTechnologyAttachment::get_name() {
 	return this->name;
 }

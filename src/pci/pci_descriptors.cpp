@@ -25,6 +25,7 @@ namespace pci {
 		"Non Essential Instrumentation"
 	};
 
+	//#get_vendor_name-doc: Get the vendor name of a pci device as a string.
 	const char* get_vendor_name(uint16_t vendor_ID) {
 		switch (vendor_ID) {
 			case 0x8086:
@@ -39,6 +40,7 @@ namespace pci {
 		return to_hstring(vendor_ID);
 	}
 
+	//#get_device_name-doc: Get the device name of a pci device as a string.
 	const char* get_device_name(uint16_t vendor_ID, uint16_t device_ID) {
 		switch (vendor_ID) {
 			case 0x8086: //Intel
@@ -73,6 +75,7 @@ namespace pci {
 		return to_hstring(device_ID);
 	}
 
+	//#mass_storage_controller_subclass_name-doc: Get the subclass name of a mass storage controller as a string.
 	const char* mass_storage_controller_subclass_name(uint8_t subclass_code) {
 		switch (subclass_code) {
 			case 0x00:
@@ -99,6 +102,7 @@ namespace pci {
 		return to_hstring(subclass_code);
 	}
 
+	//#serial_bus_controller_subclass_name-doc: Get the subclass name of a serial bus controller as a string.
 	const char* serial_bus_controller_subclass_name(uint8_t subclass_code) {
 		switch (subclass_code) {
 			case 0x00:
@@ -127,6 +131,7 @@ namespace pci {
 		return to_hstring(subclass_code);
 	}
 
+	//#bridge_device_subclass_name-doc: Get the subclass name of a bridge device as a string.
 	const char* bridge_device_subclass_name(uint8_t subclass_code) {
 		switch (subclass_code) {
 			case 0x00:
@@ -157,6 +162,7 @@ namespace pci {
 		return to_hstring(subclass_code);
 	}
 
+	//#get_subclass_name-doc: Get the subclass name of a device as a string.
 	const char* get_subclass_name(uint8_t class_code, uint8_t subclass_code) {
 		switch (class_code) {
 			case 0x01:
@@ -174,6 +180,7 @@ namespace pci {
 		return to_hstring(subclass_code);
 	}
 
+	//#get_prog_IF_name-doc: Get the interface name of a device as a string.
 	const char* get_prog_IF_name(uint8_t class_code, uint8_t subclass_code, uint8_t prog_IF) {
 		switch (class_code) {
 			case 0x01:

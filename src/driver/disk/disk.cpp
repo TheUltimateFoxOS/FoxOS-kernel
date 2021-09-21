@@ -8,38 +8,44 @@ using namespace driver::disk;
 
 DiskManager* driver::disk::global_disk_manager;
 
+//#Disk::Disk-doc: Empty constructor.
 Disk::Disk() {
 
 }
 
+//#Disk::~Disk-doc: Empty destructor.
 Disk::~Disk() {
 
 }
 
+//#Disk::read-doc: Empty virtual function to be overriden.
 void Disk::read(uint64_t sector, uint32_t sector_count, void* buffer) {
 
 }
 
+//#Disk::write-doc: Empty virtual function to be overriden.
 void Disk::write(uint64_t sector, uint32_t sector_count, void* buffer) {
 
 }
 
-
-
+//#DiskManager::DiskManager-doc: DiskManager constructor.
 DiskManager::DiskManager() {
 	this->num_disks = 0;
 }
 
+//#DiskManager::add_disk-doc: Add a disk to the disk manager.
 void DiskManager::add_disk(Disk* disk) {
 	this->disks[this->num_disks] = disk;
 	driver::global_serial_driver->printf("Adding new disk at idx %d!\n", this->num_disks);
 	this->num_disks++;
 }
 
+//#DiskManager::read-doc: Read from a disk using a given ID.
 void DiskManager::read(int disk_num, uint64_t sector, uint32_t sector_count, void* buffer) {
 	this->disks[disk_num]->read(sector, sector_count, buffer);
 }
 
+//#DiskManager::write-doc: Read from a disk using a given ID.
 void DiskManager::write(int disk_num, uint64_t sector, uint32_t sector_count, void* buffer) {
 	this->disks[disk_num]->write(sector, sector_count, buffer);
 }

@@ -9,20 +9,24 @@ using namespace fat32_old;
 int fat32_old::disk_id = 0;
 uint32_t fat32_old::fs_start_sector;
 
+//#fat32_old::read_sector-doc: Reads a sector from the disk.
 int fat32_old::read_sector(uint8_t* buffer, uint32_t sector) {
 	driver::disk::global_disk_manager->read(disk_id, sector, 1, buffer);
 	return 0;
 }
 
+//#fat32_old::write_sector-doc: Writes a sector to the disk.
 int fat32_old::write_sector(uint8_t* buffer, uint32_t sector) {
 	driver::disk::global_disk_manager->write(disk_id, sector, 1, buffer);
 	return 0;
 }
 
+//#fat32_old::fs_read_sector-doc: Read a sector with the fs_start_sector offset.
 int fat32_old::fs_read_sector(uint8_t* buffer, uint32_t sector) {
 	return read_sector(buffer,sector + fs_start_sector);
 }
 
+//#fat32_old::MBR_read-doc: Reads the MBR from the disk.
 MBR_info_t fat32_old::MBR_read(uint8_t* buffer) {
 	read_sector(buffer, 0);
 	MBR_t *MBR;
@@ -35,6 +39,7 @@ MBR_info_t fat32_old::MBR_read(uint8_t* buffer) {
 	return ret;
 }
 
+//#fat32_old::BPB_read-doc: Reads the BPB from the disk.
 fs_info_t fat32_old::BPB_read(uint8_t* buffer) {
 	fs_read_sector(buffer, 0);
 	BPB_t *BPB;
@@ -61,6 +66,7 @@ fs_info_t fat32_old::BPB_read(uint8_t* buffer) {
 	return fs_info;
 }
 
+//#fat32_old::read_info-doc: Reads the fs info from the disk.
 fs_info_t fat32_old::read_info(uint8_t* buffer) {
 	MBR_info_t mbr_info;
 	mbr_info.active = 0;
@@ -75,10 +81,12 @@ fs_info_t fat32_old::read_info(uint8_t* buffer) {
 	return fs_info;
 }
 
+//#fat32_old::fsync-doc: Syncs the disk.
 int fat32_old::fsync(sector_buffer_t* buffer) {
 	return write_sector(buffer->data, fs_start_sector+buffer->sector_number);
 }
 
+//#fat32_old::fetch-doc: Fetches a sector from the disk.
 int fat32_old::fetch(uint32_t sector, sector_buffer_t* buffer) {
 	uint32_t error_level = 0;
 	if (buffer->sector_number == sector) {
@@ -95,6 +103,7 @@ int fat32_old::fetch(uint32_t sector, sector_buffer_t* buffer) {
 	return error_level;
 }
 
+//#fat32_old::get_fat_entry-doc: Gets a FAT entry.
 uint32_t fat32_old::get_fat_entry(uint32_t cluster, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t offset = 4 * cluster;
 	uint32_t sector = fs_info.reserved_sectors + (offset/512);
@@ -103,6 +112,7 @@ uint32_t fat32_old::get_fat_entry(uint32_t cluster, fs_info_t fs_info, sector_bu
 	return* FAT_entry;
 }
 
+//#fat32_old::format_file_name-doc: Formats a file name to a fat32 name.
 static char formated_file_name[16];
 char* fat32_old::format_file_name(directory_entry_t *entry) {
 	int i, j;
@@ -144,6 +154,7 @@ char* fat32_old::format_file_name(directory_entry_t *entry) {
 	return (char*) formated_file_name;
 }
 
+//#fat32_old::read_one_file_info-doc: Reads the info of a file.
 file_info_t fat32_old::read_one_file_info(directory_entry_t* dir_entry, uint32_t cluster, fs_info_t fs_info) {
 	file_info_t ret;
 	if ((dir_entry->attributes & ATTR_LONG_NAME_MASK) == ATTR_LONG_NAME) {
@@ -170,6 +181,7 @@ file_info_t fat32_old::read_one_file_info(directory_entry_t* dir_entry, uint32_t
 	return ret;
 }
 
+//#fat32_old::find_file-doc: Finds a file in the directory.
 file_info_t* fat32_old::find_file(uint32_t cluster, const char *filename, file_info_t *fp, fs_info_t fs_info, sector_buffer_t *buffer, int recursive) {
 	if(recursive <= 0) {
 		return nullptr;
@@ -208,6 +220,7 @@ file_info_t* fat32_old::find_file(uint32_t cluster, const char *filename, file_i
 	return nullptr;
 }
 
+//#fat32_old::fopen-doc: Almost posix compliant implementation of fopen.
 file_info_t* fat32_old::fopen(const char *filename, const char *mode, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
 
 	if(fp == nullptr) {
@@ -260,6 +273,7 @@ file_info_t* fat32_old::fopen(const char *filename, const char *mode, file_info_
 	return fp;
 }
 
+//#fat32_old::find_free_cluster-doc: Finds a free cluster.
 uint32_t fat32_old::find_free_cluster(uint32_t base, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t cluster = base;
 	uint32_t TotalCluster = fs_info.total_sectors / fs_info.sectors_per_cluster;
@@ -278,6 +292,7 @@ uint32_t fat32_old::find_free_cluster(uint32_t base, fs_info_t fs_info, sector_b
 	return ERROR_VOLUME_FULL;
 }
 
+//#fat32_old::set_fat_entry-doc: Sets a fat entry.
 int fat32_old::set_fat_entry(uint32_t cluster, uint32_t value, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t error_level = 0;
 	uint32_t offset = 4 * cluster;
@@ -291,6 +306,7 @@ int fat32_old::set_fat_entry(uint32_t cluster, uint32_t value, fs_info_t fs_info
 	return error_level;
 }
 
+//#fat32_old::fseek-doc: Almost posix compliant implementation of fseek.
 int fat32_old::fseek(file_info_t* fp, int32_t base, long offset, fs_info_t fs_info, sector_buffer_t* buffer) {
 	long pos = base + offset;
 	uint32_t cluster_offset;
@@ -335,12 +351,14 @@ int fat32_old::fseek(file_info_t* fp, int32_t base, long offset, fs_info_t fs_in
 	return 0;
 }
 
+//#fat32_old::cluster_to_sector-doc: Converts a cluster number to a sector number.
 uint32_t fat32_old::cluster_to_sector(uint32_t cluster, fs_info_t fs_info) {
 	uint32_t base = fs_info.data_start_sector;
 	uint32_t offset = (cluster - 2)*fs_info.sectors_per_cluster;
 	return base + offset ;
 }
 
+//#fat32_old::fread-doc: Almost posix compliant implementation of fread.
 int fat32_old::fread(uint8_t* dest, size_t size, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t sector;
 	for (; size > 0; size--) {
@@ -360,6 +378,7 @@ int fat32_old::fread(uint8_t* dest, size_t size, file_info_t* fp, fs_info_t fs_i
 	return 0;
 }
 
+//#fat32_old::fwrite-doc: Almost posix compliant implementation of fwrite.
 int fat32_old::fwrite(uint8_t* src, uint32_t size, uint32_t count, file_info_t* fp, fs_info_t fs_info, sector_buffer_t* buffer) {
 	uint32_t i, tracking, segsize;
 	fp->flags |= ENRTRY_FLAG_DIRTY;
@@ -387,6 +406,7 @@ int fat32_old::fwrite(uint8_t* src, uint32_t size, uint32_t count, file_info_t* 
 	return size - i;
 }
 
+//#fat32_old::ffsync-doc: Flush the file system buffers.
 int fat32_old::ffsync(file_info_t* fp, sector_buffer_t* buffer) {
 	if (buffer->sector_flags & CURRENT_FLAG_DIRTY) {
 		fsync(buffer);
@@ -397,11 +417,13 @@ int fat32_old::ffsync(file_info_t* fp, sector_buffer_t* buffer) {
 	return 0;
 }
 
+//#fat32_old::fclose-doc: Almost posix compliant implementation of fclose.
 int fat32_old::fclose(file_info_t* fp, sector_buffer_t* buffer) {
 	ffsync(fp,buffer);
 	return 0;
 }
 
+//#fat32_old::touch-doc: Create a new file.
 int fat32_old::touch(const char* filename, fs_info_t fs_info, sector_buffer_t* buffer) {
 	directory_entry_t entry;
 	uint32_t cluster;
@@ -479,6 +501,7 @@ int fat32_old::touch(const char* filename, fs_info_t fs_info, sector_buffer_t* b
 	return 0;
 }
 
+//#fat32_old::show_info-doc: Print information about the file system to the serial console.
 void fat32_old::show_info(fs_info_t fs_info) {
 	driver::global_serial_driver->printf("-----------------------------FS INFO-------------------------------\n");
 	driver::global_serial_driver->printf("This Volume has a total of %u sectors!\n", fs_info.total_sectors);

@@ -44,6 +44,9 @@ intr_stub_%1:
 
 intr_stub 48
 
+;# syscall_handler-signature: void syscall_handler()
+;# syscall_handler-doc: Main syscall handler. Looks up the syscall number in the syscall table, the syscall number is stored in rax.
+
 [GLOBAL syscall_handler]
 syscall_handler:
 	cli
@@ -91,6 +94,9 @@ syscall_handler:
 
 [GLOBAL syscall_table]
 [GLOBAL syscall_table_end]
+
+;# syscall_table-discard
+;# syscall_table_end-discard
 
 syscall_table:
 	dq syscall_test

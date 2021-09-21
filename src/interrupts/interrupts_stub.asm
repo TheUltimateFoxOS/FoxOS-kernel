@@ -91,6 +91,8 @@ intr_stub 45
 intr_stub 46
 intr_stub 47
 
+;# intr_common_handler-signature: void intr_common_handler()
+;# intr_common_handler-doc: The common interrupt handler. Every interrupt except for the syscall lands here first. Calls the init_comon_handler_c function.
 
 intr_common_handler:
 	cli

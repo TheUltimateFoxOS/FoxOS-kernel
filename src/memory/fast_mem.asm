@@ -6,6 +6,9 @@
 [global memcpy_fast2]
 [global init_fast_mem]
 
+;# memset_fast1-signature: void* memset_fast1(void* dest, int c, size_t n)
+;# memset_fast1-doc: A faster version of memset.
+
 memset_fast1:
 	mov r9, rdi
 	mov al, sil
@@ -14,11 +17,17 @@ memset_fast1:
 	mov rax, r9
 	ret
 
+;# memcpy_fast1-signature: void* memcpy_fast1(void* dest, const void* src, size_t n)
+;# memcpy_fast1-doc: A faster version of memcpy.
+
 memcpy_fast1:
 	mov rax, rdi
 	mov rcx, rdx
 	rep movsb
 	ret
+
+;# memcpy_fast2-signature: void* memcpy_fast2(void* dest, const void* src, size_t n)
+;# memcpy_fast2-doc: A even faster version of memcpy.
 
 memcpy_fast2:
 	mov rax, rdi
@@ -29,6 +38,10 @@ memcpy_fast2:
 	mov ecx, edx
 	rep movsb
 	ret
+
+
+;# memset_fast2-signature: void* memset_fast2(void* dest, int c, size_t n)
+;# memset_fast2-doc: A even faster version of memset.
 
 memset_fast2:
 	mov r9, rdi
@@ -44,6 +57,8 @@ memset_fast2:
 	mov rax, r9
 	ret
 
+;# init_fast_mem-signature: void init_fast_mem()
+;# init_fast_mem-doc: Initialize the fast memory functions. This patches the original memset/memcpy functions to use the fast versions.
 
 init_fast_mem:
 	mov rdi, .memcpy_str

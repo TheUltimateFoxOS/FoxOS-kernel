@@ -4,6 +4,7 @@ using namespace driver;
 
 Serial* driver::global_serial_driver;
 
+//#Serial::Serial-doc: Constructor for the serial class. Configures the given port.
 Serial::Serial(uint16_t port_n) : port(port_n) {
 	port.offset = 1;
 	port.Write(0x00);
@@ -22,22 +23,26 @@ Serial::Serial(uint16_t port_n) : port(port_n) {
 
 }
 
-int Serial::serial_recived() {
+//#Serial::serial_recieved-doc: Check if we recieved something on the serial port.
+int Serial::serial_recieved() {
 	port.offset = 5;
 	return port.Read() & 1;
 }
 
+//#Serial::is_transmit_empty-doc: Check if we can send the next byte.
 int Serial::is_transmit_empty() {
 	port.offset = 5;
 	return port.Read() & 0x20;
 }
 
+//#Serial::read_serial-doc: Read a byte from the serial port. Waits until a byte is recieved.
 char Serial::read_serial() {
-	while(serial_recived() == 0);
+	while(serial_recieved() == 0);
 	port.offset = 0;
 	return port.Read();
 }
 
+//#Serial::write_serial-doc: Write a byte or string to the serial port.
 void Serial::write_serial(char a) {
 	while(is_transmit_empty() == 0);
 	port.offset = 0;
@@ -53,6 +58,7 @@ void Serial::write_serial(const char* str) {
 	}
 }
 
+//#Serial::putc-doc: Writes a char to the serial console.
 void Serial::putc(char c){
 
 	
@@ -64,12 +70,14 @@ void Serial::putc(char c){
 	}
 }
 
+//#Serial::puts-doc: Writes a string to the serial console.
 void Serial::puts(const char *s){
 	while(*s){
 		this->putc(*s++);
 	}
 }
 
+//#Serial::putn-doc: Writes a number to the serial console.
 void Serial::putn(unsigned long x, int base){
 	char buf[65];
 	const char* digits = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -88,6 +96,7 @@ void Serial::putn(unsigned long x, int base){
 
 }
 
+//#Serial::printf-doc: Writes a formatted string to the serial console. The following formats are supported: %s, %c, %d, %u, %x, %p.
 void Serial::printf(const char* fmt, ...){
 	va_list ap;
 	const char* s;

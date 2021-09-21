@@ -6,16 +6,19 @@
 
 using namespace net;
 
+//#DhcpProtocol::DhcpProtocol-doc: Constructor for the DHCP protocol. Takes a already opened and connected socket to a ipv4 broadcast.
 DhcpProtocol::DhcpProtocol(UdpSocket* socket) {
 	this->socket = socket;
 	socket->localPort = __builtin_bswap16(68);
 	this->ip = 0;
 }
 
+//#DhcpProtocol::~DhcpProtocol-doc: Empty destructor for the DHCP protocol.
 DhcpProtocol::~DhcpProtocol() {
 
 }
 
+//#DhcpProtocol::request-doc: This function is used to send a dhcp discover or request message to the broadcast address.
 void DhcpProtocol::request() {
 	dhcp_packet_t packet;
 	memset(&packet, 0, sizeof(dhcp_packet_t));
@@ -46,6 +49,7 @@ void DhcpProtocol::request(uint32_t ip) {
 	socket->send((uint8_t*) &packet, sizeof(dhcp_packet_t));
 }
 
+//#DhcpProtocol::onUdpMessage-doc: This function is called when a udp packet is received for the udp socket.
 void DhcpProtocol::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size) {
 	dhcp_packet_t* packet = (dhcp_packet_t*) data;
 
@@ -66,6 +70,7 @@ void DhcpProtocol::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size) {
 	}
 }
 
+//#DhcpProtocol::get_dhcp_options-doc: This function is used to get the dhcp options from a dhcp packet.
 void* DhcpProtocol::get_dhcp_options(dhcp_packet_t* packet, uint8_t type) {
 	uint8_t* options = packet->options + 4;
 	uint8_t curr_type = *options;
@@ -81,6 +86,7 @@ void* DhcpProtocol::get_dhcp_options(dhcp_packet_t* packet, uint8_t type) {
 	return nullptr;
 }
 
+//#DhcpProtocol::make_dhcp_packet-doc: This function is used to make a dhcp packet.
 void DhcpProtocol::make_dhcp_packet(dhcp_packet_t* packet, uint8_t msg_type, uint32_t request_ip) {
 	packet->op = DHCP_REQUEST;
 	packet->hardware_type = 1;

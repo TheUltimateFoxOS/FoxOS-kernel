@@ -1,5 +1,6 @@
 OBJDIR = ../lib
 BUILDDIR = ../bin
+DOCDIR = ../doc
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
@@ -7,6 +8,9 @@ CPPSRC = $(call rwildcard,./,*.cpp)
 ASMSRC = $(call rwildcard,./,*.asm)
 OBJS = $(patsubst %.cpp, $(OBJDIR)/%.o, $(CPPSRC))
 OBJS += $(patsubst %.asm, $(OBJDIR)/%_asm.o, $(ASMSRC))
+
+HTML_DOC = $(patsubst %.cpp, $(DOCDIR)/%.html, $(CPPSRC))
+HTML_DOC += $(patsubst %.asm, $(DOCDIR)/%_asm.html, $(ASMSRC))
 
 TOOLCHAIN_BASE = /usr/local/foxos-x86_64_elf_gcc
 
@@ -48,3 +52,30 @@ $(OBJDIR)/%_asm.o: %.asm
 	@echo "ASM $^ -> $@"
 	@mkdir -p $(@D)
 	@$(ASM) $(ASMFLAGS) -o $@ $^
+
+DOC_BUILD_ID = $(shell cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 20; echo;)
+WEBPATH = "/doc"
+
+# we need this so that DOC_BUILD_ID is static
+doc:
+	make _doc DOC_BUILD_ID=$(DOC_BUILD_ID)
+
+_doc: $(HTML_DOC)
+	@python list.py index $(shell pwd) $(shell pwd)/$(DOCDIR) $(WEBPATH)
+
+	@echo "Generated documentation in $(DOCDIR)"
+	@echo "Build ID: $(DOC_BUILD_ID)"
+	
+	@#echo "Run: \"python list.py summary $(DOC_BUILD_ID)\" to see a sumary of the build!"
+	@python list.py summary $(DOC_BUILD_ID)
+
+$(DOCDIR)/%.html: %.cpp
+	@echo "HTML $^ -> $@"
+	@mkdir -p $(@D)
+	@python list.py $^ $@ $(DOC_BUILD_ID)
+	
+
+$(DOCDIR)/%_asm.html: %.asm
+	@echo "HTML $^ -> $@"
+	@mkdir -p $(@D)
+	@python list.py $^ $@ $(DOC_BUILD_ID)

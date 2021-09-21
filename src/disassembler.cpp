@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+//#disassemble-doc: Disassemble a memory region to the output variable. Returns the bytes disassembled.
 unsigned int disassemble(unsigned char *bytes, unsigned int max, int offset, char *output) {
 	static char register_mnemonics8[][0xF] = { "al", "cl", "dl", "bl", "ah", "ch", "dh", "bh" };
 	static char register_mnemonics16[][0xF] = { "ax", "cx", "dx", "bx", "ax", "cx", "dx", "bx" };

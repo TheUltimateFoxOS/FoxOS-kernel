@@ -16,6 +16,7 @@ using namespace interrupts;
 
 extern "C" void schedule(s_registers* regs);
 
+//#intr_common_handler_c-doc: The general purpose interrupt handler. This handler is called when an interrupt is received. The handler will check if there is a interrupt handler for the interrupt. If there is a interrupt handler, the handler will be called. If the interrupt is a exception, the handler will cause a panic if there is no signal handler.
 extern "C" void intr_common_handler_c(s_registers* regs) {
 	if(regs->interrupt_number <= 0x1f) {
 	#ifdef SEND_SIGNALS

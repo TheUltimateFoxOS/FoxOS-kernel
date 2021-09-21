@@ -5,6 +5,7 @@ using namespace renderer;
 
 FontRenderer* renderer::global_font_renderer;
 
+//#FontRenderer::FontRenderer-doc: FontRenderer constructor.
 FontRenderer::FontRenderer(framebuffer_t* target_frame_buffer, psf1_font_t* font) {
 	this->target_frame_buffer = target_frame_buffer;
 	this->font = font;
@@ -13,6 +14,7 @@ FontRenderer::FontRenderer(framebuffer_t* target_frame_buffer, psf1_font_t* font
 	cursor_position = {0, 0};
 }
 
+//#FontRenderer::printf-doc: Print some text on to the frame buffer.
 void FontRenderer::printf(const char* str, ...) {
 	va_list ap;
 	const char* s;
@@ -69,6 +71,7 @@ out:
 	va_end(ap);
 }
 
+//#FontRenderer::putc-doc: Print a character on to the frame buffer.
 void FontRenderer::putc(char c) {
 
 	if(c == 0) {
@@ -125,12 +128,14 @@ void FontRenderer::putc(char c) {
 	}
 }
 
+//#FontRenderer::puts-doc: Print string on to the frame buffer.
 void FontRenderer::puts(const char* s) {
 	while(*s) {
 		this->putc(*s++);
 	}
 }
 
+//#FontRenderer::putn-doc: Print a number on to the frame buffer.
 void FontRenderer::putn(unsigned long x, int base) {
 	char buf[65];
 	const char* digits = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -152,6 +157,7 @@ void FontRenderer::putn(unsigned long x, int base) {
 	this->puts(p);
 }
 
+//#FontRenderer::clear-doc: Clear the frame buffer.
 void FontRenderer::clear() {
 	uint64_t base = (uint64_t) target_frame_buffer->base_address;
 	uint64_t bytes_per_scanline = target_frame_buffer->pixels_per_scanline * 4;
@@ -166,6 +172,7 @@ void FontRenderer::clear() {
 	}
 }
 
+//#FontRenderer::clear_line-doc: Clear a line of the frame buffer.
 void FontRenderer::clear_line() {
 	memset((void*) ((uint64_t) target_frame_buffer->base_address + cursor_position.y * target_frame_buffer->width * 4), 0, target_frame_buffer->width * 16 * 4);
 	cursor_position.x = 0;

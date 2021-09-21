@@ -8,6 +8,7 @@ using namespace shell;
 
 Shell* shell::global_shell;
 
+//#Shell::Shell-doc: Empty constructor.
 Shell::Shell() {
 	
 }
@@ -15,6 +16,7 @@ Shell::Shell() {
 void add_char(char c);
 bool is_reading();
 
+//#Shell::keypress-doc: Used to handle keypresses. The function adds the key to a buffer.
 void Shell::keypress(char key) {
 	if (key == 0) {
 		return;

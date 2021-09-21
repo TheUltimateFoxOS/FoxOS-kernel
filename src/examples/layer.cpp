@@ -11,6 +11,7 @@ extern uint8_t logo[];
 #define RAND_MAX 32767
 unsigned long next = 1;
 
+//#rand-doc: Get a random number.
 int rand(){
     next = next * 1103515245 + 12345;
     return (uint32_t) (next / 65536) % RAND_MAX + 1; 
@@ -19,8 +20,8 @@ int rand(){
 uint8_t buffer[1000][1000] = {0};
 uint8_t resets[1000] = {0};
 
+//#frame-doc: Render a frame of the layer test.
 void frame() {
-
 	int rows = renderer::global_font_renderer->target_frame_buffer->height / 16;
 	int columns = renderer::global_font_renderer->target_frame_buffer->width / 8;
 
@@ -66,6 +67,7 @@ void frame() {
 
 extern framebuffer_t default_framebuffer;
 
+//#layer_test-doc: Test the layer renderer.
 void layer_test() {
 	renderer::layer_t* l1 = renderer::allocate_layer_matching(&default_framebuffer);
 	renderer::layer_t* l2 = renderer::allocate_layer_matching(&default_framebuffer);

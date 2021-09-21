@@ -6,6 +6,9 @@
 ; rsi = source;
 ; rdx = size (/sizeof(uint32_t));
 
+;# do_copy-signature: extern "C" void do_copy(void* target, void* source, size_t size);
+;# do_copy-doc: This function copies data from one memory location to another. It does not overwrite the target memory location if the source memory location is 0.
+
 do_copy:
 	push r8
 	push rcx

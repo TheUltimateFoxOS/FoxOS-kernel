@@ -45,14 +45,17 @@
 
 class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler {
 	public:
+		//#KeyDown-doc: Handle keyboard events.
 		void KeyDown(char c) {
 			shell::global_shell->keypress(c);
 		}
 
+		//#SpecialKeyDown-doc: Handle a special key being pressed.
 		void SpecialKeyDown(driver::special_key key) {
 			
 		}
 
+		//#SpecialKeyUp-doc: Handle a special key being released.
 		void SpecialKeyUp(driver::special_key key) {
 			
 		}
@@ -60,10 +63,12 @@ class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler {
 
 class MouseRendererMouseEventHandler : public driver::MouseEventHandler {
 	public:
+		//#OnMouseDown-doc: Mouse down event handler.
 		void OnMouseDown(uint8_t button) {
 			renderer::global_mouse_renderer->on_mouse_down(button);
 		}
 
+		//#OnMouseMove-doc: Mouse move event handler.
 		void OnMouseMove(uint8_t mouse_packet[4]) {
 			renderer::global_mouse_renderer->on_mouse_move(mouse_packet);
 		}
@@ -71,7 +76,8 @@ class MouseRendererMouseEventHandler : public driver::MouseEventHandler {
 
 class TcpMsgHandler : public net::TcpHandler {
 	public:
-		bool onTcpMessage(net::TcpSocket* socket, uint8_t* data, size_t size) override {
+		//#onTcpMessage-doc: Handle a message from a TCP socket just here for testing.
+		bool onTcpMessage(net::TcpSocket* socket, uint8_t* data, size_t size) {
 			driver::global_serial_driver->printf("TCP PACKET: ");
 			for(int i = 0; i < size; i++) {
 				driver::global_serial_driver->printf("%x ", data[i]);
@@ -84,6 +90,7 @@ class TcpMsgHandler : public net::TcpHandler {
 
 int crashc = 0;
 
+//#crash-doc: Test function to crash the kernel it is recursive to test the stack tracing.
 void crash() {
 	if(crashc == 100) {
 		*((uint32_t*) 0xff00ff00ff00) = 0;
@@ -93,6 +100,7 @@ void crash() {
 	}
 }
 
+//#kernel_main-doc: Main function of the kernel.
 extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;

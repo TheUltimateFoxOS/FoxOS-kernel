@@ -12,7 +12,7 @@ namespace driver {
 		private:
 			Port8Bit port;
 
-			int serial_recived();
+			int serial_recieved();
 			int is_transmit_empty();
 
 		public:

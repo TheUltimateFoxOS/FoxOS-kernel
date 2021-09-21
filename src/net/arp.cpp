@@ -6,14 +6,17 @@
 
 using namespace net;
 
+//#AddressResolutionProtocol::AddressResolutionProtocol-doc: Constructor for the AddressResolutionProtocol class.
 AddressResolutionProtocol::AddressResolutionProtocol(EtherFrameProvider* ether): EtherFrameHandler(ether, 0x806) {
 	this->num_cache_entry = 0;
 }
 
+//#AddressResolutionProtocol::~AddressResolutionProtocol-doc: Empty destructor.
 AddressResolutionProtocol::~AddressResolutionProtocol() {
 
 }
 
+//#AddressResolutionProtocol::onEtherFrameReceived-doc: Called when the ether frame receives some data.
 bool AddressResolutionProtocol::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
 	if (size < sizeof(arp_message_t)) {
 		return false;
@@ -50,6 +53,7 @@ bool AddressResolutionProtocol::onEtherFrameReceived(uint8_t* payload, uint32_t 
 	return false;
 }
 
+//#AddressResolutionProtocol::broadcast_mac-doc: Broadcast the mac address from the current network card to the ip in the function arguments.
 void AddressResolutionProtocol::broadcast_mac(uint32_t ip_be) {
 	arp_message_t arp = {
 		.hardware_type = 0x0100,
@@ -66,6 +70,7 @@ void AddressResolutionProtocol::broadcast_mac(uint32_t ip_be) {
 	this->send(arp.dest_mac, (uint8_t*) &arp, sizeof(arp_message_t));
 }
 
+//#AddressResolutionProtocol::request_mac_address-doc: Reaquest a mac address from the network card.
 void AddressResolutionProtocol::request_mac_address(uint32_t ip_be) {
 	arp_message_t arp = {
 		.hardware_type = 0x0100,
@@ -82,6 +87,7 @@ void AddressResolutionProtocol::request_mac_address(uint32_t ip_be) {
 	this->send(arp.dest_mac, (uint8_t*) &arp, sizeof(arp_message_t));
 }
 
+//#AddressResolutionProtocol::get_mac_from_cache-doc: Read a mac address from the internal cache returns 0xFFFFFFFFFFFF if not found.
 uint64_t AddressResolutionProtocol::get_mac_from_cache(uint32_t ip_be) {
 	for (int i = 0; i < this->num_cache_entry; i++) {
 		if (this->ip_cache[i] == ip_be) {
@@ -91,6 +97,7 @@ uint64_t AddressResolutionProtocol::get_mac_from_cache(uint32_t ip_be) {
 	return 0xFFFFFFFFFFFF;
 }
 
+//#AddressResolutionProtocol::resolve-doc: Resolve a mac address from a ip either using the cache or actualy sending the arp request.
 uint64_t AddressResolutionProtocol::resolve(uint32_t ip_be) {
 	if (ip_be == 0xffffffff) {
 		return 0xFFFFFFFFFFFF;

@@ -1,4 +1,8 @@
 [bits 64]
+
+;# load_gdt-signature: extern "C" void load_gdt(gdt_descriptor_t* gdt_descriptor);
+;# load_gdt-doc: Load the GDT with the given descriptor.
+
 load_gdt:
 	lgdt [rdi]
 	mov ax, 0x10

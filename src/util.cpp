@@ -37,6 +37,8 @@
 #include <config.h>
 
 KernelInfo kernel_info;
+
+//#prepare_memory-doc: Read's the memory map and initialises the PageFrameAllocator also loads a new page table.
 void prepare_memory(stivale2_struct* bootinfo) {
 	stivale2_struct_tag_memmap* memmap = stivale2_tag_find<stivale2_struct_tag_memmap>(bootinfo, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
@@ -74,6 +76,7 @@ void prepare_memory(stivale2_struct* bootinfo) {
 
 interrupts::idt_t idtr;
 
+//#set_idt_gate-doc: Sets the interrupt gate for the given interrupt.
 void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_t selector) {
 	interrupts::idt_desc_entry_t* interrupt = (interrupts::idt_desc_entry_t*)(idtr.offset + entry_offset * sizeof(interrupts::idt_desc_entry_t));
 	interrupt->set_offset((uint64_t) handler);
@@ -81,6 +84,7 @@ void set_idt_gate(void* handler, uint8_t entry_offset, uint8_t type_attr, uint8_
 	interrupt->selector = selector;
 }
 
+//#prepare_interrupts-doc: Sets up the IDT and the interrupt handlers. Also remaps the programable interrupt controller.
 void prepare_interrupts() {
 	idtr.limit = 0x0FFF;
 	idtr.offset = (uint64_t) global_allocator.request_page();
@@ -173,6 +177,7 @@ extern uint8_t default_font[];
 
 framebuffer_t default_framebuffer;
 
+//#setup_globals-doc: Setup global variables. This function initializes the FontRenderer, MouseRenderer, Renderer2D, DriverManager, SerialDriver, DiskManager, NicManager and Shell.
 void setup_globals(stivale2_struct* bootinfo) {
 	driver::global_serial_driver = new driver::Serial(0x3f8);
 
@@ -220,6 +225,7 @@ void setup_globals(stivale2_struct* bootinfo) {
 	driver::nic::global_nic_manager = new driver::nic::NicManager();
 }
 
+//#prepare_acpi-doc: This function initializes the hpet if available. Also parses the matd table and sets up pci devices either using mcfg or the legacy method.
 void prepare_acpi(stivale2_struct* bootinfo) {
 	stivale2_struct_tag_rsdp* rsdp_tag = stivale2_tag_find<stivale2_struct_tag_rsdp>(bootinfo, STIVALE2_STRUCT_TAG_RSDP_ID);
 	driver::global_serial_driver->printf("Rsdp: %x", rsdp_tag->rsdp);
@@ -263,6 +269,7 @@ void prepare_acpi(stivale2_struct* bootinfo) {
 
 extern uint8_t logo[];
 
+//#init_kernel-doc: Initializes the core kernel features. like the memory manager's, the timer, the framebuffer, the renderer's, the kernel symbol resolver and interrupts.
 KernelInfo init_kernel(stivale2_struct* bootinfo) {
 	gdt_descriptor_t gdt_descriptor;
 	gdt_descriptor.size = sizeof(gdt_t) - 1;

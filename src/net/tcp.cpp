@@ -4,28 +4,34 @@
 
 using namespace net;
 
+//#TcpHandler::TcpHandler-doc: Empty constructor.
 TcpHandler::TcpHandler() {
 
 }
 
+//#TcpHandler::~TcpHandler-doc: Empty destructor.
 TcpHandler::~TcpHandler() {
 
 }
 
+//#TcpHandler::onTcpMessage-doc: Virtual function to be overridden. Called when the TCP client/server receives a message.
 bool TcpHandler::onTcpMessage(TcpSocket* socket, uint8_t* data, size_t size) {
 	return true;
 }
 
+//#TcpSocket::TcpSocket-doc: TcpSocket destrcutor.
 TcpSocket::TcpSocket(TcpProvider* provider) {
 	this->provider = provider;
 	this->handler = nullptr;
 	this->state = TcpSocketState::CLOSED;
 }
 
+//#TcpSocket::~TcpSocket-doc: Empty destrcutor.
 TcpSocket::~TcpSocket() {
 
 }
 
+//#TcpSocket::handleTcpMessage-doc: Called when the TCP client/server receives a message.
 bool TcpSocket::handleTcpMessage(uint8_t* data, size_t size) {
 	if (this->handler != nullptr) {
 		return this->handler->onTcpMessage(this, data, size);
@@ -34,6 +40,7 @@ bool TcpSocket::handleTcpMessage(uint8_t* data, size_t size) {
 	}
 }
 
+//#TcpSocket::send-doc: Send some data using a TCP socket.
 void TcpSocket::send(uint8_t* data, size_t size) {
 	uint64_t time = PIT::time_since_boot;
 	while (this->state != TcpSocketState::ESTABLISHED) {
@@ -45,10 +52,12 @@ void TcpSocket::send(uint8_t* data, size_t size) {
 	provider->send(this, data, size, TcpFlag::PSH | TcpFlag::ACK);
 }
 
+//#TcpSocket::disconnect-doc: Disconnect a socket from the client/server.
 void TcpSocket::disconnect() {
 	provider->disconnect(this);
 }
 
+//#TcpProvider::TcpProvider-doc: Empty constructor.
 TcpProvider::TcpProvider(Ipv4Provider *ipv4Provider): Ipv4Handler(ipv4Provider, 0x06), binds(100) {
 }
 
@@ -58,6 +67,7 @@ struct tcp_search_t {
 	tcp_header_t* tcp_header;
 };
 
+//#TcpProvider::onInternetProtocolReceived-doc: Called when IP receives a message.
 bool TcpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_BE, uint8_t* payload, uint32_t size) {
 	if (size < 20) {
 		return false;
@@ -205,6 +215,7 @@ bool TcpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_B
 	return false;
 }
 
+//#TcpProvider::connect-doc: Connect to a TCP server using a given IP address and port.
 TcpSocket* TcpProvider::connect(uint32_t ip, uint16_t port) {
 	TcpSocket* socket = new TcpSocket(this);
 
@@ -232,6 +243,7 @@ TcpSocket* TcpProvider::connect(uint32_t ip, uint16_t port) {
 	return socket;
 }
 
+//#TcpProvider::listen-doc: Open a TCP server on a port.
 TcpSocket* TcpProvider::listen(uint16_t port) {
 	TcpSocket* socket = new TcpSocket(this);
 
@@ -251,12 +263,14 @@ TcpSocket* TcpProvider::listen(uint16_t port) {
 	return socket;
 }
 
+//#TcpProvider::disconnect-doc: Disconnect a socket from a client/server.
 void TcpProvider::disconnect(TcpSocket* socket) {
 	socket->state = TcpSocketState::FIN_WAIT_1;
 	send(socket, 0, 0, TcpFlag::FIN + TcpFlag::ACK);
 	socket->seq_num++;
 }
 
+//#TcpProvider::send-doc: Send some data using a TCP socket.
 void TcpProvider::send(TcpSocket* socket, uint8_t* data, size_t size, uint16_t flags) {
 	uint16_t total_size = size + sizeof(tcp_header_t);
 	uint16_t total_size_phdr = total_size + sizeof(tcp_pseudo_header_t);
@@ -297,6 +311,7 @@ void TcpProvider::send(TcpSocket* socket, uint8_t* data, size_t size, uint16_t f
 	free(packet);
 }
 
+//#TcpProvider::bind-doc: Bind a TCP handler to a socket.
 void TcpProvider::bind(TcpSocket* socket, TcpHandler* handler) {
 	socket->handler = handler;
 }

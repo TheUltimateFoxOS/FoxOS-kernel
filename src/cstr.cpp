@@ -22,6 +22,8 @@ const char* to_string(uint64_t value){
 	return uintTo_StringOutput;
 }
 
+//#to_hstring-doc: Convert a number to a string. The string will be in hexadecimal. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.
+
 char hexTo_StringOutput[128];
 const char* to_hstring(uint64_t value){
 	uint64_t* valPtr = &value;
@@ -90,6 +92,8 @@ const char* to_hstring(uint8_t value){
 	return hexTo_StringOutput8;
 }
 
+//#to_string-doc: Convert a number to a string. This function can't be called from multiple threads at the same time. Only call this function a second time if you are finished with the first result.
+
 char intTo_StringOutput[128];
 const char* to_string(int64_t value){
 	uint8_t isNegative = 0;
@@ -122,7 +126,7 @@ const char* to_string(int64_t value){
 
 /* we aren't suporting sse / sse2 in the kernel 
 char doubleTo_StringOutput[128];
-const char* to_string(double value, uint8_t decimalPlaces){
+const char* to_string(double value, uint8_t decimalPlaces) {
 	if (decimalPlaces > 20) decimalPlaces = 20;
 
 	char* intPtr = (char*)to_string((int64_t)value);

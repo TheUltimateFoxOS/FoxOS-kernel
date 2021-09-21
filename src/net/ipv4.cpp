@@ -3,36 +3,43 @@
 
 using namespace net;
 
+//#Ipv4Handler::Ipv4Handler-doc: Ipv4Handler constructor.
 Ipv4Handler::Ipv4Handler(Ipv4Provider* backend, uint8_t protocol) {
 	this->protocol = protocol;
 	this->backend = backend;
 	backend->handlers.add(this);
 }
 
+//#Ipv4Handler::~Ipv4Handler-doc: Ipv4Handler destructor.
 Ipv4Handler::~Ipv4Handler() {
 	this->backend->handlers.remove(this->backend->handlers.find<Ipv4Handler*>([](Ipv4Handler* h, listv2<Ipv4Handler*>::node* n) {
 		return h == n->data;
 	}, this));	
 }
 
+//#Ipv4Handler::send-doc: Send some data using IPV4.
 void Ipv4Handler::send(uint32_t dest_ip_be, uint8_t* payload, uint32_t size) {
 	backend->send(dest_ip_be, this->protocol, payload, size);
 }
 
+//#Ipv4Handler::onInternetProtocolReceived-doc: Virtual function to be overridden. Called when IP receives a message.
 bool Ipv4Handler::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_BE, uint8_t* payload, uint32_t size) {
 	return false;
 }
 
+//#Ipv4Provider::Ipv4Provider-doc: Ipv4Provider constructor.
 Ipv4Provider::Ipv4Provider(EtherFrameProvider* backend, AddressResolutionProtocol* arp, uint32_t gateway_ip_be, uint32_t subnet_mask_be) : EtherFrameHandler(backend, 0x0800), handlers(100) {
 	this->arp = arp;
 	this->gateway_ip_be = gateway_ip_be;
 	this->subnet_mask_be =subnet_mask_be;
 }
 
+//#Ipv4Provider::~Ipv4Provider-doc: Empty destructor.
 Ipv4Provider::~Ipv4Provider() {
 
 }
 
+//#Ipv4Provider::onEtherFrameReceived-doc: Called when the ether frame receives a message.
 bool Ipv4Provider::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
 	if (size < sizeof(ipv4_message_t)) {
 		return false;
@@ -72,6 +79,7 @@ bool Ipv4Provider::onEtherFrameReceived(uint8_t* payload, uint32_t size) {
 	return send_back;
 }
 
+//#Ipv4Provider::send-doc: Send some data using IPV4.
 void Ipv4Provider::send(uint32_t dest_ip_be, uint8_t protocol, uint8_t* payload, uint32_t size) {
 	uint8_t* buffer = new uint8_t[size + sizeof(ipv4_message_t)];
 	ipv4_message_t* ipv4 = (ipv4_message_t*) buffer;
@@ -107,6 +115,7 @@ void Ipv4Provider::send(uint32_t dest_ip_be, uint8_t protocol, uint8_t* payload,
 	delete[] buffer;
 }
 
+//#Ipv4Provider::checksum-doc: Create a 2 byte checksum from a data pointer with a given size.
 uint16_t Ipv4Provider::checksum(uint16_t* data, uint32_t size) {
 	uint32_t temp = 0;
 

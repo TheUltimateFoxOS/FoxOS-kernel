@@ -8,14 +8,17 @@
 
 using namespace net;
 
+//#DomainNameServiceProvider::DomainNameServiceProvider-doc: DomainNameServiceProvider constructor.
 DomainNameServiceProvider::DomainNameServiceProvider(UdpSocket* socket) : results(100) {
 	this->socket = socket;
 }
 
+//#DomainNameServiceProvider::~DomainNameServiceProvider-doc: DomainNameServiceProvider destructor.
 DomainNameServiceProvider::~DomainNameServiceProvider() {
 
 }
 
+//#DomainNameServiceProvider::resolv_domain_to_hostname-doc: Resolve src_domain to dst_hostname.
 void DomainNameServiceProvider::resolv_domain_to_hostname(char* dst_hostname, char* src_domain) {
 	int len = strlen(src_domain) + 1;
 	char* lbl = dst_hostname;
@@ -37,6 +40,7 @@ void DomainNameServiceProvider::resolv_domain_to_hostname(char* dst_hostname, ch
 	*dst_pos = 0;
 }
 
+//#DomainNameServiceProvider::dns_request-doc: Send a DNS request.
 void DomainNameServiceProvider::dns_request(char* name) {
 	char* buffer = new char[2048];
 	dnshdr_t* dns = (dnshdr_t*)buffer;
@@ -57,6 +61,7 @@ void DomainNameServiceProvider::dns_request(char* name) {
 	delete[] buffer;
 }
 
+//#DomainNameServiceProvider::resolve-doc: Resolve a domain name to an IP address.
 uint32_t DomainNameServiceProvider::resolve(char* name) {
 	char qname[128];
 	memset(qname, 0, 128);
@@ -104,7 +109,7 @@ uint32_t DomainNameServiceProvider::resolve(char* name) {
 }
 
 // sort of hacky, but it works
-
+//#DomainNameServiceProvider::onUdpMessage-doc: Called when a UDP message is received by the DNS client.
 void DomainNameServiceProvider::onUdpMessage(UdpSocket *socket, uint8_t* data, size_t size) {
 	dnshdr_t* dns = (dnshdr_t*)data;
 	char* qname = (char*)(data + sizeof(dnshdr_t));

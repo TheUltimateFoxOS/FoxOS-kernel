@@ -4,6 +4,7 @@
 
 #include <paging/page_frame_allocator.h>
 
+//#fat32_test-doc: Test the fat32 driver.
 void fat32_test() {
 	FATFS fs;
 	FIL fp;
