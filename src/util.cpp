@@ -32,6 +32,8 @@
 #include <apic/madt.h>
 #include <apic/apic.h>
 
+#include <fs/fd.h>
+
 #include <driver/nic/nic.h>
 
 #include <config.h>
@@ -223,6 +225,7 @@ void setup_globals(stivale2_struct* bootinfo) {
 	shell::global_shell = &sh;
 
 	driver::nic::global_nic_manager = new driver::nic::NicManager();
+	fd::fdm = new fd::FileDescriptorManager();
 }
 
 //#prepare_acpi-doc: This function initializes the hpet if available. Also parses the matd table and sets up pci devices either using mcfg or the legacy method.

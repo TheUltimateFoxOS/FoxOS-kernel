@@ -137,7 +137,7 @@ def get_file_functions(file, write_to, name):
 					sig_str = "extern \"C\" " + sig_str
 			#print(sig_str)
 
-			doc_find_regex = r"^; ?# ?" + i.group().strip()[:-1] + r"-doc: ?([\w\d ;:_\-#+\*.,'()]*);?"
+			doc_find_regex = r"^; ?# ?" + i.group().strip()[:-1] + r"-doc: ?([\w\d ;:_\-#+\*.,'()/]*);?"
 			doc = re.finditer(doc_find_regex, code, flags=re.MULTILINE)
 			doc_str = ""
 
@@ -304,7 +304,7 @@ def get_file_functions(file, write_to, name):
 
 			num_functions += 1
 
-			doc_find_regex = r"\/{2} ?# ?" + doc_name + r"-doc: ?([\w\d ;:_\-#+\*.,']*)"
+			doc_find_regex = r"\/{2} ?# ?" + doc_name + r"-doc: ?([\w\d ;:_\-#+\*.,'/]*)"
 			doc = re.finditer(doc_find_regex, code)
 			doc_str = ""
 
