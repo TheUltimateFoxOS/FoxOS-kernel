@@ -20,36 +20,15 @@
     
     <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
       <h1 class="w3-margin w3-jumbo">FoxOS</h1>
-      <p class="w3-xlarge">FoxOS docs - read.cpp</p>
+      <p class="w3-xlarge">FoxOS docs - close.cpp</p>
     </header>
     
     <div class="fox-text">
       <div>
-        <h2>add_char</h2>
-        <b>Signature:</b> <code>void add_char(char c)</code><br/>
-        <b>Description:</b> Adds a character to the stdin buffer if a process is reading from stdin.<br/>
-        <br/>
-        <b>Parameters:</b><br/>
-        <ul>
-          <li><code>char c</code></li>
-        </ul>
-        <br/>
-        <b>Return:</b> <code>void</code>
-      </div>
-      <hr>
-      <div>
-        <h2>is_reading</h2>
-        <b>Signature:</b> <code>bool is_reading()</code><br/>
-        <b>Description:</b> Checks if a program is reading from stdin.<br/>
-        <br/>
-        <b>Return:</b> <code>bool</code>
-      </div>
-      <hr>
-      <div>
-        <h2>sys_read</h2>
-        <b>Signature:</b> <code>extern "C" void sys_read(s_registers regs)</code><br/>
+        <h2>sys_close</h2>
+        <b>Signature:</b> <code>extern "C" void sys_close(s_registers regs)</code><br/>
         <b>Attributes:</b> <code>extern "C"</code><br/>
-        <b>Description:</b> The syscall to read n bytes from a file descriptor.<br/>
+        <b>Description:</b> Takes a file descriptor and closes the file. The file descriptor needs to be supplied in rbx.<br/>
         <br/>
         <b>Parameters:</b><br/>
         <ul>

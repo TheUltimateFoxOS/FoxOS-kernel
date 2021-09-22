@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap">
+    <title>FoxOS - Docs</title>
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-border w3-border-orange w3-orange w3-card w3-large fox-bar">
+        <a href="/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Home</a>
+        <a href="/about/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">About us</a>
+        <a href="/FoxOS-kernel/" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">Docs</a>
+        <a href="https://github.com/TheUltimateFoxOS" class="w3-bar-item w3-button w3-hover-none w3-border-orange w3-bottombar w3-hover-border-black">GitHub</a>
+      </div>
+    </div>
+    
+    <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
+      <h1 class="w3-margin w3-jumbo">FoxOS</h1>
+      <p class="w3-xlarge">FoxOS docs - fd.cpp</p>
+    </header>
+    
+    <div class="fox-text">
+      <div>
+        <h2>FileDescriptor</h2>
+        <b>Signature:</b> <code>FileDescriptor::FileDescriptor(int fd)</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptor</code><br/>
+        <b>Description:</b> The constructor of the FileDescriptor class.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int fd</code></li>
+        </ul>
+      </div>
+      <hr>
+      <div>
+        <h2>~FileDescriptor</h2>
+        <b>Signature:</b> <code>FileDescriptor::~FileDescriptor()</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptor</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>close</h2>
+        <b>Signature:</b> <code>void FileDescriptor::close()</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptor</code><br/>
+        <b>Description:</b> Closes the file descriptor.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>open</h2>
+        <b>Signature:</b> <code>void FileDescriptor::open(const char* path, const char* mode)</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptor</code><br/>
+        <b>Description:</b> Opens the file descriptor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>const char* path</code></li>
+          <li><code>const char* mode</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>read</h2>
+        <b>Signature:</b> <code>void FileDescriptor::read(void* buffer, size_t size, size_t nmemb)</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptor</code><br/>
+        <b>Description:</b> Reads from the file descriptor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* buffer</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>size_t nmemb</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>write</h2>
+        <b>Signature:</b> <code>void FileDescriptor::write(void* buffer, size_t size, size_t nmemb)</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptor</code><br/>
+        <b>Description:</b> Writes to the file descriptor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>void* buffer</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>size_t nmemb</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>FileDescriptorManager</h2>
+        <b>Signature:</b> <code>FileDescriptorManager::FileDescriptorManager() : fds(100)</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptorManager</code><br/>
+        <b>Description:</b> The constructor of the FileDescriptorManager class.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>~FileDescriptorManager</h2>
+        <b>Signature:</b> <code>FileDescriptorManager::~FileDescriptorManager()</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptorManager</code><br/>
+        <b>Description:</b> Empty destructor.<br/>
+      </div>
+      <hr>
+      <div>
+        <h2>alloc_fd</h2>
+        <b>Signature:</b> <code>int FileDescriptorManager::alloc_fd()</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptorManager</code><br/>
+        <b>Description:</b> Allocates a new file descriptor.<br/>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>free_fd</h2>
+        <b>Signature:</b> <code>void FileDescriptorManager::free_fd(int fd)</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptorManager</code><br/>
+        <b>Description:</b> Frees a file descriptor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int fd</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>register_fd</h2>
+        <b>Signature:</b> <code>void FileDescriptorManager::register_fd(FileDescriptor* fd_obj)</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptorManager</code><br/>
+        <b>Description:</b> Registers a FileDescriptor object.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>FileDescriptor* fd_obj</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>get_fd</h2>
+        <b>Signature:</b> <code>FileDescriptor* FileDescriptorManager::get_fd(int fd)</code><br/>
+        <b>Class/Namespace:</b> <code>FileDescriptorManager</code><br/>
+        <b>Description:</b> Gets a FileDescriptor object by its file descriptor.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>int fd</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>FileDescriptor*</code>
+      </div>
+      <hr>
+    </div>
+  </body>
+</html>

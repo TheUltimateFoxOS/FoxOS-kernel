@@ -42,7 +42,7 @@
         <h2>onTcpMessage</h2>
         <b>Signature:</b> <code>bool TcpHandler::onTcpMessage(TcpSocket* socket, uint8_t* data, size_t size)</code><br/>
         <b>Class/Namespace:</b> <code>TcpHandler</code><br/>
-        <b>Description:</b> Virtual function to be overridden. Called when the TCP client<br/>
+        <b>Description:</b> Virtual function to be overridden. Called when the TCP client/server receives a message.<br/>
         <br/>
         <b>Parameters:</b><br/>
         <ul>
@@ -77,7 +77,7 @@
         <h2>handleTcpMessage</h2>
         <b>Signature:</b> <code>bool TcpSocket::handleTcpMessage(uint8_t* data, size_t size)</code><br/>
         <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
-        <b>Description:</b> Called when the TCP client<br/>
+        <b>Description:</b> Called when the TCP client/server receives a message.<br/>
         <br/>
         <b>Parameters:</b><br/>
         <ul>
@@ -107,7 +107,7 @@
         <h2>disconnect</h2>
         <b>Signature:</b> <code>void TcpSocket::disconnect()</code><br/>
         <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
-        <b>Description:</b> Disconnect a socket from the client<br/>
+        <b>Description:</b> Disconnect a socket from the client/server.<br/>
         <br/>
         <b>Return:</b> <code>void</code>
       </div>
@@ -174,7 +174,7 @@
         <h2>disconnect</h2>
         <b>Signature:</b> <code>void TcpProvider::disconnect(TcpSocket* socket)</code><br/>
         <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
-        <b>Description:</b> Disconnect a socket from a client<br/>
+        <b>Description:</b> Disconnect a socket from a client/server.<br/>
         <br/>
         <b>Parameters:</b><br/>
         <ul>
