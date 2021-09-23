@@ -20,6 +20,9 @@ vfs_mount* initialise_stivale_modules(stivale2_struct* bootinfo) {
 	mount->read = stivale_modules_read;
 	mount->close = stivale_modules_close;
 
+	mount->seek = stivale_modules_seek;
+	mount->tell = stivale_modules_tell;
+
 	mount->mount = stivale_modules_mount;
 
 	return mount;
@@ -92,10 +95,40 @@ int stivale_modules_close(vfs_mount* node, file_t* stream) {
 	return 0;
 }
 
+//#stivale_modules_seek-doc: The seek function for a stivale mount point.
+int stivale_modules_seek(vfs_mount*, file_t* file, long int offset, int whence) {
+	switch (whence) {
+		case SEEK_SET:
+			{
+				file->pos = offset;
+			}
+			break;
+		case SEEK_CUR:
+			{
+				file->pos += offset;
+			}
+			break;
+		case SEEK_END:
+			{
+				file->pos = file->size + offset;
+			}
+			break;
+		default:
+			return -1;
+	}
+
+	return 0;
+}
+
+//#stivale_modules_tell-doc: The tell function for a stivale mount point.
+long int stivale_modules_tell(vfs_mount*, file_t* file) {
+	return file->pos;
+}
+
 //#stivale_modules_read-doc: The read function for a stivale mount point.
 size_t stivale_modules_read(vfs_mount* node, void* buffer, size_t size, size_t nmemb, file_t* stream) {
 	for (int i = 0; i < size; i++) {
-		*(uint8_t*) ((uint64_t) buffer + i) = *((uint8_t*) stream->data + i);
+		*(uint8_t*) ((uint64_t) buffer + i) = *((uint8_t*) stream->data + i + stream->pos);
 	}
 	
 	return size;

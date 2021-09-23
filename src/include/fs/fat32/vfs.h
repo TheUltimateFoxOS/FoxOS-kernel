@@ -19,6 +19,9 @@ int fat32_closedir(vfs_mount*, DIR* stream);
 struct dirent* fat32_readdir(vfs_mount*, DIR* stream);
 void fat32_rewinddir(vfs_mount*, DIR* stream);
 
+int fat32_seek(vfs_mount*, file_t* file, long int offset, int whence);
+long int fat32_tell(vfs_mount*, file_t* file);
+
 int fat32_mkdir(vfs_mount*, const char* name, uint32_t);
 int fat32_unlink(vfs_mount*, const char* name);
 int fat32_rename(vfs_mount*, const char* old_name, const char* new_name);

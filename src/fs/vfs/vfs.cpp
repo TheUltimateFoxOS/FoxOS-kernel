@@ -206,6 +206,26 @@ void rewinddir(DIR* stream) {
 	stream->mount->rewinddir(stream->mount, stream);
 }
 
+//#fseek-doc: Seek in a file stream.
+int fseek(FILE* stream, long int offset, int whence) {
+	if (stream->mount->seek == NULL) {
+		set_task_errno(vfs_result::VFS_MISSING_FUNCTION);
+		return -1;
+	}
+
+	return stream->mount->seek(stream->mount, stream, offset, whence);
+}
+
+//#ftell-doc: Get the current position in a file stream.
+long int ftell(FILE* stream) {
+	if (stream->mount->tell == NULL) {
+		set_task_errno(vfs_result::VFS_MISSING_FUNCTION);
+		return -1; 
+	}
+
+	return stream->mount->tell(stream->mount, stream);
+}
+
 //#mkdir-doc: Create a directory.
 int mkdir(const char* name, uint32_t mode) {
 	char _filename[1024] = "";

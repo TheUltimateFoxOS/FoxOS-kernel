@@ -31,6 +31,9 @@ vfs_mount* initialise_fat32(int disk_id) {
 	mount->readdir = fat32_readdir;
 	mount->rewinddir = fat32_rewinddir;
 
+	mount->seek = fat32_seek;
+	mount->tell = fat32_tell;
+
 	mount->mkdir = fat32_mkdir;
 	mount->unlink = fat32_unlink;
 	mount->rename = fat32_rename;
@@ -176,6 +179,41 @@ struct dirent* fat32_readdir(vfs_mount*, DIR* stream) {
 //#fat32_rewinddir-doc: Rewind the directory stream to the start.
 void fat32_rewinddir(vfs_mount*, DIR* stream) {
 	f_readdir((FATDIR*) stream->data, 0);
+}
+
+//#fat32_seek-doc: Seek to a position in a file stream.
+int fat32_seek(vfs_mount*, file_t* file, long int offset, int whence) {
+	FRESULT res;
+	switch (whence) {
+		case SEEK_SET:
+			{
+				res = f_lseek((FIL*)file->data, offset);
+			}
+			break;
+		case SEEK_CUR:
+			{
+				res = f_lseek((FIL*)file->data, f_tell((FIL*)file->data) + offset);
+			}
+			break;
+		case SEEK_END:
+			{
+				res = f_lseek((FIL*)file->data, f_size((FIL*)file->data) + offset);
+			}
+			break;
+		default:
+			return -1;
+	}
+
+	if (res != FR_OK) {
+		return -1;
+	}
+
+	return 0;
+}
+
+//#fat32_tell-doc: Get the current position in a file stream.
+long int fat32_tell(vfs_mount*, file_t* file) {
+	return f_tell((FIL*)file->data);
 }
 
 //#fat32_mkdir-doc: Create a folder.

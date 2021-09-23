@@ -11,10 +11,19 @@ struct dir_t;
 struct dirent;
 struct vfs_mount;
 
+enum seek_type {
+	SEEK_SET = 1,
+	SEEK_CUR,
+	SEEK_END
+};
+
 typedef file_t* (*open_type_t)(vfs_mount*, const char*, const char*);
 typedef int (*close_type_t)(vfs_mount*, file_t*);
 typedef size_t (*read_type_t)(vfs_mount*, void*, size_t, size_t, file_t*);
 typedef size_t (*write_type_t)(vfs_mount*, void*, size_t, size_t, file_t*);
+
+typedef int (*seek_type_t)(vfs_mount*, file_t*, long int, int);
+typedef long int (*tell_type_t)(vfs_mount*, file_t*);
 
 typedef dir_t* (*opendir_type_t)(vfs_mount*, const char*);
 typedef int (*closedir_type_t)(vfs_mount*, dir_t*);
@@ -45,6 +54,9 @@ struct vfs_mount {
 	readdir_type_t readdir;
 	rewinddir_type_t rewinddir;
 
+	seek_type_t seek;
+	tell_type_t tell;
+
 	mkdir_type_t mkdir;
 	unlink_type_t unlink;
 	rename_type_t rename;
@@ -67,7 +79,7 @@ typedef struct file_t {
 	size_t size;
 	void* data;
 	vfs_mount* mount;
-
+	long int pos;
 } FILE;
 
 typedef struct dir_t {
@@ -104,6 +116,9 @@ DIR* opendir(const char* name);
 int closedir(DIR* stream);
 struct dirent* readdir(DIR* stream);
 void rewinddir(DIR* stream);
+
+int fseek(FILE* stream, long int offset, int whence);
+long int ftell(FILE* stream);
 
 int mkdir(const char* name, uint32_t mode);
 int unlink(const char* name);

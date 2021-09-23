@@ -93,6 +93,8 @@ syscall_handler:
 [extern sys_spawn]
 [extern sys_open]
 [extern sys_close]
+[extern sys_seek_get]
+[extern sys_seek_set]
 
 [GLOBAL syscall_table]
 [GLOBAL syscall_table_end]
@@ -112,6 +114,8 @@ syscall_table:
 	dq sys_spawn
 	dq sys_open
 	dq sys_close
+	dq sys_seek_get
+	dq sys_seek_set
 syscall_table_end:
 
 max_syscall equ ((syscall_table_end - syscall_table) / 8) -1

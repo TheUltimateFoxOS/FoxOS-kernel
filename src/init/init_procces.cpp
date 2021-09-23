@@ -101,6 +101,8 @@ readloop:
 	int page_amount = file->size / 0x1000 + 1;
 	void* elf_contents = global_allocator.request_pages(page_amount);
 
+	fseek(file, 0, SEEK_SET);
+
 	fread(elf_contents, file->size, 1, file);
 	
 	const char* argv[] = { orig_buffer, NULL };
