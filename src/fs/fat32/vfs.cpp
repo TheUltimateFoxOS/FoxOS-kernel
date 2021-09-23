@@ -71,7 +71,7 @@ FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 		fp->is_readable = 1;
 		fp->is_writable = 0;
 	} else if (strcmp((char*)mode, (char*)"w") == 0) {
-		fatmode = FA_WRITE;
+		fatmode = FA_CREATE_ALWAYS | FA_WRITE;
 		fp->is_readable = 0;
 		fp->is_writable = 1;
 	} else if (strcmp((char*)mode, (char*)"a") == 0) {
@@ -79,7 +79,7 @@ FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 		fp->is_readable = 0;
 		fp->is_writable = 1;
 	} else if (strcmp((char*)mode, (char*)"r+") == 0) {
-		fatmode = FA_OPEN_ALWAYS | FA_WRITE | FA_READ;
+		fatmode = FA_WRITE | FA_READ;
 		fp->is_readable = 1;
 		fp->is_writable = 1;
 	} else if (strcmp((char*)mode, (char*)"w+") == 0) {
@@ -87,7 +87,15 @@ FILE* fat32_open(vfs_mount* node, const char* file, const char* mode) {
 		fp->is_readable = 1;
 		fp->is_writable = 1;
 	} else if (strcmp((char*)mode, (char*)"a+") == 0) {
-		fatmode = FA_OPEN_ALWAYS | FA_OPEN_APPEND | FA_READ;
+		fatmode = FA_OPEN_APPEND | FA_READ | FA_WRITE;
+		fp->is_readable = 1;
+		fp->is_writable = 1;
+	} else if (strcmp((char*)mode, (char*)"wx") == 0) {
+		fatmode = FA_CREATE_NEW | FA_WRITE;
+		fp->is_readable = 0;
+		fp->is_writable = 1;
+	} else if (strcmp((char*)mode, (char*)"w+x") == 0) {
+		fatmode = FA_CREATE_NEW | FA_WRITE | FA_READ;
 		fp->is_readable = 1;
 		fp->is_writable = 1;
 	}

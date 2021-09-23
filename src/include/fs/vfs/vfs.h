@@ -123,3 +123,4 @@ long int ftell(FILE* stream);
 int mkdir(const char* name, uint32_t mode);
 int unlink(const char* name);
 int rename(const char* old_name, const char* new_name);
+int copy(const char* src_name, const char* dest_name);

@@ -1,5 +1,7 @@
 #include <driver/cmos.h>
 
+#include <driver/serial.h>
+
 using namespace driver;
 
 //#driver::cmos_read-doc: Read from the CMOS.
@@ -41,7 +43,8 @@ uint32_t driver::get_fattime() {
 	int hour = cmos(CMOS_READ_HOUR);
 	int day = cmos(CMOS_READ_DAY);
 	int month = cmos(CMOS_READ_MONTH);
-	int year = cmos(CMOS_READ_YEAR);
+	int century = cmos(CMOS_READ_CENTURY);
+	int year = cmos(CMOS_READ_YEAR) + (century * 100);
 	
 	return ((uint32_t) (year - 1980) << 25)
 			| ((uint32_t) month << 21)
