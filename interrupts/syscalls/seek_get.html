@@ -20,23 +20,24 @@
     
     <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
       <h1 class="w3-margin w3-jumbo">FoxOS</h1>
-      <p class="w3-xlarge">FoxOS docs</p>
+      <p class="w3-xlarge">FoxOS docs - seek_get.cpp</p>
     </header>
     
     <div class="fox-text">
-      <ul class="w3-ul w3-hoverable fox-a-nodecoration fox-ul">
-        <li><a href="/FoxOS-kernel/interrupts">..</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/read.html">read.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/write.html">write.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/env.html">env.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/open.html">open.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/seek_set.html">seek_set.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/resolve_symbol.html">resolve_symbol.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/memory.html">memory.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/spawn.html">spawn.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/seek_get.html">seek_get.cpp</a></li>
-        <li><a href="/FoxOS-kernel/interrupts/syscalls/close.html">close.cpp</a></li>
-      </ul>
+      <div>
+        <h2>sys_seek_get</h2>
+        <b>Signature:</b> <code>extern "C" void sys_seek_get(s_registers regs)</code><br/>
+        <b>Attributes:</b> <code>extern "C"</code><br/>
+        <b>Description:</b> Get the current position of a file descriptor. The file descriptor must be provided in rbx. The result will be stored in rcx.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>s_registers regs</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
     </div>
   </body>
 </html>

@@ -80,6 +80,36 @@
       </div>
       <hr>
       <div>
+        <h2>stivale_modules_seek</h2>
+        <b>Signature:</b> <code>int stivale_modules_seek(vfs_mount*, file_t* file, long int offset, int whence)</code><br/>
+        <b>Description:</b> The seek function for a stivale mount point.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>file_t* file</code></li>
+          <li><code>long int offset</code></li>
+          <li><code>int whence</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>stivale_modules_tell</h2>
+        <b>Signature:</b> <code>long int stivale_modules_tell(vfs_mount*, file_t* file)</code><br/>
+        <b>Description:</b> The tell function for a stivale mount point.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>file_t* file</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>long int</code>
+      </div>
+      <hr>
+      <div>
         <h2>stivale_modules_read</h2>
         <b>Signature:</b> <code>size_t stivale_modules_read(vfs_mount* node, void* buffer, size_t size, size_t nmemb, file_t* stream)</code><br/>
         <b>Description:</b> The read function for a stivale mount point.<br/>

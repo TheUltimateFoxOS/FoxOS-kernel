@@ -184,6 +184,36 @@
       </div>
       <hr>
       <div>
+        <h2>fat32_seek</h2>
+        <b>Signature:</b> <code>int fat32_seek(vfs_mount*, file_t* file, long int offset, int whence)</code><br/>
+        <b>Description:</b> Seek to a position in a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>file_t* file</code></li>
+          <li><code>long int offset</code></li>
+          <li><code>int whence</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>int</code>
+      </div>
+      <hr>
+      <div>
+        <h2>fat32_tell</h2>
+        <b>Signature:</b> <code>long int fat32_tell(vfs_mount*, file_t* file)</code><br/>
+        <b>Description:</b> Get the current position in a file stream.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>vfs_mount*</code></li>
+          <li><code>file_t* file</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>long int</code>
+      </div>
+      <hr>
+      <div>
         <h2>fat32_mkdir</h2>
         <b>Signature:</b> <code>int fat32_mkdir(vfs_mount*, const char* name, uint32_t)</code><br/>
         <b>Description:</b> Create a folder.<br/>
