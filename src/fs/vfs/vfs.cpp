@@ -286,9 +286,6 @@ int unlink(const char* name) {
 
 //#rename-doc: Rename a file or directory.
 int rename(const char* old_name, const char* new_name) {
-	int errno = 0;
-	__asm__ __volatile__ ("int $0x30" : : "a" (5), "b" (2), "c" (&errno));
-
 	if (strcmp((char*) old_name, (char*) new_name) == 0) {
 		return 0;
 	}
@@ -344,16 +341,12 @@ int rename(const char* old_name, const char* new_name) {
 		return ((vfs_mount*) old_node->data1)->rename((vfs_mount*) old_node->data1, old_file_path, new_file_path);
 	} else {
 		int out = copy(old_name, new_name);
-		if (out != 0 || errno != 0) {
+		if (out != 0) {
 			set_task_errno(vfs_result::VFS_ERROR);
 			return -1;
 		}
 
 		((vfs_mount*) old_node->data1)->unlink((vfs_mount*) old_node->data1, old_file_path);
-		if (errno != 0) {
-			set_task_errno(vfs_result::VFS_ERROR);
-			return -1;
-		}
 
 		return 0;
 	}
@@ -361,24 +354,12 @@ int rename(const char* old_name, const char* new_name) {
 
 //#copy-doc: Copy a file to another file.
 int copy(const char* src_name, const char* dest_name) {
-	int errno = 0;
-	__asm__ __volatile__ ("int $0x30" : : "a" (5), "b" (2), "c" (&errno));
-
 	if (strcmp((char*) src_name, (char*) dest_name) == 0) {
 		return 0;
 	}
 
 	FILE* src_f = fopen(src_name, "r");
-	if (errno != 0) {
-		set_task_errno(errno);
-		return -1;
-	}
 	FILE* dest_f = fopen(dest_name, "w");
-	if (errno != 0) {
-		fclose(src_f);
-		set_task_errno(errno);
-		return -1;
-	}
 
 	char* buf = (char*)global_allocator.request_page();
     size_t nread;
@@ -393,8 +374,6 @@ int copy(const char* src_name, const char* dest_name) {
 			if (nwritten >= 0) {
 				nread -= nwritten;
 				out_ptr += nwritten;
-			} else if (errno != 0) {
-				goto out_error;
 			}
 		} while (nread > 0);
 	}
@@ -403,10 +382,9 @@ int copy(const char* src_name, const char* dest_name) {
 		fclose(src_f);
 		fclose(dest_f);
 		return 0;
+	} else {
+		fclose(src_f);
+		fclose(dest_f);
+		return -1;
 	}
-
-out_error:
-	fclose(src_f);
-	fclose(dest_f);
-	return -1;
 }
