@@ -1,6 +1,9 @@
 #include <net/tcp.h>
+
 #include <driver/serial.h>
+
 #include <scheduling/pit/pit.h>
+#include <scheduling/hpet/hpet.h>
 
 using namespace net;
 
@@ -19,16 +22,16 @@ bool TcpHandler::onTcpMessage(TcpSocket* socket, uint8_t* data, size_t size) {
 	return true;
 }
 
-//#TcpSocket::TcpSocket-doc: TcpSocket destrcutor.
-TcpSocket::TcpSocket(TcpProvider* provider) {
+//#TcpSocket::TcpSocket-doc: TcpSocket constrcutor.
+TcpSocket::TcpSocket(TcpProvider* provider): acknowledged(1) {
 	this->provider = provider;
 	this->handler = nullptr;
 	this->state = TcpSocketState::CLOSED;
 }
 
-//#TcpSocket::~TcpSocket-doc: Empty destrcutor.
+//#TcpSocket::~TcpSocket-doc: TcpSocket destrcutor.
 TcpSocket::~TcpSocket() {
-
+	this->acknowledged.~listv2();
 }
 
 //#TcpSocket::handleTcpMessage-doc: Called when the TCP client/server receives a message.
@@ -105,82 +108,114 @@ bool TcpProvider::onInternetProtocolReceived(uint32_t srcIP_BE, uint32_t dstIP_B
 	}
 
 	if (socket != 0 && socket->state != TcpSocketState::CLOSED) {
-		switch((tcp->flags) & (TcpFlag::SYN | TcpFlag::ACK | TcpFlag::FIN)) {
-			case TcpFlag::SYN:
-				if (socket->state == TcpSocketState::LISTEN) {
-					socket->state == TcpSocketState::SYN_RECEIVED;
-					socket->remotePort = tcp->src_port;
-					socket->remoteIp = srcIP_BE;
-					socket->ack_num = __builtin_bswap32(tcp->seq_num) + 1;
-
-					#warning The TCP sequence starting offset should be random
-					socket->seq_num = 0xbeefcafe;
-
-					send(socket, 0, 0, TcpFlag::SYN | TcpFlag::ACK);
-					socket->seq_num++;
-				} else {
-					reset = true;
-				}
-				break;
-			case TcpFlag::SYN | TcpFlag::ACK:
-				if (socket->state == TcpSocketState::SYN_SENT) {
-					socket->state = TcpSocketState::ESTABLISHED;
-					socket->ack_num = __builtin_bswap32(tcp->seq_num) + 1;
-					socket->seq_num++;
-					driver::global_serial_driver->printf("TCP: SYN ACK.\n");
-					send(socket, 0, 0, TcpFlag::ACK);
-				} else {
-					reset = true;
-				}
-				break;
-			case TcpFlag::SYN | TcpFlag::FIN:
-			case TcpFlag::SYN | TcpFlag::FIN | TcpFlag::ACK:
-				reset = true;
-				break;
-			case TcpFlag::FIN:
-			case TcpFlag::FIN | TcpFlag::ACK:
-				if (socket->state == TcpSocketState::ESTABLISHED) {
-					socket->state = TcpSocketState::CLOSE_WAIT;
-					socket->ack_num++;
-					send(socket, 0, 0, TcpFlag::ACK);
-					send(socket, 0, 0, TcpFlag::FIN | TcpFlag::ACK);
-					driver::global_serial_driver->printf("TCP: Socket closed.\n");
-				} else if (socket->state == TcpSocketState::CLOSE_WAIT) {
-					socket->state = TcpSocketState::CLOSED;
-				} else if (socket->state == TcpSocketState::FIN_WAIT_1 || socket->state == TcpSocketState::FIN_WAIT_2) {
-					socket->state = TcpSocketState::CLOSED;
-					socket->ack_num++;
-					driver::global_serial_driver->printf("TCP: Socket closed.\n");
-					send(socket, 0, 0, TcpFlag::ACK);
-				} else {
-					reset = true;
-				}
-				break;
-			case TcpFlag::ACK:
-				if (socket->state == TcpSocketState::SYN_RECEIVED) {
-					socket->state = TcpSocketState::ESTABLISHED;
-					return false;
-				} else if (socket->state == TcpSocketState::FIN_WAIT_1) {
-					socket->state = TcpSocketState::FIN_WAIT_2;
-					return false;
-				} else if (socket->state == TcpSocketState::CLOSE_WAIT) {
-					socket->state == TcpSocketState::CLOSED;
-					break;
-				} else if (*(payload + (tcp->data_offset * 4)) == 0) {
-					break; //This is a bit scummy
-				}
-			default:
-				if (__builtin_bswap32(tcp->seq_num) == socket->ack_num) {
-					driver::global_serial_driver->printf("TCP: Processigng packet.\n");
-					reset = !(socket->handleTcpMessage(payload + (tcp->data_offset * 4), size - (tcp->data_offset * 4)));
-					if (!reset) {
-						socket->ack_num += size - (tcp->data_offset * 4);
-						send(socket, 0, 0, TcpFlag::ACK);
+		if (socket->seq_num != __builtin_bswap32(tcp->ack)) {
+			if (tcp->flags & (1 << 4)) { //If the message has the ACK flag.
+				listv2<tcp_sent_packet_t>::node* ack_node = socket->acknowledged.find<uint32_t>([](uint32_t ack_num, listv2<tcp_sent_packet_t>::node* ack_node) {
+					int add = 0;
+					if (ack_node->data.data_empty) {
+						add = 1;
 					}
-				} else { //Data is in the wrong order
-					driver::global_serial_driver->printf("TCP: Reset because packets are in the wrong order.\n");
+
+					if (ack_node->data.seq_num + add == ack_num) {
+						return true;
+					}
+
+					return false;
+				}, __builtin_bswap32(tcp->ack));
+
+				if (ack_node == nullptr) {
 					reset = true;
+					driver::global_serial_driver->printf("TCP: Packet that wasn't sent was acknowledged, connection reset.\n");
+				} else {
+					ack_node->data.was_acked = true;
 				}
+			}
+		}
+
+		if (!reset) {
+			switch((tcp->flags) & (TcpFlag::SYN | TcpFlag::ACK | TcpFlag::FIN)) {
+				case TcpFlag::SYN: {
+					if (socket->state == TcpSocketState::LISTEN) {
+						socket->state = TcpSocketState::SYN_RECEIVED;
+						socket->remotePort = tcp->src_port;
+						socket->remoteIp = srcIP_BE;
+						socket->ack_num = __builtin_bswap32(tcp->seq_num) + 1;
+
+						#warning The TCP sequence starting offset should be random
+						socket->seq_num = 0xbeefcafe;
+
+						send(socket, 0, 0, TcpFlag::SYN | TcpFlag::ACK);
+						socket->seq_num++;
+					} else {
+						reset = true;
+					}
+					break;
+				}
+				case TcpFlag::SYN | TcpFlag::ACK: {
+					if (socket->state == TcpSocketState::SYN_SENT) {
+						socket->state = TcpSocketState::ESTABLISHED;
+						socket->ack_num = __builtin_bswap32(tcp->seq_num) + 1;
+						socket->seq_num++;
+
+						send(socket, 0, 0, TcpFlag::ACK);
+					} else {
+						reset = true;
+					}
+					break;
+				}
+				case TcpFlag::SYN | TcpFlag::FIN:
+				case TcpFlag::SYN | TcpFlag::FIN | TcpFlag::ACK: {
+					reset = true;
+					break;
+				}
+				case TcpFlag::FIN:
+				case TcpFlag::FIN | TcpFlag::ACK: {
+					if (socket->state == TcpSocketState::ESTABLISHED) {
+						socket->state = TcpSocketState::CLOSE_WAIT;
+						socket->ack_num++;
+
+						send(socket, 0, 0, TcpFlag::ACK);
+						send(socket, 0, 0, TcpFlag::FIN | TcpFlag::ACK);
+						driver::global_serial_driver->printf("TCP: Socket closed.\n");
+					} else if (socket->state == TcpSocketState::CLOSE_WAIT) {
+						socket->state = TcpSocketState::CLOSED;
+					} else if (socket->state == TcpSocketState::FIN_WAIT_1 || socket->state == TcpSocketState::FIN_WAIT_2) {
+						socket->state = TcpSocketState::CLOSED;
+						socket->ack_num++;
+						driver::global_serial_driver->printf("TCP: Socket closed.\n");
+						send(socket, 0, 0, TcpFlag::ACK);
+					} else {
+						reset = true;
+					}
+					break;
+				}
+				case TcpFlag::ACK: {
+					if (socket->state == TcpSocketState::SYN_RECEIVED) {
+						socket->state = TcpSocketState::ESTABLISHED;
+						return false;
+					} else if (socket->state == TcpSocketState::FIN_WAIT_1) {
+						socket->state = TcpSocketState::FIN_WAIT_2;
+						return false;
+					} else if (socket->state == TcpSocketState::CLOSE_WAIT) {
+						socket->state = TcpSocketState::CLOSED;
+						break;
+					} else if (*(payload + (tcp->data_offset * 4)) == 0) {
+						break;
+					}
+				}
+				default:
+					if (__builtin_bswap32(tcp->seq_num) == socket->ack_num) {
+						driver::global_serial_driver->printf("TCP: Processigng packet.\n");
+						reset = !(socket->handleTcpMessage(payload + (tcp->data_offset * 4), size - (tcp->data_offset * 4)));
+						if (!reset) { //Acknowledge a sent message.
+							socket->ack_num += size - (tcp->data_offset * 4);
+							send(socket, 0, 0, TcpFlag::ACK);
+						}
+					} else { //Data is in the wrong order
+						driver::global_serial_driver->printf("TCP: Reset because packets are in the wrong order.\n");
+						reset = true;
+					}
+			}
 		}
 	}
 
@@ -306,9 +341,102 @@ void TcpProvider::send(TcpSocket* socket, uint8_t* data, size_t size, uint16_t f
 	tcp->checksum = 0;
 	tcp->checksum = this->backend->checksum((uint16_t*) packet, total_size_phdr);
 
+	bool expects_ack = false;
+	if ((flags != (TcpFlag::FIN | TcpFlag::ACK) && flags != TcpFlag::ACK && flags != TcpFlag::RST)) {
+		expects_ack = true;
+	}
+
+	listv2<net::tcp_sent_packet_t>::node* list_node;
+	if (expects_ack) {
+		tcp_sent_packet_t sent_packet;
+		sent_packet.seq_num = socket->seq_num;
+		sent_packet.data_empty = size == 0;
+		sent_packet.was_acked = false;
+		list_node = socket->acknowledged.add(sent_packet);
+	}
+
 	Ipv4Handler::send(socket->remoteIp, (uint8_t*) tcp, total_size);
 
-	free(packet);
+	bool retransmit = false;
+	if (expects_ack) {
+		int timeout = 1000;
+		while (!list_node->data.was_acked && socket->state == TcpSocketState::ESTABLISHED) {
+			if (--timeout == 0) {
+				driver::global_serial_driver->printf("TCP: Message timeout, retransmitting.\n");
+				retransmit = true;
+				break;
+			}
+
+			if (hpet::is_available()) {
+				hpet::sleep(100);
+			} else {
+				PIT::sleep(100);
+			}
+		}
+	}
+
+	if (retransmit && socket->state == TcpSocketState::ESTABLISHED) {
+		this->retransmit(socket, packet, size, list_node);
+	} else {
+		retransmit = false;
+		if (socket->state == TcpSocketState::SYN_SENT) {
+			int timeout = 1000;
+			while (!list_node->data.was_acked && socket->state == TcpSocketState::SYN_SENT) {
+				if (--timeout == 0) {
+					driver::global_serial_driver->printf("TCP: Connection timeout.\n");
+					retransmit = true;
+					break;
+				}
+
+				if (hpet::is_available()) {
+					hpet::sleep(100);
+				} else {
+					PIT::sleep(100);
+				}
+			}
+		}
+		if (retransmit) {
+			send(socket, 0, 0, TcpFlag::RST);
+			socket->state = TcpSocketState::CLOSED;
+		}
+
+		socket->acknowledged.remove(list_node);
+		free(packet);
+	}
+}
+
+//#TcpProvider::retransmit-doc: Send some data again using a TCP socket.
+void TcpProvider::retransmit(TcpSocket* socket, uint8_t* packet, size_t size, listv2<net::tcp_sent_packet_t>::node* list_node) {
+	if (socket->state != TcpSocketState::ESTABLISHED) {
+		socket->acknowledged.remove(list_node);
+		free(packet);
+		return;
+	}
+
+	Ipv4Handler::send(socket->remoteIp, packet, size);
+
+	bool retransmit = false;
+	int timeout = 1000;
+	while (!list_node->data.was_acked && socket->state == TcpSocketState::ESTABLISHED) {
+		if (--timeout == 0) {
+			driver::global_serial_driver->printf("TCP: Message timeout, retransmitting.\n");
+			retransmit = true;
+			break;
+		}
+
+		if (hpet::is_available()) {
+			hpet::sleep(100);
+		} else {
+			PIT::sleep(100);
+		}
+	}
+
+	if (retransmit && socket->state == TcpSocketState::ESTABLISHED) {
+		this->retransmit(socket, packet, size, list_node);
+	} else {
+		socket->acknowledged.remove(list_node);
+		free(packet);
+	}
 }
 
 //#TcpProvider::bind-doc: Bind a TCP handler to a socket.

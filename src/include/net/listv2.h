@@ -53,6 +53,7 @@ class listv2 {
 		}
 
 		node* add(T d) {
+		retry:
 			for (size_t i = 0; i < length; i++) {
 				if (!data[i].taken) {
 					data[i].data = d;
@@ -60,7 +61,10 @@ class listv2 {
 					return &data[i];
 				}
 			}
-			return nullptr;
+
+			data = (node*) realloc(data, sizeof(node) * (length + 1), length * sizeof(node));
+			length++;
+			goto retry;
 		}
 	
 	private:

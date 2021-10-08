@@ -1,7 +1,5 @@
 #include <driver/cmos.h>
 
-#include <driver/serial.h>
-
 using namespace driver;
 
 //#driver::cmos_read-doc: Read from the CMOS.

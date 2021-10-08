@@ -57,6 +57,12 @@ namespace net {
 		uint16_t total_len;
 	} __attribute__((packed));
 
+	struct tcp_sent_packet_t {
+		uint32_t seq_num;
+		bool data_empty;
+		bool was_acked;
+	};
+
 	class TcpSocket;
 	class TcpProvider;
 
@@ -87,6 +93,8 @@ namespace net {
 
 			TcpProvider* provider;
 			TcpHandler* handler;
+
+			listv2<tcp_sent_packet_t> acknowledged;
 	};
 
 	class TcpProvider: public Ipv4Handler {
@@ -111,6 +119,7 @@ namespace net {
 			virtual void disconnect(TcpSocket* socket);
 
 			virtual void send(TcpSocket* socket, uint8_t* data, size_t size, uint16_t flags = 0);
+			virtual void retransmit(TcpSocket* socket, uint8_t* packet, size_t size, listv2<net::tcp_sent_packet_t>::node* list_node);
 
 			virtual void bind(TcpSocket* socket, TcpHandler* handler);
 	};

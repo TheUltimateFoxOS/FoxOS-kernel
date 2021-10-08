@@ -80,7 +80,7 @@ class TcpMsgHandler : public net::TcpHandler {
 		bool onTcpMessage(net::TcpSocket* socket, uint8_t* data, size_t size) {
 			driver::global_serial_driver->printf("TCP PACKET: ");
 			for(int i = 0; i < size; i++) {
-				driver::global_serial_driver->printf("%x ", data[i]);
+				driver::global_serial_driver->printf("%c", data[i]);
 			}
 			driver::global_serial_driver->printf("\n");
 
@@ -207,8 +207,6 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 		renderer::global_font_renderer->printf("%fDone%r. ip: %d.%d.%d.%d, gateway: %d.%d.%d.%d, dns: %d.%d.%d.%d", 0xff00ff00, ip.ip_p[0], ip.ip_p[1], ip.ip_p[2], ip.ip_p[3], gateway.ip_p[0], gateway.ip_p[1], gateway.ip_p[2], gateway.ip_p[3], dns_ip.ip_p[0], dns_ip.ip_p[1], dns_ip.ip_p[2], dns_ip.ip_p[3]);
 		renderer::global_font_renderer->printf("\n");
 
-		/*
-
 		uint32_t ip_of_google = dns->resolve((char*) "google.com");
 		driver::nic::ip_u ip_of_google_u;
 		ip_of_google_u.ip = ip_of_google;
@@ -217,15 +215,11 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 
 		icmp->send_echo_request(ip_of_google);
 
-		net::TcpProvider* tcp = new net::TcpProvider(ipv4);
-
 		net::TcpSocket* socket = tcp->connect(ip_of_google_u.ip, 80);
 		TcpMsgHandler tcphandler;
 		tcp->bind(socket, &tcphandler);
 		const char* http = "GET / HTTP/1.1\r\nHost: www.google.com\r\n\r\n";
 		socket->send((uint8_t*)http, strlen((char*)http));
-
-		*/
 	}
 
 	vfs_mount* fat_mount = initialise_fat32(0);
