@@ -56,9 +56,9 @@
       <hr>
       <div>
         <h2>TcpSocket</h2>
-        <b>Signature:</b> <code>TcpSocket::TcpSocket(TcpProvider* provider)</code><br/>
+        <b>Signature:</b> <code>TcpSocket::TcpSocket(TcpProvider* provider): acknowledged(1)</code><br/>
         <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
-        <b>Description:</b> TcpSocket destrcutor.<br/>
+        <b>Description:</b> TcpSocket constrcutor.<br/>
         <br/>
         <b>Parameters:</b><br/>
         <ul>
@@ -70,7 +70,7 @@
         <h2>~TcpSocket</h2>
         <b>Signature:</b> <code>TcpSocket::~TcpSocket()</code><br/>
         <b>Class/Namespace:</b> <code>TcpSocket</code><br/>
-        <b>Description:</b> Empty destrcutor.<br/>
+        <b>Description:</b> TcpSocket destrcutor.<br/>
       </div>
       <hr>
       <div>
@@ -196,6 +196,23 @@
           <li><code>uint8_t* data</code></li>
           <li><code>size_t size</code></li>
           <li><code>uint16_t flags</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>retransmit</h2>
+        <b>Signature:</b> <code>void TcpProvider::retransmit(TcpSocket* socket, uint8_t* packet, size_t size, listv2<net::tcp_sent_packet_t>::node* list_node)</code><br/>
+        <b>Class/Namespace:</b> <code>TcpProvider</code><br/>
+        <b>Description:</b> Send some data again using a TCP socket.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>TcpSocket* socket</code></li>
+          <li><code>uint8_t* packet</code></li>
+          <li><code>size_t size</code></li>
+          <li><code>listv2<net::tcp_sent_packet_t>::node* list_node</code></li>
         </ul>
         <br/>
         <b>Return:</b> <code>void</code>
