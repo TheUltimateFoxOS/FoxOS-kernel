@@ -222,8 +222,14 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 		socket->send((uint8_t*)http, strlen((char*)http));
 	}
 
-	vfs_mount* fat_mount = initialise_fat32(0);
-	mount(fat_mount, (char*) "root");
+	if (driver::disk::global_disk_manager->num_disks != 0) {
+
+		vfs_mount* fat_mount = initialise_fat32(0);
+		mount(fat_mount, (char*) "root");
+		
+	} else {
+		renderer::global_font_renderer->printf("No physical disks found!\n");
+	}
 
 	vfs_mount* stivale_mount = initialise_stivale_modules(bootinfo);
 	mount(stivale_mount, (char*) "stivale");

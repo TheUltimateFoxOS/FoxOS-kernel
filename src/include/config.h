@@ -21,6 +21,8 @@ extern bool NO_SMP_SHED;
 #define USE_STIVALE2_SMP
 #define TASK_STACK_PAGES 64
 
+//#define SERIAL_TO_SCREEN_REDIRECT
+
 /* Only enable if you know why this is a experimental feature */
 //#define XSAVE_SUPPORT
 

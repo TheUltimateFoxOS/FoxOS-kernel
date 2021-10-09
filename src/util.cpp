@@ -40,6 +40,8 @@
 
 KernelInfo kernel_info;
 
+extern "C" void write_serial_to_screen_redirection();
+
 //#prepare_memory-doc: Read's the memory map and initialises the PageFrameAllocator also loads a new page table.
 void prepare_memory(stivale2_struct* bootinfo) {
 	stivale2_struct_tag_memmap* memmap = stivale2_tag_find<stivale2_struct_tag_memmap>(bootinfo, STIVALE2_STRUCT_TAG_MEMMAP_ID);
@@ -288,6 +290,10 @@ KernelInfo init_kernel(stivale2_struct* bootinfo) {
 	elf_symbol_resolver = new ElfSymbolResolver((void*) kernel_file->kernel_file);
 
 	init_fast_mem(); // we want to use as fast as possible fast memory functions
+
+#ifdef SERIAL_TO_SCREEN_REDIRECT
+	write_serial_to_screen_redirection();
+#endif
 
 	setup_globals(bootinfo);
 	renderer::global_renderer2D->load_bitmap(logo, 0);
