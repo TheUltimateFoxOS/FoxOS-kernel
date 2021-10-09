@@ -115,16 +115,19 @@ void FontRenderer::putc(char c) {
 		return;
 	}
 
-	uint32_t* pix_ptr = (uint32_t*) target_frame_buffer->base_address;
-	char* font_ptr = (char*) font->glyph_buffer + (c * font->psf1_Header->charsize);
+	if (c >= 20 && c <= 126) {
+    	
+		uint32_t* pix_ptr = (uint32_t*) target_frame_buffer->base_address;
+		char* font_ptr = (char*) font->glyph_buffer + (c * font->psf1_Header->charsize);
 
-	for (unsigned long y = cursor_position.y; y < cursor_position.y + 16; y++){
-		for (unsigned long x = cursor_position.x; x < cursor_position.x + 8; x++){
-			if ((*font_ptr & (0b10000000 >> (x - cursor_position.x))) > 0){
+		for (unsigned long y = cursor_position.y; y < cursor_position.y + 16; y++){
+			for (unsigned long x = cursor_position.x; x < cursor_position.x + 8; x++){
+				if ((*font_ptr & (0b10000000 >> (x - cursor_position.x))) > 0){
 					*(unsigned int*)(pix_ptr + x + (y * target_frame_buffer->pixels_per_scanline)) = color;
 				}
+			}
+			font_ptr++;
 		}
-		font_ptr++;
 	}
 }
 
