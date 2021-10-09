@@ -20,19 +20,19 @@
     
     <header class="w3-container w3-orange w3-center" style="padding:50px 16px">
       <h1 class="w3-margin w3-jumbo">FoxOS</h1>
-      <p class="w3-xlarge">FoxOS docs</p>
+      <p class="w3-xlarge">FoxOS docs - redirect_serial_to_screen.asm</p>
     </header>
     
     <div class="fox-text">
-      <ul class="w3-ul w3-hoverable fox-a-nodecoration fox-ul">
-        <li><a href="/FoxOS-kernel">..</a></li>
-        <li><a href="/FoxOS-kernel/renderer/layer_renderer.html">layer_renderer.cpp</a></li>
-        <li><a href="/FoxOS-kernel/renderer/font_renderer.html">font_renderer.cpp</a></li>
-        <li><a href="/FoxOS-kernel/renderer/layer_copy_asm.html">layer_copy.asm</a></li>
-        <li><a href="/FoxOS-kernel/renderer/redirect_serial_to_screen_asm.html">redirect_serial_to_screen.asm</a></li>
-        <li><a href="/FoxOS-kernel/renderer/renderer2D.html">renderer2D.cpp</a></li>
-        <li><a href="/FoxOS-kernel/renderer/mouse_renderer.html">mouse_renderer.cpp</a></li>
-      </ul>
+      <div>
+        <h2>write_serial_to_screen_redirection</h2>
+        <b>Signature:</b> <code>extern "C" void write_serial_to_screen_redirection()</code><br/>
+        <b>Attributes:</b> <code>extern "C"</code><br/>
+        <b>Description:</b> Redirects serial output to the screen. Used for testing on real hardware with no serial port.<br/>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
     </div>
   </body>
 </html>
