@@ -71,7 +71,9 @@ ap_trampoline_64:
 	cpuid
 	and ecx, 1 << 26 ; check for XSAVE support
 	test ecx, ecx
-	je to_target(.skip_xsave)
+
+	; why the fuck is here no to_target needed
+	je .skip_xsave
 
 	mov rax, cr0
 	xor rax, 1 << 3
