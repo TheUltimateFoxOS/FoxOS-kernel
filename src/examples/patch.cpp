@@ -16,7 +16,7 @@ void usefull_function2() {
 }
 
 //#test_patch-doc: Test patching.
-void test_patch() {
+void test_patch(char* _) {
 	p = patch((char*) "_Z16usefull_functionv", resolve_symbol((char*) "_Z17usefull_function2v"));
 	usefull_function();
 	usefull_function();

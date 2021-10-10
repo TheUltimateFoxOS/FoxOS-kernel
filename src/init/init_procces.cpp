@@ -13,13 +13,21 @@
 #include <config.h>
 
 bool autoexec = false;
+char* default_path_override = nullptr;
 
 extern "C" void syscall_table();
 extern "C" void syscall_table_end();
 
 //#set_autoexec-doc: Configures the init procces to run the predefined file on startup.
-void set_autoexec() {
+void set_autoexec(char* path) {
 	autoexec = true;
+	default_path_override = path;
+
+	if (default_path_override) {
+		driver::global_serial_driver->printf("Setting autoexec to %s!\n", default_path_override);
+	} else {
+		driver::global_serial_driver->printf("Setting autoexec to %s!\n", AUTOEXEC_PATH);
+	}
 }
 
 //#__init_procces_sighandler-doc: The standard init procces signal handler. Just shows the general panic screen.
@@ -56,9 +64,15 @@ readloop:
 	renderer::global_font_renderer->printf("Executable to start > ");
 
 	if (autoexec) {
-		renderer::global_font_renderer->printf("%s\n", AUTOEXEC_PATH);
-		strcpy(buffer, AUTOEXEC_PATH);
-		reading = false;
+    		if (default_path_override) {
+        		renderer::global_font_renderer->printf("%s\n", default_path_override);
+        		strcpy(buffer, default_path_override);
+        		reading = false;
+    		} else {
+			renderer::global_font_renderer->printf("%s\n", AUTOEXEC_PATH);
+			strcpy(buffer, AUTOEXEC_PATH);
+			reading = false;
+    		}
 	}
 
 	while (reading) {

@@ -2,13 +2,13 @@
 
 #include <bootinfo.h>
 
-void syscall_test();
-void test_patch();
-void test_scheduler();
-void disk_test();
-void font_renderer_test();
-void fat32_old_test();
-void fat32_test();
-void vfs_test();
-void layer_test();
-void test_sound();
+void syscall_test(char* _);
+void test_patch(char* _);
+void test_scheduler(char* _);
+void disk_test(char* _);
+void font_renderer_test(char* _);
+void fat32_old_test(char* _);
+void fat32_test(char* _);
+void vfs_test(char* _);
+void layer_test(char* _);
+void test_sound(char* _);

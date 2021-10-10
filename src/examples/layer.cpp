@@ -68,7 +68,7 @@ void frame() {
 extern framebuffer_t default_framebuffer;
 
 //#layer_test-doc: Test the layer renderer.
-void layer_test() {
+void layer_test(char* _) {
 	renderer::layer_t* l1 = renderer::allocate_layer_matching(&default_framebuffer);
 	renderer::layer_t* l2 = renderer::allocate_layer_matching(&default_framebuffer);
 

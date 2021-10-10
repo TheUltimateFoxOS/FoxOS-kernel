@@ -10,7 +10,7 @@
 ------------------------------------------------------------ */
 
 //#vfs_test-doc: Test the virtual file system. DO NOT TRY TO INITIALISE A DISK TWICE AT THE SAME ID!
-void vfs_test() {
+void vfs_test(char* _) {
     vfs_mount* fat_mount = initialise_fat32(0); //Initialise the FAT32 disk at ID 0
 	mount(fat_mount, (char*) "vfstest"); //Mount the FAT32 disk at vfstest:/
 

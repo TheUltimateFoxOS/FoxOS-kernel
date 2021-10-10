@@ -4,7 +4,7 @@
 #include <scheduling/pit/pit.h>
 
 //#test_sound-doc: Test the sound driver (very loud).
-void test_sound() {
+void test_sound(char* _) {
 	driver::PcSpeakerDriver* driver = (driver::PcSpeakerDriver*) driver::global_driver_manager->find_driver_by_name((char*) "pc speaker");
 
 	for (int i = 0; i < 7; i++) {

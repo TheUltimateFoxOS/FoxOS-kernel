@@ -35,7 +35,7 @@ struct symbol {
 
 extern ElfSymbolResolver* elf_symbol_resolver;
 
-void set_no_smp_shed();
+void set_no_smp_shed(char* _);
 struct patch_t {
 	void* old_addr;
 	uint8_t old_code[13];

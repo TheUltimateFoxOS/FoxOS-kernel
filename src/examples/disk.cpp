@@ -5,7 +5,7 @@
 #include <driver/serial.h>
 
 //#disk_test-doc: Test reading the disk.
-void disk_test() {
+void disk_test(char* _) {
 	char* buffer = (char*) global_allocator.request_page(); //Request a page from the page frame allocator to store the data read by the disk manager
 	driver::disk::global_disk_manager->read(0, 0, 1, buffer);//Read raw data from the disk of ID 0 into the buffer
 

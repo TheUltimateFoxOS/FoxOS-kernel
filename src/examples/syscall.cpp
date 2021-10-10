@@ -13,6 +13,6 @@ extern "C" void syscall_test2(s_registers* regs) {
 }
 
 //#syscall_test-doc: Test a syscall.
-void syscall_test() {
+void syscall_test(char* _) {
 	asm ("mov $0, %rax; int $0x30; mov $1, %rax; int $0x30");
 }

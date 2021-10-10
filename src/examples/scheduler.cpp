@@ -6,7 +6,7 @@
 task* task2;
 
 //#test_scheduler-doc: Test the scheduler.
-void test_scheduler() {
+void test_scheduler(char* _) {
 	//#new_task-discard
 	task* task1 = new_task((void*) (void_function) []() {
 		driver::global_serial_driver->printf("A");

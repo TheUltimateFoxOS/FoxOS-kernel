@@ -5,7 +5,7 @@
 #include <paging/page_frame_allocator.h>
 
 //#fat32_old_test-doc: Test the OLD fat32 driver.
-void fat32_old_test() {
+void fat32_old_test(char* _) {
 	fat32_old::disk_id = 0; //Set to the first disk
 	uint8_t fs_buf[512];
 	fat32_old::fs_info_t fs_info = fat32_old::read_info(fs_buf); //Read file system info

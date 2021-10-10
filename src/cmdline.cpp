@@ -40,23 +40,43 @@ void CmdLineParser::parse(char* cmdline) {
 		if (cmdline[i] == ' ') {
 			cmdline[i] = 0;
 
+			char* starting_asingment = nullptr;
+
+			for (int k = 0; k < strlen(last_token); k++) {
+				if (last_token[k] == '=') {
+					last_token[k] = 0;
+					starting_asingment = &last_token[k + 1];
+					break;
+    				}
+    			}
+
 			list_node_t* node = this->find_node(find_handler, last_token, 0, 0, 0);
 
 			if (node == 0) {
 				renderer::global_font_renderer->printf("%fUnknown command: %s%r\n", 0xffff0000, last_token);
 			} else {
-				((cmdline_handler) node->data2)();
+				((cmdline_handler) node->data2)(starting_asingment);
 			}
 
 			last_token = &cmdline[i + 1];
 		}
 	}
+
+	char* starting_asingment = nullptr;
+
+	for (int k = 0; k < strlen(last_token); k++) {
+		if (last_token[k] == '=') {
+			last_token[k] = 0;
+			starting_asingment = &last_token[k + 1];
+			break;
+		}
+    	}
 	
 	list_node_t* node = this->find_node(find_handler, last_token, 0, 0, 0);
 
 	if (node == 0) {
 		renderer::global_font_renderer->printf("%fUnknown command: %s%r\n", 0xffff0000, last_token);
 	} else {
-		((cmdline_handler) node->data2)();
+		((cmdline_handler) node->data2)(starting_asingment);
 	}
 }

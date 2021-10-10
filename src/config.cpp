@@ -4,7 +4,7 @@
 bool NO_SMP_SHED = false;
 
 //#set_no_smp_shed-doc: Configure the kernel to not use SMP threads.
-void set_no_smp_shed() {
+void set_no_smp_shed(char* _) {
 	NO_SMP_SHED = true;
 }
 

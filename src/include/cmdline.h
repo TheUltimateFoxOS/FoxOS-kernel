@@ -2,7 +2,7 @@
 
 #include <fs/vfs/list.h>
 
-typedef void (*cmdline_handler)();
+typedef void (*cmdline_handler)(char*);
 
 class CmdLineParser: public list {
 	public:
