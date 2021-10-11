@@ -7,6 +7,8 @@
 #include <config.h>
 #include <stdio.h>
 
+//#load_module-doc: Load a kernel module either from a file or from a memory buffer.
+
 void load_module(char* path) {
 	file_t* file = fopen(path, "r");
 
