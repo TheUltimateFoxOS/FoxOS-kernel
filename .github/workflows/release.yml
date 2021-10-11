@@ -1,0 +1,31 @@
+name: Release the kernel headers as a zip file
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-docs:
+    runs-on: [self-hosted, Linux, X64]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Build the kernel headers
+        run: |
+          zip -r kernel-headers.zip src/include/.
+    
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Kernel headers"
+          files: | 
+              kernel-headers.zip
+      
+      - name: Delete the zip file
+        run: |
+          rm kernel-headers.zip
