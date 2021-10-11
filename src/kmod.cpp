@@ -145,6 +145,10 @@ void load_module(void* module, uint32_t size) {
 					*(uint32_t*) target = rel_table[rela].r_addend + symbol_table[ELF64_R_SYM(rel_table[rela].r_info)].st_value - target;
 					break;
 
+				case R_X86_64_32S:
+					*(int32_t*) target = rel_table[rela].r_addend + symbol_table[ELF64_R_SYM(rel_table[rela].r_info)].st_value;
+					break;
+
 				default:
 					driver::global_serial_driver->printf("WARNING: Unsupported relocation type %d\n", ELF64_R_TYPE(rel_table[rela].r_info));
 					break;

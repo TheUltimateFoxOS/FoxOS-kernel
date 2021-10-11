@@ -117,6 +117,7 @@ typedef struct {
 
 #define R_X86_64_64 1
 #define R_X86_64_32 10
+#define R_X86_64_32S 11
 #define R_X86_64_PC32 2
 #define R_X86_64_PLT32 4
 
