@@ -103,6 +103,8 @@ void crash() {
 
 //#kernel_main-doc: Main function of the kernel.
 extern "C" void kernel_main(stivale2_struct* bootinfo) {
+	global_bootinfo = bootinfo;
+
 	KernelInfo kernel_info = init_kernel(bootinfo);
 	PageTableManager* page_table_manager = kernel_info.page_table_manager;
 

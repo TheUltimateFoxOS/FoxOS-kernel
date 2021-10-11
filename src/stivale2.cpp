@@ -34,3 +34,5 @@ static stivale2_header __stivale2_header = {
 	.flags = 0,
 	.tags = (uint64_t) &framebuffer_tag
 };
+
+stivale2_struct* global_bootinfo;

@@ -349,4 +349,6 @@ template<typename T> T* stivale2_tag_find(stivale2_struct* bootinfo, long tag_id
 	return nullptr;
 }
 
+extern stivale2_struct* global_bootinfo;
+
 #endif
