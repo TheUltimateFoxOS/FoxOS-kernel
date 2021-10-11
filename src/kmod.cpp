@@ -13,7 +13,7 @@ void load_module(char* path) {
 	file_t* file = fopen(path, "r");
 
 	if (file->is_error) {
-		interrupts::Panic p = interrupts::Panic("Could not open module file");
+		interrupts::Panic p = interrupts::Panic((char*) "Could not open module file");
 		p.do_it(nullptr);
 	}
 
@@ -34,17 +34,17 @@ void load_module(void* module, uint32_t size) {
 
 
 	if(__builtin_bswap32(header->e_ident.i) != elf::MAGIC) {
-		interrupts::Panic p = interrupts::Panic("Invalid ELF file");
+		interrupts::Panic p = interrupts::Panic((char*) "Invalid ELF file");
 		p.do_it(nullptr);
 	}
 
 	if(header->e_ident.c[elf::EI_CLASS] != elf::ELFCLASS64) {
-		interrupts::Panic p = interrupts::Panic("ELF not 64 bit");
+		interrupts::Panic p = interrupts::Panic((char*) "ELF not 64 bit");
 		p.do_it(nullptr);
 	}
 
 	if(header->e_type != elf::ET_REL) {
-		interrupts::Panic p = interrupts::Panic("Elf not relocatable");
+		interrupts::Panic p = interrupts::Panic((char*) "Elf not relocatable");
 		p.do_it(nullptr);
 	}
 
@@ -53,7 +53,7 @@ void load_module(void* module, uint32_t size) {
 	memcpy(base_address, module, size);
 
 	for (unsigned int i = 0; i < header->e_shnum; ++i) {
-		Elf64_Shdr* sh = (Elf64_Shdr*) (base_address + header->e_shoff + header->e_shentsize * i);
+		Elf64_Shdr* sh = (Elf64_Shdr*) ((uint64_t) base_address +header->e_shoff + header->e_shentsize * i);
 
 		// print section information
 		driver::global_serial_driver->printf("Section %d: %d\n", i, sh->sh_type);
@@ -62,27 +62,27 @@ void load_module(void* module, uint32_t size) {
 			sh->sh_addr = (uint64_t) global_allocator.request_pages(sh->sh_size / 0x1000 + 1);
 			memset((void*) sh->sh_addr, 0, sh->sh_size);
 		} else {
-			sh->sh_addr = (uint64_t) (base_address + sh->sh_offset);
+			sh->sh_addr = (uint64_t) ((uint64_t) base_address + sh->sh_offset);
 		}
 	}
 
 	module_t* module_data = nullptr;
 
 	for (int i = 0; i < header->e_shnum; i++) {
-		Elf64_Shdr* sh = (Elf64_Shdr*) (base_address + header->e_shoff + header->e_shentsize * i);
+		Elf64_Shdr* sh = (Elf64_Shdr*) ((uint64_t) base_address + header->e_shoff + header->e_shentsize * i);
 
 		if (sh->sh_type != 2 /* SHT_SYMTAB */) {
 			continue;
 		}
 
-		Elf64_Shdr* strtab_hdr = (Elf64_Shdr*) (base_address + header->e_shoff + header->e_shentsize * sh->sh_link);
+		Elf64_Shdr* strtab_hdr = (Elf64_Shdr*) ((uint64_t) base_address + header->e_shoff + header->e_shentsize * sh->sh_link);
 		char* sym_names = (char*) strtab_hdr->sh_addr;
 		Elf64_Sym* sym_table = (Elf64_Sym*) sh->sh_addr;
 
 		for (uint16_t sym = 0; sym < sh->sh_size / sizeof(Elf64_Sym); ++sym) {
 
 			if (sym_table[sym].st_shndx > 0 && sym_table[sym].st_shndx < 0xFF00) {
-				Elf64_Shdr* sym_hdr = (Elf64_Shdr*) (base_address + header->e_shoff + header->e_shentsize * sym_table[sym].st_shndx);
+				Elf64_Shdr* sym_hdr = (Elf64_Shdr*) ((uint64_t) base_address + header->e_shoff + header->e_shentsize * sym_table[sym].st_shndx);
 				sym_table[sym].st_value += (uint64_t) sym_hdr->sh_addr;
 				
 			} else if (sym_table[sym].st_shndx == 0 && sym_table[sym].st_name > 0) {
@@ -100,7 +100,7 @@ void load_module(void* module, uint32_t size) {
 			}
 			
 			if (sym_table[sym].st_name > 0) {
-				if (strcmp(sym_names + sym_table[sym].st_name, "__module__") == 0) {
+				if (strcmp(sym_names + sym_table[sym].st_name, (char*) "__module__") == 0) {
 					module_data = (module_t*) sym_table[sym].st_value;
 				}
 			}
@@ -108,12 +108,12 @@ void load_module(void* module, uint32_t size) {
 	}
 
 	if (module_data == nullptr) {
-		interrupts::Panic p = interrupts::Panic("Module data not found");
+		interrupts::Panic p = interrupts::Panic((char*) "Module data not found");
 		p.do_it(nullptr);
 	}
 
 	for (int i = 0; i < header->e_shnum; i++) {
-		Elf64_Shdr* sh = (Elf64_Shdr*) (base_address + header->e_shoff + header->e_shentsize * i);
+		Elf64_Shdr* sh = (Elf64_Shdr*) ((uint64_t) base_address + header->e_shoff + header->e_shentsize * i);
 
 		if (sh->sh_type != 4 /* SHT_REL */) {
 			continue;
@@ -121,9 +121,9 @@ void load_module(void* module, uint32_t size) {
 
 		Elf64_Rela* rel_table = (Elf64_Rela*) sh->sh_addr;
 
-		Elf64_Shdr* target_section = (Elf64_Shdr*) (base_address + header->e_shoff + header->e_shentsize * sh->sh_info);
+		Elf64_Shdr* target_section = (Elf64_Shdr*) ((uint64_t) base_address + header->e_shoff + header->e_shentsize * sh->sh_info);
 
-		Elf64_Shdr* symbol_section = (Elf64_Shdr*) (base_address + header->e_shoff + header->e_shentsize * sh->sh_link);
+		Elf64_Shdr* symbol_section = (Elf64_Shdr*) ((uint64_t) base_address + header->e_shoff + header->e_shentsize * sh->sh_link);
 		Elf64_Sym* symbol_table = (Elf64_Sym*) symbol_section->sh_addr;
 
 		for (unsigned int rela = 0; rela < sh->sh_size / sizeof(Elf64_Rela); ++rela) {
