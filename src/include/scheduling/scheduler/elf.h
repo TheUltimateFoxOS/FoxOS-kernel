@@ -110,6 +110,22 @@ typedef struct {
     Elf64_Xword p_align;    
 } __attribute__((packed)) Elf64_Phdr;
 
+
+#define ELF64_R_SYM(i)    ((i) >> 32)
+#define ELF64_R_TYPE(i)   ((i) & 0xFFFFFFFFL)
+#define ELF64_R_INFO(s,t) (((s) << 32) + ((t) & 0xFFFFFFFFL))
+
+#define R_X86_64_64 1
+#define R_X86_64_32 10
+#define R_X86_64_PC32 2
+#define R_X86_64_PLT32 4
+
+typedef struct {
+	Elf64_Addr r_offset;
+	Elf64_Xword r_info; 
+	Elf64_Sxword r_addend;
+} __attribute__((packed)) Elf64_Rela;
+
 typedef struct {
 	Elf64_Word sh_name;
 	Elf64_Word sh_type;

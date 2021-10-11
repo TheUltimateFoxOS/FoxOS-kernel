@@ -30,6 +30,7 @@
 
 #include <stivale2.h>
 #include <cmdline.h>
+#include <kmod.h>
 
 #include <driver/nic/nic.h>
 #include <net/etherframe.h>
@@ -127,6 +128,19 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	renderer::global_font_renderer->printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
 	renderer::global_font_renderer->printf("This is free software, and you are welcome to redistribute it.\n\n");
 
+	if (driver::disk::global_disk_manager->num_disks != 0) {
+
+		vfs_mount* fat_mount = initialise_fat32(0);
+		mount(fat_mount, (char*) "root");
+		
+	} else {
+		renderer::global_font_renderer->printf("No physical disks found!\n");
+	}
+
+	vfs_mount* stivale_mount = initialise_stivale_modules(bootinfo);
+	mount(stivale_mount, (char*) "stivale");
+
+
 	//Command line parser to run tests
 	CmdLineParser cmd_line_parser;
 
@@ -141,6 +155,7 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	cmd_line_parser.add_handler((char*) "--vfs-test", vfs_test);
 	cmd_line_parser.add_handler((char*) "--autoexec", set_autoexec);
 	cmd_line_parser.add_handler((char*) "--no-smp", set_no_smp_shed);
+	cmd_line_parser.add_handler((char*) "--load-mod", load_module);
 
 	stivale2_struct_tag_cmdline* cmdline = stivale2_tag_find<stivale2_struct_tag_cmdline>(bootinfo, STIVALE2_STRUCT_TAG_CMDLINE_ID);
 	cmd_line_parser.parse((char*) cmdline->cmdline);
@@ -221,18 +236,6 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 		// const char* http = "GET / HTTP/1.1\r\nHost: www.google.com\r\n\r\n";
 		// socket->send((uint8_t*)http, strlen((char*)http));
 	}
-
-	if (driver::disk::global_disk_manager->num_disks != 0) {
-
-		vfs_mount* fat_mount = initialise_fat32(0);
-		mount(fat_mount, (char*) "root");
-		
-	} else {
-		renderer::global_font_renderer->printf("No physical disks found!\n");
-	}
-
-	vfs_mount* stivale_mount = initialise_stivale_modules(bootinfo);
-	mount(stivale_mount, (char*) "stivale");
 
 	run_on_ap([]() {
 		driver::global_serial_driver->printf("Hello ap world!\n");
