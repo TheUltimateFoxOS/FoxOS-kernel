@@ -6,10 +6,10 @@ using namespace pci;
 
 //#read_bar-doc: Read the mask of the BAR.
 void read_bar(uint32_t* mask, uint16_t bus, uint16_t device, uint16_t function, uint32_t offset) {
-	uint32_t data = pci::pci_read(bus, device, function, offset);
-	pci::pci_write(bus, device, function, offset, 0xffffffff);
-	*mask = pci::pci_read(bus, device, function, offset);
-	pci::pci_write(bus, device, function, offset, data);
+	uint32_t data = pci::pci_readd(bus, device, function, offset);
+	pci::pci_writed(bus, device, function, offset, 0xffffffff);
+	*mask = pci::pci_readd(bus, device, function, offset);
+	pci::pci_writed(bus, device, function, offset, data);
 }
 
 //#pci::get_bar-doc: Get a pci bar with some more information about it. The information is: bar type, size, and address.

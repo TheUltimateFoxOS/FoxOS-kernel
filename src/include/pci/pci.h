@@ -6,6 +6,7 @@
 #include <renderer/font_renderer.h>
 #include <driver/serial.h>
 
+#include <net/listv2.h>
 
 namespace pci {
 	struct pci_device_header_t {
@@ -54,12 +55,21 @@ namespace pci {
 	const char* get_subclass_name(uint8_t class_code, uint8_t subclass_code);
 	const char* get_prog_IF_name(uint8_t class_code, uint8_t subclass_code, uint8_t prog_IF);
 
-	uint32_t pci_read(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset);
-	void pci_write(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint32_t value);
+	uint32_t pci_readd(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset);
+	void pci_writed(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint32_t value);
+	
+	uint8_t pci_readb(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset);
+	void pci_writeb(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint8_t value);
+	
+	uint16_t pci_readw(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset);
+	void pci_writew(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint16_t value);
+
 	int device_has_functions(uint16_t bus, uint16_t device);
 	pci_header_0_t get_device_header(uint16_t bus, uint16_t device, uint16_t function);
 	void enumerate_pci();
 
 	void enable_mmio(uint16_t bus, uint16_t device, uint16_t function);
 	void become_bus_master(uint16_t bus, uint16_t device, uint16_t function);
+
+	extern listv2<pci_header_0_t*>* pci_devices;
 }
