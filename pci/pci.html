@@ -84,8 +84,8 @@
       </div>
       <hr>
       <div>
-        <h2>pci_read</h2>
-        <b>Signature:</b> <code>uint32_t pci::pci_read(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset)</code><br/>
+        <h2>pci_readd</h2>
+        <b>Signature:</b> <code>uint32_t pci::pci_readd(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset)</code><br/>
         <b>Class/Namespace:</b> <code>pci</code><br/>
         <b>Description:</b> Read from the PCI device.<br/>
         <br/>
@@ -101,8 +101,8 @@
       </div>
       <hr>
       <div>
-        <h2>pci_write</h2>
-        <b>Signature:</b> <code>void pci::pci_write(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint32_t value)</code><br/>
+        <h2>pci_writed</h2>
+        <b>Signature:</b> <code>void pci::pci_writed(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint32_t value)</code><br/>
         <b>Class/Namespace:</b> <code>pci</code><br/>
         <b>Description:</b> Write to the PCI device.<br/>
         <br/>
@@ -116,6 +116,76 @@
         </ul>
         <br/>
         <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>pci_writeb</h2>
+        <b>Signature:</b> <code>void pci::pci_writeb(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint8_t value)</code><br/>
+        <b>Class/Namespace:</b> <code>pci</code><br/>
+        <b>Description:</b> Write to the PCI device.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t bus</code></li>
+          <li><code>uint16_t device</code></li>
+          <li><code>uint16_t function</code></li>
+          <li><code>uint32_t registeroffset</code></li>
+          <li><code>uint8_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>pci_readb</h2>
+        <b>Signature:</b> <code>uint8_t pci::pci_readb(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset)</code><br/>
+        <b>Class/Namespace:</b> <code>pci</code><br/>
+        <b>Description:</b> Read from the PCI device.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t bus</code></li>
+          <li><code>uint16_t device</code></li>
+          <li><code>uint16_t function</code></li>
+          <li><code>uint32_t registeroffset</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint8_t</code>
+      </div>
+      <hr>
+      <div>
+        <h2>pci_writew</h2>
+        <b>Signature:</b> <code>void pci::pci_writew(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint16_t value)</code><br/>
+        <b>Class/Namespace:</b> <code>pci</code><br/>
+        <b>Description:</b> Write to the PCI device.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t bus</code></li>
+          <li><code>uint16_t device</code></li>
+          <li><code>uint16_t function</code></li>
+          <li><code>uint32_t registeroffset</code></li>
+          <li><code>uint16_t value</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>void</code>
+      </div>
+      <hr>
+      <div>
+        <h2>pci_readw</h2>
+        <b>Signature:</b> <code>uint16_t pci::pci_readw(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset)</code><br/>
+        <b>Class/Namespace:</b> <code>pci</code><br/>
+        <b>Description:</b> Read from the PCI device.<br/>
+        <br/>
+        <b>Parameters:</b><br/>
+        <ul>
+          <li><code>uint16_t bus</code></li>
+          <li><code>uint16_t device</code></li>
+          <li><code>uint16_t function</code></li>
+          <li><code>uint32_t registeroffset</code></li>
+        </ul>
+        <br/>
+        <b>Return:</b> <code>uint16_t</code>
       </div>
       <hr>
       <div>
