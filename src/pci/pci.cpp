@@ -13,7 +13,7 @@
 
 using namespace pci;
 
-listv2<pci_header_0_t*>* pci::pci_devices;
+listv2<pci_device>* pci::pci_devices;
 
 //#enumerate_function-doc: Enumerate all PCI device functions. This function also instantiates the driver for the device if there is a driver available for it.
 void enumerate_function(uint64_t address, uint64_t function, uint16_t bus, uint16_t device) {
@@ -81,7 +81,12 @@ void enumerate_function(uint64_t address, uint64_t function, uint16_t bus, uint1
 
 	driver::global_serial_driver->printf("Pushing device %x:%x:%x with header at %x into list!\n", bus, device, function, (pci::pci_header_0_t*) pci_device_header);
 
-	pci::pci_devices->add((pci::pci_header_0_t*) pci_device_header);
+	pci::pci_devices->add({
+		.header = (pci_header_0_t*) pci_device_header,
+		.bus = bus,
+		.device = device,
+		.function = function
+    	});
 }
 
 //#enumerate_device-doc: Enumerate all PCI devices.
@@ -128,7 +133,7 @@ void enumerate_bus(uint64_t base_address, uint64_t bus) {
 
 //#pci::enumerate_pci-doc: Enumerate all PCI devices.
 void pci::enumerate_pci(acpi::mcfg_header_t* mcfg) {
-	pci::pci_devices = new listv2<pci_header_0_t*>(10);
+	pci::pci_devices = new listv2<pci_device>(10);
 
 	int entries = ((mcfg->header.length) - sizeof(acpi::mcfg_header_t)) / sizeof(acpi::device_config_t);
 
@@ -239,10 +244,12 @@ pci::pci_header_0_t pci::get_device_header(uint16_t bus, uint16_t device, uint16
 }
 
 void pci::enumerate_pci() {
-	for (uint64_t bus = 0; bus < 8; bus++) {
-		for (uint64_t device = 0; device < 32; device++) {
+	pci::pci_devices = new listv2<pci_device>(10);
+	
+	for (uint16_t bus = 0; bus < 8; bus++) {
+		for (uint16_t device = 0; device < 32; device++) {
 			int num_functions = device_has_functions(bus, device) ? 8 : 1;
-			for (int function = 0; function < num_functions; function++) {
+			for (uint64_t function = 0; function < num_functions; function++) {
 				pci::pci_header_0_t pci_header = get_device_header(bus, device, function);
 				if(pci_header.header.vendor_id == 0x0000 || pci_header.header.vendor_id == 0xffff) {
 					continue;
@@ -300,7 +307,12 @@ void pci::enumerate_pci() {
 
 				driver::global_serial_driver->printf("Pushing device %x:%x:%x with header at %x\n", bus, device, function, pci_device_header);
 
-				pci::pci_devices->add(header_copy);
+				pci::pci_devices->add({
+					.header = header_copy,
+					.bus = bus,
+					.device = device,
+					.function = function
+    				});
 			}
 		}
 	}

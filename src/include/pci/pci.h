@@ -46,6 +46,13 @@ namespace pci {
 		uint8_t max_latency;
 	};
 
+	struct pci_device {
+		pci_header_0_t* header;
+		uint16_t bus;
+		uint16_t device;
+		uint64_t function;
+	};
+
 	void enumerate_pci(acpi::mcfg_header_t* mcfg);
 
 	extern const char* device_classes[];
@@ -71,5 +78,5 @@ namespace pci {
 	void enable_mmio(uint16_t bus, uint16_t device, uint16_t function);
 	void become_bus_master(uint16_t bus, uint16_t device, uint16_t function);
 
-	extern listv2<pci_header_0_t*>* pci_devices;
+	extern listv2<pci_device>* pci_devices;
 }
