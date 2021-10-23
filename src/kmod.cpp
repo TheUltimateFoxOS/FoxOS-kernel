@@ -159,6 +159,11 @@ void load_module(void* module, uint32_t size) {
 	module_data->loaded_pages = size / 0x1000 + 1;
 	module_data->base_address = base_address;
 
+	ElfSymbolResolver* resolver = new ElfSymbolResolver(base_address);
+	register_symbol_resolver(resolver);
+
+	driver::global_serial_driver->printf("Loaded module %s at %x\n", module_data->name, base_address);
+
 	asm volatile(
 		"movq %0                                                                                                                      , %%rax;"
 		"callq %%rax"

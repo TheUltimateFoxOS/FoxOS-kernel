@@ -10,13 +10,41 @@ void set_no_smp_shed(char* _) {
 
 ElfSymbolResolver* elf_symbol_resolver = nullptr;
 
+ElfSymbolResolver* resolvers[512];
+int resolver_count = 0;
+
+void register_symbol_resolver(ElfSymbolResolver* resolver) {
+	resolvers[resolver_count] = resolver;
+	resolver_count++;
+}
+
 uint64_t resolve_symbol(char* name) {
-	return (uint64_t) elf_symbol_resolver->resolve(name);
+	uint64_t sym_addr = (uint64_t) elf_symbol_resolver->resolve(name);
+	if (sym_addr == 0) {
+		for (int i = 0; i < resolver_count; i++) {
+			sym_addr = (uint64_t) resolvers[i]->resolve(name);
+			if (sym_addr != 0) {
+				break;
+			}
+		}
+	}
+
+	return sym_addr;
 }
 
 //#resolve_symbol-doc: Resolves a symbol from the kernel ELF file.
 char* resolve_symbol(uint64_t address) {
-	return elf_symbol_resolver->resolve((void*) address);
+	char* sym_name = elf_symbol_resolver->resolve((void*) address);
+	if (strcmp(sym_name, "<unknown function>") == 0) {
+		for (int i = 0; i < resolver_count; i++) {
+			sym_name = resolvers[i]->resolve((void*) address);
+			if (strcmp(sym_name, "<unknown function>") != 0) {
+				break;
+			}
+		}
+	}
+
+	return sym_name;
 }
 
 //#unwind-doc: Unwind the stack to the previous frames. A callback function is called for each frame.

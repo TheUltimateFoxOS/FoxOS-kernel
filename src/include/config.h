@@ -35,6 +35,8 @@ struct symbol {
 
 extern ElfSymbolResolver* elf_symbol_resolver;
 
+void register_symbol_resolver(ElfSymbolResolver* resolver);
+
 void set_no_smp_shed(char* _);
 struct patch_t {
 	void* old_addr;
