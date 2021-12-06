@@ -95,7 +95,7 @@ uint32_t DomainNameServiceProvider::resolve(char* name) {
 		}
 
 		listv2<dns_result_t>::node* n = results.find<char*>([](char* qname, listv2<dns_result_t>::node* n) {
-			return strcmp(qname, n->data.name) == 0;
+			return strncmp(qname, n->data.name, strlen(qname)) == 0;
 		}, qname);
 
 		if (n != nullptr) {

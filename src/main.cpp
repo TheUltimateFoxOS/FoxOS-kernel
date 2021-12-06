@@ -41,6 +41,7 @@
 #include <net/dhcp.h>
 #include <net/dns.h>
 #include <net/tcp.h>
+#include <net/net_stack.h>
 
 #include "examples/examples.h"
 
@@ -53,12 +54,12 @@ class PrintfKeyboardEventHandler : public driver::KeyboardEventHandler {
 
 		//#SpecialKeyDown-doc: Handle a special key being pressed.
 		void SpecialKeyDown(driver::special_key key) {
-			
+
 		}
 
 		//#SpecialKeyUp-doc: Handle a special key being released.
 		void SpecialKeyUp(driver::special_key key) {
-			
+
 		}
 };
 
@@ -134,7 +135,7 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 
 		vfs_mount* fat_mount = initialise_fat32(0);
 		mount(fat_mount, (char*) "root");
-		
+
 	} else {
 		renderer::global_font_renderer->printf("No physical disks found!\n");
 	}
@@ -158,6 +159,7 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 	cmd_line_parser.add_handler((char*) "--autoexec", set_autoexec);
 	cmd_line_parser.add_handler((char*) "--no-smp", set_no_smp_shed);
 	cmd_line_parser.add_handler((char*) "--load-mod", load_module);
+	cmd_line_parser.add_handler((char*) "--test-net", test_net);
 
 	stivale2_struct_tag_cmdline* cmdline = stivale2_tag_find<stivale2_struct_tag_cmdline>(bootinfo, STIVALE2_STRUCT_TAG_CMDLINE_ID);
 	cmd_line_parser.parse((char*) cmdline->cmdline);
@@ -168,7 +170,7 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 
 	//font_renderer_test();
 	//renderer::global_font_renderer->printf("RSDP: %f0x%x%r\n", 0xffff00ff, bootinfo->rsdp);
-	
+
 	//fe_test();
 	//test_patch();
 	//disk_test();
@@ -217,9 +219,24 @@ extern "C" void kernel_main(stivale2_struct* bootinfo) {
 		driver::nic::ip_u dns_ip;
 		dns_ip.ip = dhcp->dns;
 
-		net::UdpSocket* dns_socket = udp->connect(dns_ip.ip, 53);
+		// net::UdpSocket* dns_socket = udp->connect(dns_ip.ip, 53); // the qemu dns server isn't working for me??????
+		net::UdpSocket* dns_socket = udp->connect(0x08080808, 53);
 		net::DomainNameServiceProvider* dns = new net::DomainNameServiceProvider(dns_socket);
 		udp->bind(dns_socket, dns);
+
+		net::net_stack_t* net_stack = new net::net_stack_t;
+
+		*net_stack = {
+			.ether = ether,
+			.arp = arp,
+			.ipv4 = ipv4,
+			.icmp = icmp,
+			.udp = udp,
+			.tcp = tcp,
+			.dns = dns
+		};
+
+		driver::nic::global_nic_manager->get_nic(i)->load_network_stack(net_stack);
 
 		renderer::global_font_renderer->printf("%fDone%r. ip: %d.%d.%d.%d, gateway: %d.%d.%d.%d, dns: %d.%d.%d.%d", 0xff00ff00, ip.ip_p[0], ip.ip_p[1], ip.ip_p[2], ip.ip_p[3], gateway.ip_p[0], gateway.ip_p[1], gateway.ip_p[2], gateway.ip_p[3], dns_ip.ip_p[0], dns_ip.ip_p[1], dns_ip.ip_p[2], dns_ip.ip_p[3]);
 		renderer::global_font_renderer->printf("\n");

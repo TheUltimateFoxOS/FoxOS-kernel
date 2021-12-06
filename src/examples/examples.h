@@ -12,3 +12,4 @@ void fat32_test(char* _);
 void vfs_test(char* _);
 void layer_test(char* _);
 void test_sound(char* _);
+void test_net(char* _);

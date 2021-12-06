@@ -3,6 +3,8 @@
 #include <renderer/font_renderer.h>
 #include <driver/serial.h>
 
+#include <net/net_stack.h>
+
 using namespace driver;
 using namespace driver::nic;
 
@@ -43,6 +45,20 @@ uint32_t Nic::get_ip() {
 void Nic::set_ip(uint32_t ip) {
 	
 }
+
+void Nic::load_network_stack(net::net_stack_t* network_stack) {
+	this->network_stack = network_stack;
+
+	driver::global_serial_driver->printf("[NIC] Network stack loaded.\n");
+	driver::global_serial_driver->printf("      etherframe: %x\n", network_stack->ether);
+	driver::global_serial_driver->printf("      arp: %x\n", network_stack->arp);
+	driver::global_serial_driver->printf("      ipv4: %x\n", network_stack->ipv4);
+	driver::global_serial_driver->printf("      icmp: %x\n", network_stack->icmp);
+	driver::global_serial_driver->printf("      udp: %x\n", network_stack->udp);
+	driver::global_serial_driver->printf("      tcp: %x\n", network_stack->tcp);
+	driver::global_serial_driver->printf("      dns: %x\n", network_stack->dns);
+}
+
 
 //#NicDataManager::NicDataManager-doc: NicDataManager constructor.
 NicDataManager::NicDataManager(int id) {

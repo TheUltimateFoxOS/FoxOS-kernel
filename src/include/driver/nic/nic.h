@@ -2,10 +2,18 @@
 #define Nic_H
 
 #include <stdint.h>
+// #include <net/net_stack.h>
 
 #define NIC_NUM 265
 
 typedef void (*nic_recv_handler)(uint8_t* data, uint32_t len);
+
+
+// i cant import net_stack.h here so just a void*
+namespace net {
+	struct net_stack_t;
+}
+
 
 namespace driver {
 	namespace nic {
@@ -45,7 +53,9 @@ namespace driver {
 				virtual void set_ip(uint32_t ip);
 
 				NicDataManager* nic_data_manager;
+				net::net_stack_t* network_stack;
 
+				void load_network_stack(net::net_stack_t* network_stack);
 		};
 
 		class NicManager {
