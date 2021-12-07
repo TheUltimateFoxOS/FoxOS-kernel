@@ -23,3 +23,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc/
+
+      - name: Send request to server
+        run: curl -X POST -F 'secret=${{ secrets.PHP_UPDATE_SECRET }}' -F 'updatedocs=true' https://theultimatefoxos.dev/kerneldoc-update.php
